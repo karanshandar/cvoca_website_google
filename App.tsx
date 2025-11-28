@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
-import Membership from './pages/Membership';
-import Events from './pages/Events';
-import Blog from './pages/Blog';
-import DigitalOutreach from './pages/DigitalOutreach';
-import Contact from './pages/Contact';
-import PrivacyPolicy from './pages/PrivacyPolicy';
+import LoadingSpinner from './components/LoadingSpinner';
+
+// Lazy load page components for code splitting
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+const Membership = lazy(() => import('./pages/Membership'));
+const Events = lazy(() => import('./pages/Events'));
+const Blog = lazy(() => import('./pages/Blog'));
+const DigitalOutreach = lazy(() => import('./pages/DigitalOutreach'));
+const Contact = lazy(() => import('./pages/Contact'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -43,16 +46,18 @@ const App: React.FC = () => {
         <Header theme={theme} toggleTheme={toggleTheme} />
         {/* Removed pt-24 to allow Hero sections to sit behind the transparent header */}
         <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/membership" element={<Membership />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/digital-outreach" element={<DigitalOutreach />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          </Routes>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/membership" element={<Membership />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/digital-outreach" element={<DigitalOutreach />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            </Routes>
+          </Suspense>
         </main>
         <Footer />
       </div>
