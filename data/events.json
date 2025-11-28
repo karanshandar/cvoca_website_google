@@ -1,0 +1,69 @@
+
+[
+  {
+    "id": 1,
+    "title": "Annual Tax Conference 2025",
+    "date": "2025-02-20",
+    "time": "9:00 AM - 5:00 PM",
+    "location": "Grand Ballroom, Mumbai",
+    "committee": "RRC & PD",
+    "tags": ["Conference", "Tax", "Networking"],
+    "cost": "₹2500",
+    "description": "Our flagship annual conference covering the latest in direct and indirect taxation, with keynote speakers from the industry and government."
+  },
+  {
+    "id": 2,
+    "title": "Workshop on AI in Auditing",
+    "date": "2025-03-15",
+    "time": "10:00 AM - 1:00 PM",
+    "location": "Online Webinar",
+    "committee": "InfoViews",
+    "tags": ["Workshop", "Technology", "Training"],
+    "cost": "₹500",
+    "description": "An interactive workshop on leveraging Artificial Intelligence and Machine Learning tools to enhance audit efficiency and accuracy."
+  },
+  {
+    "id": 3,
+    "title": "Student Career Guidance Seminar",
+    "date": "2025-03-28",
+    "time": "2:00 PM - 5:00 PM",
+    "location": "CVOCA Office, Dadar",
+    "committee": "Students",
+    "tags": ["Seminar", "Career"],
+    "cost": "Free",
+    "description": "A special seminar for students and newly qualified CAs to explore diverse career paths and opportunities in the finance world."
+  },
+  {
+    "id": 4,
+    "title": "Capital Markets Outlook",
+    "date": "2025-04-10",
+    "time": "6:00 PM - 8:00 PM",
+    "location": "Online Webinar",
+    "committee": "Capital Market",
+    "tags": ["Seminar", "Finance"],
+    "cost": "₹300",
+    "description": "Join market experts as they discuss the trends, challenges, and opportunities in the Indian capital markets for the upcoming fiscal year."
+  },
+  {
+    "id": 5,
+    "title": "Members Networking Dinner",
+    "date": "2025-04-25",
+    "time": "7:30 PM onwards",
+    "location": "The Orchid Hotel, Mumbai",
+    "committee": "Mem.& Recreation",
+    "tags": ["Networking", "Social"],
+    "cost": "₹1500",
+    "description": "An exclusive social event for members to connect, network, and build professional relationships in a relaxed setting."
+  },
+  {
+    "id": 6,
+    "title": "Advanced Excel for Accountants",
+    "date": "2025-05-05",
+    "time": "9:30 AM - 4:30 PM",
+    "location": "Computer Lab, Vile Parle",
+    "committee": "Pub & Trn",
+    "tags": ["Training", "Technology"],
+    "cost": "₹1200",
+    "description": "A hands-on training session to master advanced Excel functions, pivot tables, and data visualization for accounting professionals."
+  }
+]

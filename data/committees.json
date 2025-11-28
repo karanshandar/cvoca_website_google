@@ -1,0 +1,102 @@
+
+[
+  {
+    "name": "Program Committee",
+    "chairperson": { "name": "CA Jeenal Kenil Savla", "nativePlace": "Beraja" },
+    "advisors": [
+      { "name": "CA Manoj Chunilal Shah", "nativePlace": "Lakhapur" }
+    ],
+    "convenors": [
+      { "name": "CA Chintan Tarun Rambhia", "nativePlace": "Ramania" }
+    ],
+    "jointConvenors": [
+      { "name": "CA Viral Vinod Satra", "nativePlace": "Gundala" },
+      { "name": "CA Meghna Vihang Makda", "nativePlace": "Beraja" }
+    ],
+    "specialInvitees": [
+      { "name": "CA Paresh Khimji Vora", "nativePlace": "Navinar" },
+      { "name": "CA Anil Kantilal Haria", "nativePlace": "Shredi" }
+    ],
+    "subCommittee": [
+      { "name": "CA Paras Laxmichand Maru", "nativePlace": "Sabhrai" },
+      { "name": "CA Shreya Kirti Nagda", "nativePlace": "Bhojay" },
+      { "name": "CA Zalak Mahendra Savla", "nativePlace": "Moti Rayan" },
+      { "name": "CA Harsh Lalit Soni", "nativePlace": "Bambhdai" },
+      { "name": "CA Akshay Nitin Satra", "nativePlace": "Luni" },
+      { "name": "CA Parigh Laxmichand Sangoi", "nativePlace": "Godhro" },
+      { "name": "CA Nisha Ninad Gala", "nativePlace": "Desalpur" }
+    ]
+  },
+  {
+    "name": "RRC & PD (Regional Review Committee)",
+    "chairperson": { "name": "CA Amit R. Shah", "nativePlace": "Kutch" },
+    "convenors": [{ "name": "CA Rajesh K. Gala", "nativePlace": "Bhuj" }],
+    "jointConvenors": [{ "name": "CA Snehal P. Vora", "nativePlace": "Mandvi" }],
+    "subCommittee": [
+        { "name": "CA Rahul Mehta", "nativePlace": "Anjar" },
+        { "name": "CA Priya Doshi", "nativePlace": "Mundra" }
+    ]
+  },
+  {
+    "name": "Pub & Trn (Publication & Training)",
+    "chairperson": { "name": "CA Neha P. Dedhia", "nativePlace": "Bidada" },
+    "advisors": [{ "name": "CA Suresh M. Chheda", "nativePlace": "Dahisara" }],
+    "convenors": [{ "name": "CA Varun S. Shah", "nativePlace": "Naliya" }]
+  },
+  {
+    "name": "Mem. & Recreation",
+    "chairperson": { "name": "CA Hitesh L. Gada", "nativePlace": "Dombivali" },
+    "jointConvenors": [
+        { "name": "CA Pooja K. Shah", "nativePlace": "Ghatkopar" },
+        { "name": "CA Ravi J. Savla", "nativePlace": "Mulund" }
+    ]
+  },
+  {
+    "name": "Study Circle",
+    "chairperson": { "name": "CA Kiran B. Furia", "nativePlace": "Matunga" },
+    "convenors": [{ "name": "CA Sanjay D. Shah", "nativePlace": "Sion" }]
+  },
+  {
+    "name": "Capital Market",
+    "chairperson": { "name": "CA Vickky N. Nisar", "nativePlace": "Thane" },
+    "advisors": [{ "name": "CA Piyush J. Shah", "nativePlace": "Borivali" }]
+  },
+  {
+    "name": "InfoViews",
+    "chairperson": { "name": "CA Rakesh M. Rambhia", "nativePlace": "Kandivali" },
+    "convenors": [{ "name": "CA Seema V. Gada", "nativePlace": "Malad" }]
+  },
+  {
+    "name": "Students",
+    "chairperson": { "name": "CA Tarun P. Satra", "nativePlace": "Goregaon" },
+    "subCommittee": [
+        { "name": "CA Aman J. Shah", "nativePlace": "Andheri" },
+        { "name": "CA Riya K. Gala", "nativePlace": "Vile Parle" }
+    ]
+  },
+  {
+    "name": "YIME (Youth Initiative)",
+    "chairperson": { "name": "CA Harshil B. Shah", "nativePlace": "Santacruz" },
+    "jointConvenors": [{ "name": "CA Fenil D. Dedhia", "nativePlace": "Bandra" }]
+  },
+  {
+    "name": "Practice M & D",
+    "chairperson": { "name": "CA Dilip K. Vora", "nativePlace": "Dadar" },
+    "advisors": [{ "name": "CA Mahesh C. Shah", "nativePlace": "Mahim" }]
+  },
+  {
+    "name": "Digi Outreach",
+    "chairperson": { "name": "CA Kartik S. Gala", "nativePlace": "Parel" },
+    "convenors": [{ "name": "CA Anita R. Shah", "nativePlace": "Worli" }]
+  },
+  {
+    "name": "Representations & Updates",
+    "chairperson": { "name": "CA Deepak M. Chheda", "nativePlace": "Byculla" },
+    "specialInvitees": [{ "name": "CA Nilesh P. Shah", "nativePlace": "Mazgaon" }]
+  },
+  {
+    "name": "Office Premises",
+    "chairperson": { "name": "CA Chetan K. Shah", "nativePlace": "Fort" },
+    "advisors": [{ "name": "CA Bharat J. Gada", "nativePlace": "Marine Lines" }]
+  }
+]

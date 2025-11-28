@@ -1,0 +1,16 @@
+
+[
+  { "name": "CA Jeenal Kenil Savla", "role": "President", "photoUrl": "https://picsum.photos/seed/jks/200/200" },
+  { "name": "CA Aarav Mehta", "role": "Vice-President", "photoUrl": "https://picsum.photos/seed/am/200/200" },
+  { "name": "CA Priya Desai", "role": "Secretary", "photoUrl": "https://picsum.photos/seed/pd/200/200" },
+  { "name": "CA Rohan Shah", "role": "Treasurer", "photoUrl": "https://picsum.photos/seed/rs/200/200" },
+  { "name": "CA Diya Patel", "role": "Joint Secretary", "photoUrl": "https://picsum.photos/seed/dp/200/200" },
+  { "name": "CA Nihar Gala", "role": "Member", "photoUrl": "https://picsum.photos/seed/ng/200/200" },
+  { "name": "CA Anjali Furia", "role": "Member", "photoUrl": "https://picsum.photos/seed/af/200/200" },
+  { "name": "CA Kian Vora", "role": "Member", "photoUrl": "https://picsum.photos/seed/kv/200/200" },
+  { "name": "CA Mira Sanghavi", "role": "Member", "photoUrl": "https://picsum.photos/seed/ms/200/200" },
+  { "name": "CA Arjun Chedda", "role": "Member", "photoUrl": "https://picsum.photos/seed/ac/200/200" },
+  { "name": "CA Isha Nagda", "role": "Member", "photoUrl": "https://picsum.photos/seed/in/200/200" },
+  { "name": "CA Vedant Gada", "role": "Member", "photoUrl": "https://picsum.photos/seed/vg/200/200" },
+  { "name": "CA Zara Shah", "role": "Member", "photoUrl": "https://picsum.photos/seed/zs/200/200" }
+]

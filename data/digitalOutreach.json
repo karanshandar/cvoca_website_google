@@ -1,0 +1,32 @@
+[
+  {
+    "category": "Street Theatre",
+    "iconPath": "M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z",
+    "image": "https://images.unsplash.com/photo-1531058020387-3be344556be6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    "title": "Financial Literacy Street Plays",
+    "description": "Bringing Finance to the Streets. We use powerful street theatre (Nukkad Natak) to raise awareness about financial topics in a way that's relatable, engaging, and accessible to everyone.",
+    "features": ["Interactive financial skits", "Regional language delivery", "Real-life scenario enactments", "Expert debriefing sessions"],
+    "stats": [{ "label": "Performances", "value": "25+" }, { "label": "Audience Reach", "value": "5,000+" }, { "label": "Cities", "value": "4" }],
+    "ctaText": "Join as a Performer"
+  },
+  {
+    "category": "Public Seminars",
+    "iconPath": "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+    "image": "https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    "title": "Community Awareness Events",
+    "description": "Decoding Finance for the Public. We host dedicated programs after key financial events—like the Union Budget—to break down complex announcements into actionable insights for the common man.",
+    "features": ["Post-budget briefings", "Tax planning for seniors", "Investment safety workshops", "Open Q&A forums"],
+    "stats": [{ "label": "Annual Events", "value": "12" }, { "label": "Attendees", "value": "3,500+" }, { "label": "Cost", "value": "Free" }],
+    "ctaText": "View Upcoming Schedule"
+  },
+  {
+    "category": "Digital Education",
+    "iconPath": "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+    "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    "title": "Public Education Courses",
+    "description": "Skill Up, Step Up. Our free and affordable public courses are designed to upskill individuals in both financial and digital literacy, covering practical topics for everyday life and business.",
+    "features": ["GST for Small Businesses", "Digital Payments Safety", "Basic Accounting Tools", "Certification included"],
+    "stats": [{ "label": "Total Graduates", "value": "1,200" }, { "label": "Courses Offered", "value": "5" }, { "label": "Satisfaction", "value": "4.9/5" }],
+    "ctaText": "Browse Course Catalog"
+  }
+]
