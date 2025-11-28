@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Logo from './Logo';
@@ -7,17 +8,23 @@ interface HeaderProps {
   toggleTheme: () => void;
 }
 
-const HeaderLogo: React.FC<{ textColorClass: string }> = ({ textColorClass }) => (
-  <div className="flex items-center gap-3 group">
-    <div className={`relative w-10 h-10 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-110 ${textColorClass}`}>
-      <Logo />
+const HeaderLogo: React.FC<{ textColorClass: string }> = ({ textColorClass }) => {
+  // If the text is white (implies dark background), we need the Dark Theme Logo (which has white text)
+  // If the text is dark (implies light background), we need the Light Theme Logo (which has dark text)
+  const logoVariant = textColorClass.includes('text-white') ? 'dark' : 'light';
+
+  return (
+    <div className="flex items-center gap-3 group">
+      <div className={`relative w-10 h-10 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-110`}>
+        <Logo variant={logoVariant} />
+      </div>
+      <div className="flex flex-col">
+        <span className={`text-xl md:text-2xl font-extrabold tracking-tight leading-none ${textColorClass}`}>CVOCA</span>
+        <span className="text-[0.6rem] md:text-[0.65rem] font-bold tracking-widest uppercase text-primary dark:text-primary-light">Association</span>
+      </div>
     </div>
-    <div className="flex flex-col">
-      <span className={`text-xl md:text-2xl font-extrabold tracking-tight leading-none ${textColorClass}`}>CVOCA</span>
-      <span className="text-[0.6rem] md:text-[0.65rem] font-bold tracking-widest uppercase text-primary dark:text-primary-light">Association</span>
-    </div>
-  </div>
-);
+  );
+};
 
 const NavLinks: React.FC<{onLinkClick?: () => void, mobile?: boolean, textColorClass?: string, scrolled?: boolean}> = ({ onLinkClick, mobile, textColorClass, scrolled }) => {
     const links = [
