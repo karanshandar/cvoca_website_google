@@ -32,7 +32,7 @@ const Blog: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('./data/blog.json')
+        fetch('/data/blog.json')
             .then(res => res.json())
             .then(data => {
                 setPosts(data);

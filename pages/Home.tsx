@@ -44,7 +44,7 @@ const Home: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('./data/home.json')
+        fetch('/data/home.json')
             .then(res => res.json())
             .then(data => {
                 setData(data);

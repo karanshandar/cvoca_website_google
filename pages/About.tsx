@@ -124,9 +124,9 @@ const About: React.FC = () => {
             setLoading(true);
             try {
                 const [mcRes, ppRes, cRes] = await Promise.all([
-                    fetch('./data/managingCommittee.json'),
-                    fetch('./data/pastPresidents.json'),
-                    fetch('./data/committees.json')
+                    fetch('/data/managingCommittee.json'),
+                    fetch('/data/pastPresidents.json'),
+                    fetch('/data/committees.json')
                 ]);
                 if (!mcRes.ok || !ppRes.ok || !cRes.ok) {
                     throw new Error('Network response was not ok');

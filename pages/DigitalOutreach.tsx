@@ -89,7 +89,7 @@ const DigitalOutreach: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('./data/digitalOutreach.json')
+        fetch('/data/digitalOutreach.json')
             .then(res => res.json())
             .then(data => {
                 setInitiatives(data);

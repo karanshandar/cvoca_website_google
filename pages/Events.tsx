@@ -143,8 +143,8 @@ const Events: React.FC = () => {
             setLoading(true);
             try {
                 const [eventsRes, committeesRes] = await Promise.all([
-                    fetch('./data/events.json'),
-                    fetch('./data/committees.json')
+                    fetch('/data/events.json'),
+                    fetch('/data/committees.json')
                 ]);
                 if (!eventsRes.ok || !committeesRes.ok) {
                     throw new Error('Network response was not ok');

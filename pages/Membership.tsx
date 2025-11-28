@@ -167,7 +167,7 @@ const Membership: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('./data/membership.json')
+        fetch('/data/membership.json')
             .then(res => res.json())
             .then(data => {
                 setData(data);
