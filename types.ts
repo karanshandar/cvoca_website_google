@@ -86,6 +86,7 @@ export interface BlogPost {
 export interface MembershipTier {
   tier: string;
   price: string;
+  period: string;
   variant: 'student' | 'professional';
   link: string;
   benefits: string[];

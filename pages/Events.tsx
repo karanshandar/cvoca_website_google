@@ -134,6 +134,7 @@ const Events: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [committeeFilter, setCommitteeFilter] = useState('all');
     const [tagFilter, setTagFilter] = useState('all');
+    const [timeFilter, setTimeFilter] = useState('upcoming'); // Default to Upcoming events
     const [allEvents, setAllEvents] = useState<CvoEvent[]>([]);
     const [committees, setCommittees] = useState<{ name: string }[]>([]);
     const [loading, setLoading] = useState(true);
@@ -169,13 +170,55 @@ const Events: React.FC = () => {
     }, [allEvents]);
 
     const filteredEvents = useMemo(() => {
-        return allEvents.filter(event => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Normalize today to start of day
+
+        const filtered = allEvents.filter(event => {
+            const eventDate = new Date(event.date);
+            
             const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) || event.description.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesCommittee = committeeFilter === 'all' || event.committee === committeeFilter;
             const matchesTag = tagFilter === 'all' || event.tags.includes(tagFilter);
-            return matchesSearch && matchesCommittee && matchesTag;
+            
+            let matchesTime = true;
+            if (timeFilter === 'upcoming') {
+                matchesTime = eventDate >= today;
+            } else if (timeFilter === 'past') {
+                matchesTime = eventDate < today;
+            }
+
+            return matchesSearch && matchesCommittee && matchesTag && matchesTime;
         });
-    }, [allEvents, searchTerm, committeeFilter, tagFilter]);
+
+        // Sort events
+        return filtered.sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+
+            // If viewing past events, show most recent first (Descending)
+            // If viewing upcoming or all, show nearest first (Ascending)
+            // Actually for 'all', usually upcoming events are more relevant, so ascending is safer to show nearest future events at top
+            // but for mixed 'all', usually you want descending to see latest news/events at top. 
+            // However, context of "Events Calendar" usually implies upcoming.
+            // Let's stick to: Upcoming=Asc, Past=Desc, All=Desc (Newest/Furthest Future first)
+            
+            if (timeFilter === 'upcoming') {
+                return dateA - dateB; // Ascending (Soonest first)
+            } else {
+                return dateB - dateA; // Descending (Most recent/Furthest future first)
+            }
+        });
+
+    }, [allEvents, searchTerm, committeeFilter, tagFilter, timeFilter]);
+
+    const clearFilters = () => {
+        setSearchTerm('');
+        setCommitteeFilter('all');
+        setTagFilter('all');
+        setTimeFilter('all');
+    };
+
+    const hasActiveFilters = searchTerm !== '' || committeeFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'all';
 
     return (
         <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
@@ -200,7 +243,24 @@ const Events: React.FC = () => {
                 <>
                     {/* Filters */}
                     <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-3xl shadow-xl mb-12 border border-white/20 dark:border-gray-700">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                         <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                Filter Events
+                            </h2>
+                            {hasActiveFilters && (
+                                <button 
+                                    onClick={clearFilters}
+                                    className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full transition-all"
+                                    title="Remove all filters"
+                                >
+                                    <span>Clear</span>
+                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <svg className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -213,6 +273,23 @@ const Events: React.FC = () => {
                                     className="w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                                 />
                             </div>
+                            
+                            {/* Time Filter */}
+                            <div className="relative">
+                                <select
+                                    value={timeFilter}
+                                    onChange={(e) => setTimeFilter(e.target.value)}
+                                    className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none transition-all cursor-pointer font-medium"
+                                >
+                                    <option value="upcoming">Upcoming Events</option>
+                                    <option value="past">Past Events</option>
+                                    <option value="all">All Events</option>
+                                </select>
+                                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                            </div>
+
                             <div className="relative">
                                 <select
                                     value={committeeFilter}
@@ -235,7 +312,7 @@ const Events: React.FC = () => {
                                     {allTags.map(tag => <option key={tag} value={tag} className="capitalize">{tag === 'all' ? 'All Tags' : tag}</option>)}
                                 </select>
                                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
                                 </div>
                             </div>
                         </div>
@@ -254,8 +331,12 @@ const Events: React.FC = () => {
                                 <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             </div>
                             <h3 className="text-lg font-medium text-gray-900 dark:text-white">No events found</h3>
-                            <p className="mt-2 text-gray-500 dark:text-gray-400">We couldn't find any events matching your filters.</p>
-                            <button onClick={() => {setSearchTerm(''); setCommitteeFilter('all'); setTagFilter('all')}} className="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg">Clear filters</button>
+                            <p className="mt-2 text-gray-500 dark:text-gray-400">
+                                {timeFilter === 'upcoming' 
+                                    ? "There are no upcoming events scheduled at the moment." 
+                                    : "We couldn't find any events matching your filters."}
+                            </p>
+                            <button onClick={clearFilters} className="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg">Clear all filters</button>
                         </div>
                     )}
                 </>

@@ -15,7 +15,7 @@ const BenefitCard: React.FC<{ title: string; iconPath: string; children: React.R
     </div>
 );
 
-const TierCard: React.FC<{ tier: string; price: string; benefits: string[]; link: string; variant: 'student' | 'professional' }> = ({ tier, price, benefits, link, variant }) => {
+const TierCard: React.FC<{ tier: string; price: string; period: string; benefits: string[]; link: string; variant: 'student' | 'professional' }> = ({ tier, price, period, benefits, link, variant }) => {
     
     const isStudent = variant === 'student';
     
@@ -43,9 +43,9 @@ const TierCard: React.FC<{ tier: string; price: string; benefits: string[]; link
                 <div className="relative z-10 flex justify-between items-start mb-6">
                     <div>
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{tier}</h3>
-                        <div className="flex items-baseline">
+                        <div className="flex items-baseline flex-wrap">
                             <span className={`text-5xl font-extrabold tracking-tight ${theme.primaryColor}`}>{price}</span>
-                            <span className="ml-2 text-lg text-gray-400 font-medium">/year</span>
+                            <span className="ml-2 text-sm text-gray-400 font-medium uppercase tracking-wide">{period}</span>
                         </div>
                     </div>
                     <div className={`w-14 h-14 rounded-2xl ${theme.iconBg} flex items-center justify-center text-white shadow-lg transform rotate-3 group-hover:rotate-12 transition-all duration-300`}>
@@ -211,6 +211,7 @@ const Membership: React.FC = () => {
                                 key={index}
                                 tier={tier.tier}
                                 price={tier.price}
+                                period={tier.period}
                                 link={tier.link}
                                 variant={tier.variant}
                                 benefits={tier.benefits}

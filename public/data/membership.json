@@ -2,7 +2,8 @@
   "tiers": [
     {
       "tier": "Student Member",
-      "price": "₹500",
+      "price": "₹50",
+      "period": "+ GST",
       "variant": "student",
       "link": "https://pages.razorpay.com/CVOCAStudentmembership",
       "benefits": [
@@ -14,8 +15,9 @@
       ]
     },
     {
-      "tier": "Full Time Member",
-      "price": "₹2,500",
+      "tier": "Life Member",
+      "price": "₹500",
+      "period": "+ GST (Lifetime)",
       "variant": "professional",
       "link": "https://pages.razorpay.com/pl_HwZQcSjrRHa1td/view",
       "benefits": [
