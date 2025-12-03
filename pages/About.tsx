@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Committee, CommitteeMember, PastPresident, CoreMember } from '../types';
+import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -105,11 +105,102 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
     );
 };
 
+const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }) => {
+    const [showAll, setShowAll] = useState(false);
+
+    if (!reports || reports.length === 0) return null;
+
+    // Filter to find the featured report (either marked isNew or the first one)
+    const featuredReport = reports.find(r => r.isNew) || reports[0];
+    // The rest of the reports
+    const previousReports = reports.filter(r => r !== featuredReport);
+
+    return (
+        <div className="animate-fade-in-up">
+            <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Annual Reports & Governance</h2>
+                <p className="mt-2 text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+                    Explore our journey of transparency and growth. Access detailed accounts of our activities, financial health, and community initiatives.
+                </p>
+            </div>
+
+            {/* Featured Card */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-slate-800 dark:to-slate-900 text-white shadow-2xl p-6 md:p-12 mb-10 border border-blue-500/30 dark:border-gray-700">
+                 {/* Background decoration */}
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/30 dark:bg-blue-600/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
+                 
+                 <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8">
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-white/20 dark:bg-blue-500/20 backdrop-blur-sm border border-white/20 dark:border-blue-500/30 text-white dark:text-blue-100 rounded-full">
+                                Latest Release
+                            </span>
+                            <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-emerald-500/20 dark:bg-emerald-500/10 backdrop-blur-sm border border-emerald-400/30 dark:border-emerald-500/20 text-emerald-100 dark:text-emerald-300 rounded-full">
+                                {featuredReport.year}
+                            </span>
+                        </div>
+                        <h3 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-3 tracking-tight break-words leading-tight text-white">
+                            {featuredReport.title}
+                        </h3>
+                        <p className="text-blue-100 dark:text-gray-300 text-base md:text-lg font-medium leading-relaxed max-w-2xl">
+                            {featuredReport.description || 'Comprehensive review of financials, events, and strategic initiatives for the fiscal year.'}
+                        </p>
+                    </div>
+                    <div className="flex-shrink-0 w-full lg:w-auto mt-4 lg:mt-0">
+                        <a 
+                            href={featuredReport.link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-4 bg-white dark:bg-primary text-blue-700 dark:text-white font-bold rounded-xl hover:bg-blue-50 dark:hover:bg-primary-dark transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 whitespace-nowrap"
+                        >
+                            <span>Download PDF</span>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        </a>
+                    </div>
+                 </div>
+            </div>
+
+            {/* Toggle Button */}
+            {previousReports.length > 0 && (
+                <div className="flex flex-col items-center">
+                     <button 
+                        onClick={() => setShowAll(!showAll)}
+                        className="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:shadow-md hover:text-primary dark:hover:text-primary transition-all mb-8 z-10 relative"
+                     >
+                        {showAll ? 'Hide Archive' : 'View Archive'}
+                        <svg className={`w-4 h-4 transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                     </button>
+                </div>
+            )}
+
+            {/* Grid Reveal */}
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-all duration-500 ease-in-out ${showAll ? 'opacity-100 translate-y-0' : 'hidden opacity-0 -translate-y-4'}`}>
+                {previousReports.map((report, idx) => (
+                    <div key={idx} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-md transition-all flex flex-col justify-between group h-full">
+                        <div className="mb-4">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-slate-700/50 px-2 py-1 rounded">FY {report.year}</span>
+                            </div>
+                            <h4 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">{report.title}</h4>
+                        </div>
+                        <a href={report.link} target="_blank" rel="noopener noreferrer" className="mt-auto w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 dark:bg-slate-700/50 hover:bg-primary hover:text-white dark:hover:bg-primary text-gray-600 dark:text-gray-300 text-sm font-semibold rounded-lg transition-all">
+                            Download
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const About: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'managing' | 'core' | 'past'>('managing');
     const [managingCommittee, setManagingCommittee] = useState<CommitteeMember[]>([]);
     const [pastPresidents, setPastPresidents] = useState<PastPresident[]>([]);
     const [committees, setCommittees] = useState<Committee[]>([]);
+    const [annualReports, setAnnualReports] = useState<AnnualReport[]>([]);
     const [loading, setLoading] = useState(true);
     
     // Core Committee Search
@@ -123,23 +214,26 @@ const About: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [mcRes, ppRes, cRes] = await Promise.all([
+                const [mcRes, ppRes, cRes, arRes] = await Promise.all([
                     fetch('/data/managingCommittee.json'),
                     fetch('/data/pastPresidents.json'),
-                    fetch('/data/committees.json')
+                    fetch('/data/committees.json'),
+                    fetch('/data/annualReports.json')
                 ]);
-                if (!mcRes.ok || !ppRes.ok || !cRes.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const mcData = await mcRes.json();
-                const ppData = await ppRes.json();
-                const cData = await cRes.json();
+                
+                // Note: We check individual responses but allow partial failures if needed, 
+                // though Promise.all fails fast. Ideally, we handle errors per fetch.
+                const mcData = mcRes.ok ? await mcRes.json() : [];
+                const ppData = ppRes.ok ? await ppRes.json() : [];
+                const cData = cRes.ok ? await cRes.json() : [];
+                const arData = arRes.ok ? await arRes.json() : [];
                 
                 setManagingCommittee(mcData);
                 // Assign Serial Numbers
                 const ppWithSr = ppData.map((p: any, i: number) => ({ ...p, srNo: i + 1 }));
                 setPastPresidents(ppWithSr);
                 setCommittees(cData);
+                setAnnualReports(arData);
             } catch (error) {
                 console.error("Failed to fetch about page data:", error);
             } finally {
@@ -516,6 +610,11 @@ const About: React.FC = () => {
                     <div className="min-h-[400px]">
                         {renderTabContent()}
                     </div>
+                </section>
+
+                {/* Annual Reports Section */}
+                <section>
+                    <AnnualReportsSection reports={annualReports} />
                 </section>
             </div>
         </div>

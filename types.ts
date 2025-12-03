@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export interface CommitteeMember {
@@ -113,4 +114,12 @@ export interface OutreachInitiative {
   features: string[];
   stats: { label: string; value: string }[];
   ctaText: string;
+}
+
+export interface AnnualReport {
+  year: string;
+  title: string;
+  description?: string;
+  link: string;
+  isNew?: boolean;
 }
