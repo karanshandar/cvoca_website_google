@@ -10,6 +10,7 @@ export interface PastPresident {
   srNo?: number;
   name: string;
   term: string;
+  village: string;
 }
 
 export interface CoreMember {

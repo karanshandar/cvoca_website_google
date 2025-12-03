@@ -156,14 +156,15 @@ const About: React.FC = () => {
         switch (activeTab) {
             case 'managing':
                 return (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                    // Changed grid columns from xl:5/lg:4 to xl:4/lg:3 to give more width to each card
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {managingCommittee.map(member => (
                             <div key={member.name} className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 text-center border border-gray-100 dark:border-gray-700 hover:-translate-y-1">
-                                <div className="relative w-24 h-24 mx-auto mb-4">
+                                <div className="relative w-28 h-28 mx-auto mb-5">
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-full opacity-20 group-hover:opacity-40 transition-opacity blur-md"></div>
                                     <img src={member.photoUrl} alt={member.name} className="relative w-full h-full rounded-full object-cover shadow-md border-2 border-white dark:border-slate-700" />
                                 </div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">{member.name}</h4>
+                                <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight">{member.name}</h4>
                                 <p className="text-sm font-medium text-primary dark:text-primary-light">{member.role}</p>
                             </div>
                         ))}
@@ -224,7 +225,8 @@ const About: React.FC = () => {
                 const sortedAndFilteredPresidents = [...pastPresidents]
                     .filter(p => 
                         p.name.toLowerCase().includes(ppSearch.toLowerCase()) || 
-                        p.term.includes(ppSearch)
+                        p.term.includes(ppSearch) ||
+                        (p.village && p.village.toLowerCase().includes(ppSearch.toLowerCase()))
                     )
                     .sort((a, b) => {
                         const key = ppSort.key;
@@ -238,6 +240,9 @@ const About: React.FC = () => {
                         }
                         if (key === 'term') {
                             return a.term.localeCompare(b.term) * dir;
+                        }
+                        if (key === 'village') {
+                            return (a.village || '').localeCompare(b.village || '') * dir;
                         }
                         return 0;
                     });
@@ -266,7 +271,7 @@ const About: React.FC = () => {
                                 </div>
                                 <input
                                     type="text"
-                                    placeholder="Search by name or year..."
+                                    placeholder="Search by name, year or village..."
                                     value={ppSearch}
                                     onChange={(e) => setPpSearch(e.target.value)}
                                     className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm"
@@ -274,7 +279,41 @@ const About: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
+                        {/* Mobile View: Card Layout */}
+                        <div className="md:hidden space-y-4">
+                            {sortedAndFilteredPresidents.map((president) => (
+                                <div key={president.name} className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-3">
+                                     <div className="flex justify-between items-start">
+                                         <div className="flex items-center gap-3">
+                                              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 text-xs font-bold text-gray-500 dark:text-gray-400">
+                                                  {president.srNo ? String(president.srNo).padStart(2, '0') : '-'}
+                                              </span>
+                                              <h4 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{president.name}</h4>
+                                         </div>
+                                     </div>
+                                     <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700/50 mt-1">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Term</span>
+                                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 font-mono">{president.term}</span>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Native Place</span>
+                                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800 mt-1">
+                                                {president.village}
+                                            </span>
+                                        </div>
+                                     </div>
+                                </div>
+                            ))}
+                            {sortedAndFilteredPresidents.length === 0 && (
+                                <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                                    No records found matching "{ppSearch}"
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Desktop View: Table Layout */}
+                        <div className="hidden md:block bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead className="bg-gray-50 dark:bg-slate-900/50">
@@ -282,9 +321,9 @@ const About: React.FC = () => {
                                             <th 
                                                 scope="col" 
                                                 onClick={() => handleSort('srNo')}
-                                                className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-24"
+                                                className="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-20"
                                             >
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center justify-center gap-2">
                                                     Sr. No.
                                                     <SortIcon column="srNo" />
                                                 </div>
@@ -302,11 +341,21 @@ const About: React.FC = () => {
                                             <th 
                                                 scope="col" 
                                                 onClick={() => handleSort('term')}
+                                                className="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-40"
+                                            >
+                                                <div className="flex items-center justify-center gap-2">
+                                                    Term Year
+                                                    <SortIcon column="term" />
+                                                </div>
+                                            </th>
+                                            <th 
+                                                scope="col" 
+                                                onClick={() => handleSort('village')}
                                                 className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-48"
                                             >
                                                 <div className="flex items-center gap-2">
-                                                    Term Year
-                                                    <SortIcon column="term" />
+                                                    Native Place
+                                                    <SortIcon column="village" />
                                                 </div>
                                             </th>
                                         </tr>
@@ -314,20 +363,25 @@ const About: React.FC = () => {
                                     <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
                                         {sortedAndFilteredPresidents.map((president) => (
                                             <tr key={president.name} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono font-bold">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono font-bold text-center">
                                                     {president.srNo ? String(president.srNo).padStart(2, '0') : '-'}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                                     {president.name}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono text-center">
                                                     {president.term}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800">
+                                                        {president.village}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         ))}
                                         {sortedAndFilteredPresidents.length === 0 && (
                                             <tr>
-                                                <td colSpan={3} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                                <td colSpan={4} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                                     No records found matching "{ppSearch}"
                                                 </td>
                                             </tr>
