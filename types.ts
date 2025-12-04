@@ -38,8 +38,10 @@ export interface CvoEvent {
   committee: string;
   tags: string[];
   cost: string;
+  fullPricing?: string;
   description: string;
   registrationLink?: string;
+  imageUrl?: string;
 }
 
 export interface NavLink {

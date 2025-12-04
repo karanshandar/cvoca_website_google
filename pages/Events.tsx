@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CvoEvent } from '../types';
 
 const getGoogleCalendarUrl = (event: CvoEvent): string => {
@@ -58,88 +58,195 @@ const getGoogleCalendarUrl = (event: CvoEvent): string => {
     return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}&ctz=Asia/Kolkata`;
 };
 
+// Gradient mapping based on committee/id for fallback visuals
+const getFallbackGradient = (id: number) => {
+    const gradients = [
+        "from-blue-600 to-indigo-700",
+        "from-emerald-500 to-teal-700",
+        "from-orange-500 to-red-600",
+        "from-purple-600 to-fuchsia-700",
+        "from-cyan-500 to-blue-600",
+        "from-pink-500 to-rose-600"
+    ];
+    return gradients[id % gradients.length];
+};
+
 const EventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [contentHeight, setContentHeight] = useState<string>('4.5em'); // Default roughly 3 lines
+    const textRef = useRef<HTMLParagraphElement>(null);
     const dateObj = new Date(event.date);
     const day = dateObj.getDate();
     const month = dateObj.toLocaleString('default', { month: 'short' });
     const year = dateObj.getFullYear();
     const calendarUrl = getGoogleCalendarUrl(event);
+    const isLongText = event.description.length > 120;
+
+    // Calculate exact height for smooth animation
+    useEffect(() => {
+        if (isExpanded && textRef.current) {
+            setContentHeight(`${textRef.current.scrollHeight}px`);
+        } else {
+            setContentHeight('4.5em');
+        }
+    }, [isExpanded]);
 
     return (
-        <div className="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700/60 hover:-translate-y-1 h-full">
-            <div className="flex flex-grow">
-                {/* Date Column */}
-                <div className="w-24 bg-gradient-to-b from-gray-50 to-white dark:from-slate-700/30 dark:to-slate-800 flex flex-col items-center justify-start pt-8 border-r border-gray-100 dark:border-gray-700/50 group-hover:bg-primary/5 transition-colors">
-                    <div className="text-center">
-                        <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{month}</span>
-                        <span className="block text-3xl font-extrabold text-primary leading-none mb-1">{day}</span>
-                        <span className="block text-xs text-gray-400">{year}</span>
-                    </div>
-                </div>
-                
-                {/* Content */}
-                <div className="p-6 flex-grow">
-                    <div className="flex justify-between items-start mb-3">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
-                            {event.committee}
-                        </span>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
-                            {event.cost === 'Free' ? 'Free' : `${event.cost}`}
-                        </span>
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-tight mb-3 group-hover:text-primary transition-colors">{event.title}</h3>
-
-                    <div className="space-y-2 mb-4">
-                        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <svg className="w-4 h-4 mr-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            {event.time}
+        <div className="group flex flex-col md:flex-row bg-white dark:bg-slate-800 rounded-3xl shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 h-full relative">
+            
+            {/* Left Media Section: Image or Fallback */}
+            <div className={`${
+                event.imageUrl
+                    ? 'aspect-[3/4] md:w-56 bg-gray-100 dark:bg-slate-900'
+                    : 'aspect-[1/1] md:w-40'
+            } md:aspect-auto md:h-full relative shrink-0 overflow-hidden`}>
+                {event.imageUrl ? (
+                    <img
+                        src={event.imageUrl}
+                        alt={event.title}
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    />
+                ) : (
+                    // Graceful Fallback
+                    <div className={`w-full h-full bg-gradient-to-br ${getFallbackGradient(event.id)} relative flex items-center justify-center`}>
+                        {/* Decorative Pattern Overlay */}
+                        <div className="absolute inset-0 opacity-20" style={{
+                            backgroundImage: 'radial-gradient(circle, #ffffff 2px, transparent 2.5px)',
+                            backgroundSize: '20px 20px'
+                        }}></div>
+                        
+                        {/* Committee Initial/Icon as Fallback Graphic */}
+                        <div className="relative z-10 w-20 h-20 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
+                            <span className="text-3xl font-bold text-white/90">
+                                {event.committee.charAt(0)}
+                            </span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <svg className="w-4 h-4 mr-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <span className="line-clamp-1">{event.location}</span>
-                        </div>
+                        
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
                     </div>
+                )}
 
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-5 line-clamp-2 leading-relaxed">{event.description}</p>
-
-                    <div className="flex flex-wrap gap-2">
-                        {event.tags.map(tag => (
-                            <span key={tag} className="text-xs font-medium text-gray-400 bg-gray-100 dark:bg-slate-700/50 px-2 py-1 rounded-md">#{tag}</span>
-                        ))}
-                    </div>
+                {/* Floating Date Badge */}
+                <div className="absolute top-4 left-4 bg-white dark:bg-slate-900 rounded-2xl p-3 shadow-lg flex flex-col items-center justify-center min-w-[3.5rem] border border-gray-100 dark:border-gray-700 z-20">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">{month}</span>
+                    <span className="text-2xl font-black text-gray-900 dark:text-white leading-none mt-0.5">{day}</span>
+                    <span className="text-[10px] font-medium text-gray-400 mt-0.5">{year}</span>
                 </div>
             </div>
             
-            <div className="flex border-t border-gray-100 dark:border-gray-700 divide-x divide-gray-100 dark:divide-gray-700">
-                <a
-                    href={calendarUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 py-4 flex items-center justify-center gap-2 bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-400 font-bold text-sm tracking-wide hover:bg-gray-800 hover:text-white dark:hover:bg-gray-200 dark:hover:text-slate-900 transition-all duration-300"
-                >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    Add to Calendar
-                </a>
-                {event.registrationLink ? (
-                    <a
-                        href={event.registrationLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 py-4 flex items-center justify-center gap-2 bg-blue-50/40 dark:bg-blue-900/10 text-primary dark:text-primary-light font-bold text-sm tracking-wide hover:bg-primary hover:text-white transition-all duration-300"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
-                        Register Now
-                    </a>
-                ) : (
-                    <button
-                        disabled
-                        className="flex-1 py-4 flex items-center justify-center gap-2 bg-gray-100 dark:bg-slate-700/50 text-gray-400 dark:text-gray-500 font-bold text-sm tracking-wide cursor-not-allowed"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
-                        Register Now
-                    </button>
+            {/* Content Section */}
+            <div className="flex-grow flex flex-col p-6 relative">
+                
+                {/* Header: Committee & Cost */}
+                <div className="flex flex-wrap justify-between items-start mb-3 gap-3">
+                     <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-secondary dark:text-secondary-light">
+                        {event.committee}
+                    </span>
+                    <span className={`shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${
+                        event.cost === 'Free' 
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' 
+                        : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                    }`}>
+                        {event.cost === 'Free' ? 'Free' : `${event.cost}`}
+                    </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 leading-tight group-hover:text-primary transition-colors duration-200">
+                    {event.title}
+                </h3>
+
+                {/* Meta Info */}
+                <div className="flex flex-col gap-2 mb-4 text-sm text-gray-600 dark:text-gray-300">
+                    <div className="flex items-center">
+                         <svg className="w-4 h-4 mr-2.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                         <span className="font-medium">{event.time}</span>
+                    </div>
+                    <div className="flex items-start">
+                        <svg className="w-4 h-4 mr-2.5 text-gray-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span className="font-medium leading-tight">{event.location}</span>
+                    </div>
+                </div>
+
+                {/* Full Pricing (if applicable) */}
+                {event.fullPricing && (
+                    <div className="mb-4 bg-gray-50 dark:bg-slate-700/30 p-2.5 rounded-lg border border-gray-100 dark:border-gray-700/50">
+                        <div className="flex items-start">
+                             <span className="mr-2 mt-0.5 text-gray-400">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                                    <path d="M6 4H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M6 9H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M6 14C6 14 7.5 14 10 14C12.5 14 14 12.5 14 9H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M14 14L6 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                             </span>
+                             <span className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{event.fullPricing}</span>
+                        </div>
+                    </div>
                 )}
+
+                {/* Description with Smooth Animation */}
+                <div className="mb-6 relative">
+                     <div 
+                        className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" 
+                        style={{ height: contentHeight }}
+                     >
+                        <p ref={textRef}>{event.description}</p>
+                     </div>
+                     
+                     {isLongText && (
+                        <div className="mt-1">
+                            {!isExpanded && <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white dark:from-slate-800 to-transparent pointer-events-none"></div>}
+                            <button 
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="text-primary text-xs font-bold hover:text-primary-dark flex items-center gap-1 group/btn focus:outline-none transition-colors duration-200"
+                            >
+                                {isExpanded ? 'Read Less' : 'Read More'}
+                                <svg className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'group-hover/btn:translate-y-0.5'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                        </div>
+                     )}
+                </div>
+
+                {/* Tags & Actions */}
+                <div className="mt-auto pt-5 border-t border-gray-100 dark:border-gray-700/50">
+                    <div className="flex flex-wrap gap-2 mb-5">
+                        {event.tags.map(tag => (
+                            <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-gray-50 text-gray-500 dark:bg-slate-700/50 dark:text-gray-400 border border-gray-100 dark:border-gray-700">
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <a 
+                            href={calendarUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold text-sm hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-white transition-colors duration-200 flex items-center justify-center gap-2 group/cal"
+                        >
+                            <svg className="w-4 h-4 text-gray-400 group-hover/cal:text-primary dark:group-hover/cal:text-white transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            Add to Calendar
+                        </a>
+                        
+                        {event.registrationLink ? (
+                             <a
+                                href={event.registrationLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            >
+                                Register Now
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            </a>
+                        ) : (
+                             <button disabled className="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 text-sm font-bold rounded-xl cursor-not-allowed flex items-center justify-center border border-transparent">
+                                Registration Closed
+                            </button>
+                        )}
+                    </div>
+                </div>
+
             </div>
         </div>
     );
@@ -147,28 +254,22 @@ const EventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
 
 const Events: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [committeeFilter, setCommitteeFilter] = useState('all');
+    const [organizerFilter, setOrganizerFilter] = useState('all');
     const [tagFilter, setTagFilter] = useState('all');
     const [timeFilter, setTimeFilter] = useState('upcoming'); // Default to Upcoming events
     const [allEvents, setAllEvents] = useState<CvoEvent[]>([]);
-    const [committees, setCommittees] = useState<{ name: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [eventsRes, committeesRes] = await Promise.all([
-                    fetch('/data/events.json'),
-                    fetch('/data/committees.json')
-                ]);
-                if (!eventsRes.ok || !committeesRes.ok) {
+                const eventsRes = await fetch('/data/events.json');
+                if (!eventsRes.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const eventsData = await eventsRes.json();
-                const committeesData = await committeesRes.json();
                 setAllEvents(eventsData);
-                setCommittees(committeesData);
             } catch (error) {
                 console.error("Failed to fetch events data:", error);
             } finally {
@@ -177,6 +278,12 @@ const Events: React.FC = () => {
         };
         fetchData();
     }, []);
+
+    const allOrganizers = useMemo(() => {
+        const organizers = new Set<string>();
+        allEvents.forEach(event => organizers.add(event.committee));
+        return ['all', ...Array.from(organizers).sort()];
+    }, [allEvents]);
 
     const allTags = useMemo(() => {
         const tags = new Set<string>();
@@ -190,9 +297,9 @@ const Events: React.FC = () => {
 
         const filtered = allEvents.filter(event => {
             const eventDate = new Date(event.date);
-            
+
             const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) || event.description.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesCommittee = committeeFilter === 'all' || event.committee === committeeFilter;
+            const matchesOrganizer = organizerFilter === 'all' || event.committee === organizerFilter;
             const matchesTag = tagFilter === 'all' || event.tags.includes(tagFilter);
             
             let matchesTime = true;
@@ -202,7 +309,7 @@ const Events: React.FC = () => {
                 matchesTime = eventDate < today;
             }
 
-            return matchesSearch && matchesCommittee && matchesTag && matchesTime;
+            return matchesSearch && matchesOrganizer && matchesTag && matchesTime;
         });
 
         // Sort events
@@ -212,10 +319,6 @@ const Events: React.FC = () => {
 
             // If viewing past events, show most recent first (Descending)
             // If viewing upcoming or all, show nearest first (Ascending)
-            // Actually for 'all', usually upcoming events are more relevant, so ascending is safer to show nearest future events at top
-            // but for mixed 'all', usually you want descending to see latest news/events at top. 
-            // However, context of "Events Calendar" usually implies upcoming.
-            // Let's stick to: Upcoming=Asc, Past=Desc, All=Desc (Newest/Furthest Future first)
             
             if (timeFilter === 'upcoming') {
                 return dateA - dateB; // Ascending (Soonest first)
@@ -224,16 +327,16 @@ const Events: React.FC = () => {
             }
         });
 
-    }, [allEvents, searchTerm, committeeFilter, tagFilter, timeFilter]);
+    }, [allEvents, searchTerm, organizerFilter, tagFilter, timeFilter]);
 
     const clearFilters = () => {
         setSearchTerm('');
-        setCommitteeFilter('all');
+        setOrganizerFilter('all');
         setTagFilter('all');
         setTimeFilter('all');
     };
 
-    const hasActiveFilters = searchTerm !== '' || committeeFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'all';
+    const hasActiveFilters = searchTerm !== '' || organizerFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'all';
 
     return (
         <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
@@ -307,12 +410,12 @@ const Events: React.FC = () => {
 
                             <div className="relative">
                                 <select
-                                    value={committeeFilter}
-                                    onChange={(e) => setCommitteeFilter(e.target.value)}
+                                    value={organizerFilter}
+                                    onChange={(e) => setOrganizerFilter(e.target.value)}
                                     className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none transition-all cursor-pointer"
                                 >
-                                    <option value="all">All Committees</option>
-                                    {committees.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                                    <option value="all">All Organizers</option>
+                                    {allOrganizers.filter(org => org !== 'all').map(org => <option key={org} value={org}>{org}</option>)}
                                 </select>
                                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>

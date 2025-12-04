@@ -250,8 +250,8 @@ const About: React.FC = () => {
         switch (activeTab) {
             case 'managing':
                 return (
-                    // Changed grid columns from xl:5/lg:4 to xl:4/lg:3 to give more width to each card
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    // Using 3 columns max to prevent name wrapping on desktop
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {managingCommittee.map(member => (
                             <div key={member.name} className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 text-center border border-gray-100 dark:border-gray-700 hover:-translate-y-1">
                                 <div className="relative w-28 h-28 mx-auto mb-5">
