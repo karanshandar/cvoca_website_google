@@ -96,16 +96,17 @@ const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ image
                     target="_blank" 
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10 font-medium text-sm"
                     title="Open Full Size (Zoom)"
                 >
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
+                    <span className="hidden sm:inline">Open Full Size</span>
                 </a>
                 <button 
                     onClick={onClose}
-                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
+                    className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
                     aria-label="Close"
                 >
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,12 +124,18 @@ const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ image
             
             <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none px-4">
                  <span className="inline-block px-4 py-2 bg-black/50 text-white text-xs rounded-full backdrop-blur-md border border-white/10">
-                    Tap top-right icon to open full size
+                    Pinch to zoom or tap "Open Full Size"
                 </span>
             </div>
         </div>
     );
 };
+
+const IconWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+    <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl shadow-sm border border-black/5 ${className}`}>
+        {children}
+    </div>
+);
 
 const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void }> = ({ event, onImageClick }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -209,52 +216,66 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
             <div className="flex-grow flex flex-col p-6 relative">
                 
                 {/* Header: Committee & Cost */}
-                <div className="flex flex-wrap justify-between items-start mb-3 gap-3">
-                     <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-secondary dark:text-secondary-light">
+                <div className="flex flex-wrap justify-between items-start mb-4 gap-3">
+                     <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shadow-sm">
                         {event.committee}
                     </span>
-                    <span className={`shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${
+                    <span className={`shrink-0 inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm border ${
                         event.cost === 'Free' 
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' 
-                        : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                        ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' 
+                        : 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
                     }`}>
                         {event.cost === 'Free' ? 'Free' : `${event.cost}`}
                     </span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 leading-tight group-hover:text-primary transition-colors duration-200">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 leading-tight group-hover:text-primary transition-colors duration-200">
                     {event.title}
                 </h3>
 
                 {/* Meta Info */}
-                <div className="flex flex-col gap-2 mb-4 text-sm text-gray-600 dark:text-gray-300">
-                    <div className="flex items-center">
-                         <svg className="w-4 h-4 mr-2.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                         <span className="font-medium">{event.time}</span>
+                <div className="space-y-4 mb-6">
+                    <div className="flex items-start gap-4">
+                         <IconWrapper className="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 border-blue-100 dark:border-blue-800">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                         </IconWrapper>
+                         <div className="flex-1 py-0.5 min-w-0">
+                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Time</p>
+                             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{event.time}</p>
+                         </div>
                     </div>
-                    <div className="flex items-start">
-                        <svg className="w-4 h-4 mr-2.5 text-gray-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        <span className="font-medium leading-tight">{event.location}</span>
-                    </div>
-                </div>
-
-                {/* Full Pricing (if applicable) */}
-                {event.fullPricing && (
-                    <div className="mb-4 bg-gray-50 dark:bg-slate-700/30 p-2.5 rounded-lg border border-gray-100 dark:border-gray-700/50">
-                        <div className="flex items-start">
-                             <span className="mr-2 mt-0.5 text-gray-400">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
-                                    <path d="M6 4H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M6 9H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M6 14C6 14 7.5 14 10 14C12.5 14 14 12.5 14 9H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M14 14L6 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                             </span>
-                             <span className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{event.fullPricing}</span>
+                    
+                    <div className="flex items-start gap-4">
+                        <IconWrapper className="bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 border-rose-100 dark:border-rose-800">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </IconWrapper>
+                        <div className="flex-1 py-0.5 min-w-0">
+                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Location</p>
+                             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-snug">{event.location}</p>
                         </div>
                     </div>
-                )}
+
+                    {/* Cost Block - Moved inside Meta Info for better flow */}
+                    {event.fullPricing && (
+                        <div className="flex items-start gap-4">
+                             <IconWrapper className="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800">
+                                {/* Ticket Icon - Outlined */}
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                </svg>
+                             </IconWrapper>
+                             <div className="flex-1 py-0.5 min-w-0">
+                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Entry Fee</p>
+                                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-snug">{event.fullPricing}</p>
+                             </div>
+                        </div>
+                    )}
+                </div>
 
                 {/* Description with Smooth Animation */}
                 <div className="mb-6 relative">
@@ -283,7 +304,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                 <div className="mt-auto pt-5 border-t border-gray-100 dark:border-gray-700/50">
                     <div className="flex flex-wrap gap-2 mb-5">
                         {event.tags.map(tag => (
-                            <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-gray-50 text-gray-500 dark:bg-slate-700/50 dark:text-gray-400 border border-gray-100 dark:border-gray-700">
+                            <span key={tag} className="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide bg-slate-50 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 hover:text-slate-900 transition-colors shadow-sm">
                                 #{tag}
                             </span>
                         ))}
