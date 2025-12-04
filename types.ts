@@ -39,6 +39,7 @@ export interface CvoEvent {
   tags: string[];
   cost: string;
   description: string;
+  registrationLink?: string;
 }
 
 export interface NavLink {
@@ -122,4 +123,39 @@ export interface AnnualReport {
   description?: string;
   link: string;
   isNew?: boolean;
+}
+
+export interface ContactInfo {
+  id: string;
+  label: string;
+  value: string;
+  iconType: 'location' | 'phone' | 'email' | 'clock';
+}
+
+export interface ContactData {
+  hero: {
+    title: string;
+    subtitle: string;
+  };
+  organization: {
+    name: string;
+    tagline: string;
+  };
+  contactInfo: ContactInfo[];
+  map: {
+    title: string;
+    description: string;
+    embedUrl: string;
+  };
+}
+
+export interface SocialMediaPlatform {
+  id: string;
+  name: string;
+  url: string;
+  svgPath: string;
+}
+
+export interface SocialMediaData {
+  platforms: SocialMediaPlatform[];
 }

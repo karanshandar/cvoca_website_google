@@ -3,7 +3,7 @@
   {
     "id": 1,
     "title": "Annual Tax Conference 2025",
-    "date": "2025-02-20",
+    "date": "2025-09-15",
     "time": "9:00 AM - 5:00 PM",
     "location": "Grand Ballroom, Mumbai",
     "committee": "RRC & PD",
@@ -14,7 +14,7 @@
   {
     "id": 2,
     "title": "Workshop on AI in Auditing",
-    "date": "2025-03-15",
+    "date": "2025-09-28",
     "time": "10:00 AM - 1:00 PM",
     "location": "Online Webinar",
     "committee": "InfoViews",
@@ -25,7 +25,7 @@
   {
     "id": 3,
     "title": "Student Career Guidance Seminar",
-    "date": "2025-12-28",
+    "date": "2025-11-20",
     "time": "2:00 PM - 5:00 PM",
     "location": "CVOCA Office, Dadar",
     "committee": "Students",
@@ -36,7 +36,7 @@
   {
     "id": 4,
     "title": "Capital Markets Outlook",
-    "date": "2025-12-10",
+    "date": "2025-10-15",
     "time": "6:00 PM - 8:00 PM",
     "location": "Online Webinar",
     "committee": "Capital Market",
@@ -47,7 +47,7 @@
   {
     "id": 5,
     "title": "Members Networking Dinner",
-    "date": "2025-12-25",
+    "date": "2025-11-05",
     "time": "7:30 PM onwards",
     "location": "The Orchid Hotel, Mumbai",
     "committee": "Mem.& Recreation",
@@ -58,12 +58,47 @@
   {
     "id": 6,
     "title": "Advanced Excel for Accountants",
-    "date": "2025-05-05",
+    "date": "2025-10-08",
     "time": "9:30 AM - 4:30 PM",
     "location": "Computer Lab, Vile Parle",
     "committee": "Pub & Trn",
     "tags": ["Training", "Technology"],
     "cost": "₹1200",
     "description": "A hands-on training session to master advanced Excel functions, pivot tables, and data visualization for accounting professionals."
+  },
+  {
+    "id": 7,
+    "title": "From ABC to GenZ: Rethinking Consumption Analysis",
+    "date": "2025-12-12",
+    "time": "6:00 PM - 8:00 PM (Networking: 5:30 PM - 6:00 PM)",
+    "location": "Shishuvan School, Teju Leela Hall, Matunga (C.R.), Mumbai",
+    "committee": "Value Investing Club",
+    "tags": ["Seminar", "Investing", "Finance"],
+    "cost": "VIC Members: Free | CVOCA: ₹1,000 + GST | Non-CVOCA: ₹1,500 + GST",
+    "description": "Join Harini Dedhia, Head of Research at Tamohara Investment Managers, for an insightful session on rethinking consumption analysis. Includes tea/coffee, networking, refreshments/working dinner at the canteen (8:00 PM - 8:30 PM). Limited valet parking available.",
+    "registrationLink": "https://rzp.io/l/ValueInvestingClubSpot"
+  },
+  {
+    "id": 8,
+    "title": "विरासत SE VIKAS TAK: Building Business Legacies",
+    "date": "2026-01-02",
+    "time": "3:30 PM onwards (Followed by Networking Dinner)",
+    "location": "BN Vaidya Auditorium, Dadar East, Mumbai",
+    "committee": "CVOCA",
+    "tags": ["Conference", "Business", "Leadership"],
+    "cost": "Early Bird (till 15 Dec): CVOCA ₹500 + GST | Non-CVOCA ₹750 + GST | Group (3+) ₹600 + GST",
+    "description": "A focused programme on business succession, next-gen leadership and governance in businesses. Join us for an insight-packed session followed by networking dinner. For queries contact: https://wa.me/919867687985",
+    "registrationLink": "https://rzp.io/rzp/virasatsevikastak"
+  },
+  {
+    "id": 9,
+    "title": "CVOCA INVESTOCRAFT 20-20",
+    "date": "2026-02-28",
+    "time": "TBD",
+    "location": "Sahara Star, Vile Parle, Mumbai",
+    "committee": "Capital Market",
+    "tags": ["Conference", "Investing", "Finance"],
+    "cost": "TBD",
+    "description": "India's markets are rewriting history - new highs, new opportunities, and a new era of intelligent investing. A strategic investment conclave designed to decode emerging opportunities in India's dynamic markets. Get ready for an insight-packed day that sharpens your investment edge. Stay tuned for updates!"
   }
 ]

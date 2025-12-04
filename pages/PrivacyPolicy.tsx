@@ -91,16 +91,11 @@ const PrivacyPolicy: React.FC = () => {
 
                 <Section title="7. Contact Us" id="contact">
                     <p>For any privacy-related questions, please contact us:</p>
-                    <p><strong>Email:</strong> privacy@cvoca.org</p>
+                    <p><strong>Email:</strong> president@cvoca.org</p>
                     <p><strong>Address:</strong> 304, Jasmine Apartment, Dadasaheb Phalke Road, Dadar (E), Mumbai 400014, Maharashtra</p>
                 </Section>
 
-                <div className="mt-12 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm">
-                    <h3 className="font-bold mb-2">ICAI Compliance Notice</h3>
-                    <p>This website and its privacy practices comply with the Institute of Chartered Accountants of India (ICAI) guidelines for professional conduct and data protection standards.</p>
-                </div>
-
-                 <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
+                 <div className="mt-12 text-sm text-gray-500 dark:text-gray-400">
                     <h3 className="font-bold mb-2">Policy Changes</h3>
                     <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated 'Last Updated' date. Your continued use of our website after changes constitutes your acceptance of the updated Privacy Policy.</p>
                 </div>

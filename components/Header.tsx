@@ -106,7 +106,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   }, [isOpen]);
 
   // Identify pages with dark hero sections where we need white text initially
-  const darkHeroPaths = ['/', '/about', '/membership', '/events', '/digital-outreach'];
+  const darkHeroPaths = ['/', '/about', '/membership', '/events', '/digital-outreach', '/blog', '/contact'];
   const isDarkHero = darkHeroPaths.includes(location.pathname);
 
   // Determine text color based on scroll state and page type
