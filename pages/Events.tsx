@@ -71,7 +71,66 @@ const getFallbackGradient = (id: number) => {
     return gradients[id % gradients.length];
 };
 
-const EventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
+// New Component: ImageModal for Lightbox
+const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ imageUrl, onClose }) => {
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+        window.addEventListener('keydown', handleEsc);
+        document.body.style.overflow = 'hidden';
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+            document.body.style.overflow = 'unset';
+        };
+    }, [onClose]);
+
+    return (
+        <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm transition-opacity duration-300 animate-fade-in-up"
+            onClick={onClose}
+        >
+            <div className="absolute top-4 right-4 z-10 flex gap-4">
+                 <a 
+                    href={imageUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
+                    title="Open Full Size (Zoom)"
+                >
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+                <button 
+                    onClick={onClose}
+                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
+                    aria-label="Close"
+                >
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <img 
+                src={imageUrl} 
+                alt="Event Flyer" 
+                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                onClick={(e) => e.stopPropagation()} 
+            />
+            
+            <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none px-4">
+                 <span className="inline-block px-4 py-2 bg-black/50 text-white text-xs rounded-full backdrop-blur-md border border-white/10">
+                    Tap top-right icon to open full size
+                </span>
+            </div>
+        </div>
+    );
+};
+
+const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void }> = ({ event, onImageClick }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [contentHeight, setContentHeight] = useState<string>('4.5em'); // Default roughly 3 lines
     const textRef = useRef<HTMLParagraphElement>(null);
@@ -95,17 +154,29 @@ const EventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
         <div className="group flex flex-col md:flex-row bg-white dark:bg-slate-800 rounded-3xl shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 h-full relative">
             
             {/* Left Media Section: Image or Fallback */}
-            <div className={`${
+            <div 
+                onClick={() => event.imageUrl && onImageClick(event.imageUrl)}
+                className={`${
                 event.imageUrl
-                    ? 'aspect-[3/4] md:w-56 bg-gray-100 dark:bg-slate-900'
+                    ? 'aspect-[3/4] md:w-56 bg-gray-100 dark:bg-slate-900 cursor-pointer group/image'
                     : 'aspect-[1/1] md:w-40'
             } md:aspect-auto md:h-full relative shrink-0 overflow-hidden`}>
                 {event.imageUrl ? (
-                    <img
-                        src={event.imageUrl}
-                        alt={event.title}
-                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                    />
+                    <>
+                        <img
+                            src={event.imageUrl}
+                            alt={event.title}
+                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        />
+                        {/* Zoom overlay hint */}
+                        <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                            <div className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-full shadow-lg opacity-0 group-hover/image:opacity-100 transform translate-y-4 group-hover/image:translate-y-0 transition-all duration-300 scale-90 group-hover/image:scale-100">
+                                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </>
                 ) : (
                     // Graceful Fallback
                     <div className={`w-full h-full bg-gradient-to-br ${getFallbackGradient(event.id)} relative flex items-center justify-center`}>
@@ -127,7 +198,7 @@ const EventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
                 )}
 
                 {/* Floating Date Badge */}
-                <div className="absolute top-4 left-4 bg-white dark:bg-slate-900 rounded-2xl p-3 shadow-lg flex flex-col items-center justify-center min-w-[3.5rem] border border-gray-100 dark:border-gray-700 z-20">
+                <div className="absolute top-4 left-4 bg-white dark:bg-slate-900 rounded-2xl p-3 shadow-lg flex flex-col items-center justify-center min-w-[3.5rem] border border-gray-100 dark:border-gray-700 z-20 pointer-events-none">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">{month}</span>
                     <span className="text-2xl font-black text-gray-900 dark:text-white leading-none mt-0.5">{day}</span>
                     <span className="text-[10px] font-medium text-gray-400 mt-0.5">{year}</span>
@@ -259,6 +330,7 @@ const Events: React.FC = () => {
     const [timeFilter, setTimeFilter] = useState('upcoming'); // Default to Upcoming events
     const [allEvents, setAllEvents] = useState<CvoEvent[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -440,7 +512,7 @@ const Events: React.FC = () => {
                     {filteredEvents.length > 0 ? (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             {filteredEvents.map(event => (
-                                <EventCard key={event.id} event={event} />
+                                <EventCard key={event.id} event={event} onImageClick={setSelectedImage} />
                             ))}
                         </div>
                     ) : (
@@ -460,6 +532,9 @@ const Events: React.FC = () => {
                 </>
                 )}
             </div>
+
+            {/* Lightbox Modal */}
+            {selectedImage && <ImageModal imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />}
         </div>
     );
 };
