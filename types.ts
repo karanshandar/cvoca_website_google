@@ -108,15 +108,25 @@ export interface MembershipData {
   generalBenefits: MembershipBenefit[];
 }
 
+export interface OutreachContact {
+    name: string;
+    contact: string; // Phone number or URL
+    type: 'whatsapp' | 'phone' | 'email';
+    label?: string;
+}
+
 export interface OutreachInitiative {
   category: string;
   iconPath: string;
   image: string;
   title: string;
+  subtitle?: string;
   description: string;
   features: string[];
-  stats: { label: string; value: string }[];
-  ctaText: string;
+  stats?: { label: string; value: string }[];
+  ctaText?: string;
+  ctaLink?: string;
+  contacts?: OutreachContact[];
 }
 
 export interface AnnualReport {

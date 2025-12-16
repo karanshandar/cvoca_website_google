@@ -285,31 +285,31 @@ const Home: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {/* Static Compliance Calendar Card - First Position */}
                         <a href="https://blog.cvoca.org/category/karvera-na-ata-pata-monthly-planner/" target="_blank" rel="noopener noreferrer" className="block h-full group">
-                            <div className="flex flex-col bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-2xl shadow-lg overflow-hidden border border-amber-200 dark:border-amber-800 hover:shadow-2xl hover:border-amber-400/50 transition-all duration-300 transform hover:-translate-y-1 h-full relative">
-                                 <div className="absolute top-0 right-0 w-24 h-24 bg-orange-200/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                            <div className="flex flex-col bg-gradient-to-br from-cyan-50 to-teal-50 dark:from-cyan-950/30 dark:to-teal-950/30 rounded-2xl shadow-lg overflow-hidden border border-cyan-200 dark:border-cyan-800 hover:shadow-2xl hover:border-cyan-400/50 transition-all duration-300 transform hover:-translate-y-1 h-full relative">
+                                 <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-200/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                                 {/* Card Header */}
-                                <div className="p-4 border-b border-amber-100 dark:border-amber-800/50 flex justify-between items-center bg-white/30 dark:bg-black/10 backdrop-blur-sm">
-                                    <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200 border border-amber-200 dark:border-amber-800">
+                                <div className="p-4 border-b border-cyan-100 dark:border-cyan-800/50 flex justify-between items-center bg-white/30 dark:bg-black/10 backdrop-blur-sm">
+                                    <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-cyan-100 text-cyan-800 dark:bg-cyan-900/50 dark:text-cyan-200 border border-cyan-200 dark:border-cyan-800">
                                         Monthly Resource
                                     </span>
-                                     <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                     <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                                 {/* Content */}
                                 <div className="p-6 flex-grow flex flex-col relative z-10">
                                     <div className="mb-4">
-                                        <span className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-1 block">
+                                        <span className="text-xs font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wide mb-1 block">
                                             Karvera Na Ata Pata
                                         </span>
-                                        <h3 className="text-xl font-extrabold text-gray-900 dark:text-white leading-tight group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+                                        <h3 className="text-xl font-extrabold text-gray-900 dark:text-white leading-tight group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
                                             Compliance Calendar
                                         </h3>
                                     </div>
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mb-6 flex-grow leading-relaxed font-medium">
                                         Stay ahead of statutory due dates for Income Tax, GST, and ROC.
                                     </p>
-                                    <button className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-xl shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-2 group-hover:shadow-lg">
+                                    <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white text-sm font-bold rounded-xl shadow-md shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group-hover:shadow-lg">
                                         View Deadlines
                                          <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

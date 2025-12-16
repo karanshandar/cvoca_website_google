@@ -1,32 +1,62 @@
+
 [
   {
-    "category": "Street Theatre",
-    "iconPath": "M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z",
-    "image": "https://images.unsplash.com/photo-1531058020387-3be344556be6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    "title": "Financial Literacy Street Plays",
-    "description": "Bringing Finance to the Streets. We use powerful street theatre (Nukkad Natak) to raise awareness about financial topics in a way that's relatable, engaging, and accessible to everyone.",
-    "features": ["Interactive financial skits", "Regional language delivery", "Real-life scenario enactments", "Expert debriefing sessions"],
-    "stats": [{ "label": "Performances", "value": "25+" }, { "label": "Audience Reach", "value": "5,000+" }, { "label": "Cities", "value": "4" }],
-    "ctaText": "Join as a Performer"
+    "category": "Investment Community",
+    "iconPath": "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+    "image": "https://images.unsplash.com/photo-1611974765270-ca12586343bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    "title": "Value Investing Club",
+    "subtitle": "INVEST WITH CLARITY. LEARN WITH PEERS.",
+    "description": "After two successful years, the Value Investing Club continues to grow. We focus on structured networking and deep-dive knowledge sessions to help members master the art of value investing.",
+    "features": ["7–8 exclusive investing sessions", "Members-only WhatsApp group", "Priority for Capital Market events", "Structured networking over hi-tea"],
+    "stats": [
+      { "label": "Active Members", "value": "250+" },
+      { "label": "Knowledge Sessions", "value": "20+" },
+      { "label": "Mega Events", "value": "2" }
+    ],
+    "ctaText": "Register & Pay",
+    "ctaLink": "https://rzp.io/rzp/VIC25-26",
+    "contacts": [
+      { "name": "CA Akash Gogri", "contact": "https://wa.me/+917977034768", "type": "whatsapp", "label": "Coordinator" },
+      { "name": "CA Jai Savla", "contact": "https://wa.me/+919819722592", "type": "whatsapp", "label": "Coordinator" }
+    ]
   },
   {
-    "category": "Public Seminars",
-    "iconPath": "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
-    "image": "https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    "title": "Community Awareness Events",
-    "description": "Decoding Finance for the Public. We host dedicated programs after key financial events—like the Union Budget—to break down complex announcements into actionable insights for the common man.",
-    "features": ["Post-budget briefings", "Tax planning for seniors", "Investment safety workshops", "Open Q&A forums"],
-    "stats": [{ "label": "Annual Events", "value": "12" }, { "label": "Attendees", "value": "3,500+" }, { "label": "Cost", "value": "Free" }],
-    "ctaText": "View Upcoming Schedule"
+    "category": "Technology & AI",
+    "iconPath": "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z",
+    "image": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    "title": "Tech & AI Study Group",
+    "subtitle": "ENHANCING PROFESSIONAL PRODUCTIVITY",
+    "description": "Technology and AI are now part of daily professional work. This study group helps members use tech tools to save time, improve accuracy, and deliver better outcomes. Sessions are practical and use-case driven.",
+    "features": ["Practical use of AI & Tech tools", "Reduce repetitive manual effort", "Live demos & real-life use cases", "Interactive discussions & Q&A"],
+    "stats": []
   },
   {
-    "category": "Digital Education",
-    "iconPath": "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
-    "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    "title": "Public Education Courses",
-    "description": "Skill Up, Step Up. Our free and affordable public courses are designed to upskill individuals in both financial and digital literacy, covering practical topics for everyday life and business.",
-    "features": ["GST for Small Businesses", "Digital Payments Safety", "Basic Accounting Tools", "Certification included"],
-    "stats": [{ "label": "Total Graduates", "value": "1,200" }, { "label": "Courses Offered", "value": "5" }, { "label": "Satisfaction", "value": "4.9/5" }],
-    "ctaText": "Browse Course Catalog"
+    "category": "Student Mentorship",
+    "iconPath": "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z",
+    "image": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    "title": "Student B.U.D.D.Y. (MITRAM)",
+    "subtitle": "CAPITAL MARKET COMMITTEE OF CVOCA",
+    "description": "A structured mentoring initiative for CA, CS, and CMA students. We focus on guidance, motivation, and hand-holding from the 'Dream till Degree'. We provide academic and emotional support during the course.",
+    "features": ["Exam preparation strategy", "Stress management during exams", "Articleship & internship guidance", "Handling failures and re-attempts"],
+    "stats": [
+      { "label": "Students Benefited", "value": "35+" },
+      { "label": "Senior Mentors", "value": "Multiple" },
+      { "label": "Helpline Support", "value": "24/7" }
+    ],
+    "contacts": [
+      { "name": "91679 28622", "contact": "tel:+919167928622", "type": "phone", "label": "Mentoring Helpline" }
+    ]
+  },
+  {
+    "category": "Financial Aid",
+    "iconPath": "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+    "image": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    "title": "Student Education & Laptop Loan",
+    "subtitle": "THROUGH CVOCA SUPPORT NETWORK",
+    "description": "A financial assistance initiative to support CA, CS, and CMA students. We aim to reduce the financial burden on students and enable access to laptops and study resources for uninterrupted professional education.",
+    "features": ["Laptop / computer purchase support", "Education loan assistance", "Reduce financial burden", "Preferential terms through partners"],
+    "stats": [],
+    "ctaText": "Apply Now",
+    "ctaLink": "https://edusupport.net.in"
   }
 ]
