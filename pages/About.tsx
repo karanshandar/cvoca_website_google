@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
+import useSEO from '../hooks/useSEO';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -196,6 +197,14 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
 };
 
 const About: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'About Us',
+        description: 'Learn about CVOCA - CVO Chartered & Cost Accountants Association. Established in 1973, we are a premier professional body serving 2,400+ members in Mumbai with networking and development opportunities.',
+        canonicalUrl: 'https://cvoca.org/about',
+        keywords: 'CVOCA history, about CVOCA, chartered accountants association Mumbai, managing committee, past presidents'
+    });
+
     const [activeTab, setActiveTab] = useState<'managing' | 'core' | 'past'>('managing');
     const [managingCommittee, setManagingCommittee] = useState<CommitteeMember[]>([]);
     const [pastPresidents, setPastPresidents] = useState<PastPresident[]>([]);
@@ -256,7 +265,7 @@ const About: React.FC = () => {
                             <div key={member.name} className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 text-center border border-gray-100 dark:border-gray-700 hover:-translate-y-1">
                                 <div className="relative w-28 h-28 mx-auto mb-5">
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-full opacity-20 group-hover:opacity-40 transition-opacity blur-md"></div>
-                                    <img src={member.photoUrl} alt={member.name} className="relative w-full h-full rounded-full object-cover shadow-md border-2 border-white dark:border-slate-700" />
+                                    <img src={member.photoUrl} alt={member.name} loading="lazy" decoding="async" className="relative w-full h-full rounded-full object-cover shadow-md border-2 border-white dark:border-slate-700" />
                                 </div>
                                 <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight">{member.name}</h4>
                                 <p className="text-sm font-medium text-primary dark:text-primary-light">{member.role}</p>

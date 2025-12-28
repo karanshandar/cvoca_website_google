@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { HomeData, CvoEvent, OutreachInitiative } from '../types';
+import useSEO from '../hooks/useSEO';
 
 const StatCard: React.FC<{ value: string; label: string; delay: string }> = ({ value, label, delay }) => (
     <div className={`bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 text-center transform transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl animate-fade-in-up`} style={{ animationDelay: delay }}>
@@ -80,7 +81,7 @@ const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ ini
     <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 h-full hover:-translate-y-1">
         <div className="relative h-48 overflow-hidden flex-shrink-0">
              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-             <img src={initiative.image} alt={initiative.title} className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700" />
+             <img src={initiative.image} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700" />
              <div className="absolute bottom-4 left-4 z-20">
                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/30">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,6 +102,14 @@ const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ ini
 );
 
 const Home: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'Home',
+        description: 'CVOCA - CVO Chartered & Cost Accountants Association. Premier professional body for CAs and CMAs in Mumbai since 1973. Join 2,400+ members for networking, events, and professional growth.',
+        canonicalUrl: 'https://cvoca.org/',
+        keywords: 'CVOCA, Chartered Accountants Mumbai, Cost Accountants Association, CA networking India, professional accountants community'
+    });
+
     const [homeData, setHomeData] = useState<HomeData | null>(null);
     const [events, setEvents] = useState<CvoEvent[]>([]);
     const [outreach, setOutreach] = useState<OutreachInitiative[]>([]);
@@ -213,6 +222,8 @@ const Home: React.FC = () => {
                             <img
                                 src={presidentPhoto}
                                 alt="CVOCA President"
+                                loading="lazy"
+                                decoding="async"
                                 className="relative w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-2xl"
                             />
                             {/* Decorative Badge - Center Aligned */}

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { OutreachInitiative, OutreachContact } from '../types';
+import useSEO from '../hooks/useSEO';
 
 // Theme configuration maps for dynamic styling based on category
 const THEMES: Record<string, any> = {
@@ -149,7 +150,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
             
             {/* IMAGE SIDE (40%) */}
             <div className="lg:w-5/12 relative min-h-[350px] lg:min-h-full cursor-pointer group overflow-hidden" onClick={() => onImageClick(initiative.image)}>
-                <img src={initiative.image} alt={initiative.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img src={initiative.image} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent lg:bg-black/10"></div>
                 
                 {/* Floating Badge */}
@@ -281,6 +282,14 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
 };
 
 const DigitalOutreach: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'Digital Outreach',
+        description: 'CVOCA Digital Outreach initiatives - Value Investing Club, Tech & AI Study Group, Student Mentorship (BUDDY/MITRAM), and Financial Aid programs for CA students and professionals.',
+        canonicalUrl: 'https://cvoca.org/digital-outreach',
+        keywords: 'CVOCA outreach, value investing club, CA mentorship, student support, tech and AI accounting'
+    });
+
     const [initiatives, setInitiatives] = useState<OutreachInitiative[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);

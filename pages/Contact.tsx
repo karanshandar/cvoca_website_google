@@ -1,6 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { ContactData } from '../types';
+import useSEO from '../hooks/useSEO';
+import SchemaMarkup from '../components/SchemaMarkup';
+import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/schema';
 
 const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; delay: string }> = ({ icon, label, value, delay }) => (
     <div 
@@ -28,6 +31,14 @@ const getIconByType = (iconType: string) => {
 };
 
 const Contact: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'Contact Us',
+        description: 'Contact CVOCA - CVO Chartered & Cost Accountants Association. Visit us at Dadar East, Mumbai. Office hours: Mon-Sat 10:30 AM - 6:00 PM. Phone: +91-9167928622.',
+        canonicalUrl: 'https://cvoca.org/contact',
+        keywords: 'CVOCA contact, CVOCA address Mumbai, chartered accountants association Dadar, CVOCA phone number'
+    });
+
     const [contactData, setContactData] = useState<ContactData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -48,8 +59,17 @@ const Contact: React.FC = () => {
         return <div className="min-h-screen flex justify-center items-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>;
     }
 
+    // Breadcrumb schema for Contact page
+    const breadcrumbSchema = getBreadcrumbSchema([
+        { name: 'Home', url: 'https://cvoca.org/' },
+        { name: 'Contact', url: 'https://cvoca.org/contact' }
+    ]);
+
     return (
         <div className="animate-fadeIn bg-gray-50 dark:bg-background-dark min-h-screen">
+            {/* LocalBusiness Schema for Contact Page */}
+            <SchemaMarkup schema={[getLocalBusinessSchema(), breadcrumbSchema]} />
+
             {/* Dark Theme Hero Section */}
             <section className="relative bg-slate-900 pt-32 pb-24 text-center overflow-hidden">
                  <div className="absolute inset-0">

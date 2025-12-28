@@ -1,8 +1,10 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
+import SchemaMarkup from './components/SchemaMarkup';
+import { getOrganizationSchema, getWebsiteSchema } from './utils/schema';
 
 // Lazy load page components for code splitting
 const Home = lazy(() => import('./pages/Home'));
@@ -40,8 +42,10 @@ const App: React.FC = () => {
   };
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ScrollToTop />
+      {/* Global SEO Schema - Organization and Website */}
+      <SchemaMarkup schema={[getOrganizationSchema(), getWebsiteSchema()]} />
       <div className="flex flex-col min-h-screen font-sans">
         <Header theme={theme} toggleTheme={toggleTheme} />
         {/* Removed pt-24 to allow Hero sections to sit behind the transparent header */}
@@ -61,7 +65,7 @@ const App: React.FC = () => {
         </main>
         <Footer />
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 

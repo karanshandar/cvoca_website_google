@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MembershipData } from '../types';
+import useSEO from '../hooks/useSEO';
 
 const BenefitCard: React.FC<{ title: string; iconPath: string; children: React.ReactNode }> = ({ title, iconPath, children }) => (
     <div className="group flex items-start p-6 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-gray-700 hover:border-primary/30 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
@@ -163,6 +164,14 @@ const EligibilitySection: React.FC = () => (
 );
 
 const Membership: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'Membership',
+        description: 'Join CVOCA - CVO Chartered & Cost Accountants Association. Affordable membership options: Student Member at Rs 50 and Life Member at Rs 500. Access networking, events, and professional development.',
+        canonicalUrl: 'https://cvoca.org/membership',
+        keywords: 'CVOCA membership, join CVOCA, chartered accountants membership Mumbai, student membership, life membership'
+    });
+
     const [data, setData] = useState<MembershipData | null>(null);
     const [loading, setLoading] = useState(true);
 

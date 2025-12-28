@@ -1,4 +1,5 @@
 import React from 'react';
+import useSEO from '../hooks/useSEO';
 
 const Section: React.FC<{ title: string; id: string; children: React.ReactNode }> = ({ title, id, children }) => (
     <section id={id} className="mb-8">
@@ -10,6 +11,14 @@ const Section: React.FC<{ title: string; id: string; children: React.ReactNode }
 );
 
 const PrivacyPolicy: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'Privacy Policy',
+        description: 'CVOCA Privacy Policy - Learn how we collect, use, and protect your personal information. Our commitment to data privacy and security for members and visitors.',
+        canonicalUrl: 'https://cvoca.org/privacy-policy',
+        noIndex: true
+    });
+
     return (
         <div className="animate-fadeIn">
             <div className="bg-primary/10 dark:bg-primary/5 pt-32 pb-16">

@@ -1,4 +1,5 @@
 import React from 'react';
+import useSEO from '../hooks/useSEO';
 
 // Action Card Component
 const ActionCard: React.FC<{
@@ -70,6 +71,14 @@ const ActionCard: React.FC<{
 };
 
 const Blog: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'Knowledge Hub',
+        description: 'CVOCA Knowledge Hub - Articles, insights, and updates for Chartered and Cost Accountants. Tax updates, technology trends, and career guidance for finance professionals.',
+        canonicalUrl: 'https://cvoca.org/blog',
+        keywords: 'CVOCA blog, chartered accountants articles, tax updates India, CA knowledge hub, accounting insights'
+    });
+
     return (
         <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
             {/* Hero Section */}

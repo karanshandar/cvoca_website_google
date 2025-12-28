@@ -1,0 +1,11 @@
+# robots.txt for CVOCA Website
+# https://cvoca.org
+
+User-agent: *
+Allow: /
+
+# Disallow admin or API paths if any
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://cvoca.org/sitemap.xml

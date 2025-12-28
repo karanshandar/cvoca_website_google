@@ -1,6 +1,9 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CvoEvent } from '../types';
+import useSEO from '../hooks/useSEO';
+import SchemaMarkup from '../components/SchemaMarkup';
+import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
 
 const getGoogleCalendarUrl = (event: CvoEvent): string => {
     // Safely parse YYYY-MM-DD to avoid timezone issues
@@ -173,6 +176,8 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                         <img
                             src={event.imageUrl}
                             alt={event.title}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                         />
                         {/* Zoom overlay hint */}
@@ -345,6 +350,15 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
 }
 
 const Events: React.FC = () => {
+    // SEO Meta Tags
+    useSEO({
+        title: 'Events',
+        description: 'Discover upcoming CVOCA events - conferences, workshops, seminars, and networking sessions for Chartered and Cost Accountants in Mumbai. Register for professional development events.',
+        canonicalUrl: 'https://cvoca.org/events',
+        keywords: 'CVOCA events, chartered accountants events Mumbai, CA conferences, accounting workshops, professional seminars',
+        ogType: 'event'
+    });
+
     const [searchTerm, setSearchTerm] = useState('');
     const [organizerFilter, setOrganizerFilter] = useState('all');
     const [tagFilter, setTagFilter] = useState('all');
@@ -431,8 +445,29 @@ const Events: React.FC = () => {
 
     const hasActiveFilters = searchTerm !== '' || organizerFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'all';
 
+    // Generate Event schema for upcoming events
+    const eventSchemas = filteredEvents.slice(0, 10).map(event => getEventSchema({
+        id: event.id,
+        title: event.title,
+        date: event.date,
+        time: event.time,
+        location: event.location,
+        description: event.description,
+        cost: event.cost,
+        imageUrl: event.imageUrl,
+        registrationLink: event.registrationLink
+    }));
+
+    const breadcrumbSchema = getBreadcrumbSchema([
+        { name: 'Home', url: 'https://cvoca.org/' },
+        { name: 'Events', url: 'https://cvoca.org/events' }
+    ]);
+
     return (
         <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
+            {/* Event Schema Markup */}
+            <SchemaMarkup schema={[...eventSchemas, breadcrumbSchema]} />
+
             {/* Hero Section */}
             <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 py-32 pb-24 text-center text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-30">
