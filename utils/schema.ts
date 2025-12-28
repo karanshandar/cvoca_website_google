@@ -17,8 +17,8 @@ export const getOrganizationSchema = () => ({
   "name": "CVO Chartered & Cost Accountants Association",
   "alternateName": "CVOCA",
   "url": BASE_URL,
-  "logo": `${BASE_URL}/images/logo-light-theme.png`,
-  "image": `${BASE_URL}/images/logo-light-theme.png`,
+  "logo": `${BASE_URL}/images/logo-light-theme.webp`,
+  "image": `${BASE_URL}/images/logo-light-theme.webp`,
   "description": "Premier professional association for Chartered and Cost Accountants in Mumbai, India since 1973. Providing networking, professional development, and community support.",
   "foundingDate": "1973",
   "address": {
@@ -75,7 +75,7 @@ export const getLocalBusinessSchema = () => ({
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": "CVO Chartered & Cost Accountants Association",
-  "image": `${BASE_URL}/images/logo-light-theme.png`,
+  "image": `${BASE_URL}/images/logo-light-theme.webp`,
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "304, Jasmine Apartment, Dadasaheb Phalke Road, Dadar (E)",
@@ -130,7 +130,7 @@ export const getEventSchema = (event: EventData) => {
         "addressCountry": "IN"
       }
     },
-    "image": event.imageUrl || `${BASE_URL}/images/logo-light-theme.png`,
+    "image": event.imageUrl || `${BASE_URL}/images/logo-light-theme.webp`,
     "organizer": {
       "@type": "Organization",
       "name": "CVOCA",
@@ -211,7 +211,7 @@ export const getArticleSchema = (article: ArticleData) => ({
   "headline": article.title,
   "description": article.description,
   "datePublished": article.datePublished,
-  "image": article.imageUrl || `${BASE_URL}/images/logo-light-theme.png`,
+  "image": article.imageUrl || `${BASE_URL}/images/logo-light-theme.webp`,
   "author": {
     "@type": "Organization",
     "name": article.author || "CVOCA"
@@ -221,7 +221,7 @@ export const getArticleSchema = (article: ArticleData) => ({
     "name": "CVOCA",
     "logo": {
       "@type": "ImageObject",
-      "url": `${BASE_URL}/images/logo-light-theme.png`
+      "url": `${BASE_URL}/images/logo-light-theme.webp`
     }
   },
   "mainEntityOfPage": {

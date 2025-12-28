@@ -12,7 +12,7 @@ interface SEOProps {
 
 // Base URL - update this when production domain is confirmed
 const BASE_URL = 'https://cvoca.org';
-const DEFAULT_IMAGE = '/images/logo-light-theme.png';
+const DEFAULT_IMAGE = '/images/logo-light-theme.webp';
 const SITE_NAME = 'CVOCA - CVO Chartered & Cost Accountants Association';
 
 /**

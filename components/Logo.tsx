@@ -13,8 +13,8 @@ const Logo: React.FC<LogoProps> = ({ className = "w-full h-full", variant }) => 
   // Cast import.meta to any to avoid TypeScript errors regarding missing 'env' property if vite types are not loaded
   const baseUrl = ((import.meta as any).env && (import.meta as any).env.BASE_URL) || '/cvoca_website_google/';
   
-  const lightLogo = `${baseUrl}images/logo-light-theme.png`;
-  const darkLogo = `${baseUrl}images/logo-dark-theme.png`;
+  const lightLogo = `${baseUrl}images/logo-light-theme.webp`;
+  const darkLogo = `${baseUrl}images/logo-dark-theme.webp`;
 
   // Explicitly forced variant (used in Header)
   if (variant === 'light') {
