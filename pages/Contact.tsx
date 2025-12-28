@@ -129,6 +129,7 @@ const Contact: React.FC = () => {
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
                                 title="CVOCA Office Location"
+                                sandbox="allow-scripts allow-same-origin"
                             ></iframe>
                         </div>
                     </div>
