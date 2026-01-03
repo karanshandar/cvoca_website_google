@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 import useSEO from '../hooks/useSEO';
+import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports } from '../utils/googleSheets';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -223,28 +224,47 @@ const About: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [mcRes, ppRes, cRes, arRes] = await Promise.all([
-                    fetch('/data/managingCommittee.json'),
-                    fetch('/data/pastPresidents.json'),
-                    fetch('/data/committees.json'),
-                    fetch('/data/annualReports.json')
+                // Fetch from Google Sheets
+                const [mcData, cData, arData] = await Promise.all([
+                    fetchManagingCommittee(),
+                    fetchCommittees(),
+                    fetchAnnualReports()
                 ]);
-                
-                // Note: We check individual responses but allow partial failures if needed, 
-                // though Promise.all fails fast. Ideally, we handle errors per fetch.
-                const mcData = mcRes.ok ? await mcRes.json() : [];
-                const ppData = ppRes.ok ? await ppRes.json() : [];
-                const cData = cRes.ok ? await cRes.json() : [];
-                const arData = arRes.ok ? await arRes.json() : [];
-                
+
                 setManagingCommittee(mcData);
-                // Assign Serial Numbers
-                const ppWithSr = ppData.map((p: any, i: number) => ({ ...p, srNo: i + 1 }));
-                setPastPresidents(ppWithSr);
                 setCommittees(cData);
                 setAnnualReports(arData);
+
+                // TODO: Add pastPresidents sheet later
+                // For now, fallback to JSON
+                const ppRes = await fetch('/data/pastPresidents.json');
+                if (ppRes.ok) {
+                    const ppData = await ppRes.json();
+                    const ppWithSr = ppData.map((p: any, i: number) => ({ ...p, srNo: i + 1 }));
+                    setPastPresidents(ppWithSr);
+                }
             } catch (error) {
                 console.error("Failed to fetch about page data:", error);
+                // Fallback to JSON files
+                try {
+                    console.log("Attempting fallback to local JSON...");
+                    const [mcRes, ppRes, cRes, arRes] = await Promise.all([
+                        fetch('/data/managingCommittee.json'),
+                        fetch('/data/pastPresidents.json'),
+                        fetch('/data/committees.json'),
+                        fetch('/data/annualReports.json')
+                    ]);
+
+                    if (mcRes.ok) setManagingCommittee(await mcRes.json());
+                    if (ppRes.ok) {
+                        const ppData = await ppRes.json();
+                        setPastPresidents(ppData.map((p: any, i: number) => ({ ...p, srNo: i + 1 })));
+                    }
+                    if (cRes.ok) setCommittees(await cRes.json());
+                    if (arRes.ok) setAnnualReports(await arRes.json());
+                } catch (fallbackError) {
+                    console.error("Fallback also failed:", fallbackError);
+                }
             } finally {
                 setLoading(false);
             }

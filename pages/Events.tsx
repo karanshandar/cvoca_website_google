@@ -4,6 +4,7 @@ import { CvoEvent } from '../types';
 import useSEO from '../hooks/useSEO';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
+import { fetchEvents } from '../utils/googleSheets';
 
 const getGoogleCalendarUrl = (event: CvoEvent): string => {
     // Safely parse YYYY-MM-DD to avoid timezone issues
@@ -371,14 +372,23 @@ const Events: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const eventsRes = await fetch('/data/events.json');
-                if (!eventsRes.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const eventsData = await eventsRes.json();
+                // Fetch from Google Sheets
+                const eventsData = await fetchEvents();
                 setAllEvents(eventsData);
             } catch (error) {
-                console.error("Failed to fetch events data:", error);
+                console.error("Failed to fetch events data from Google Sheets:", error);
+                // Fallback to local JSON if Google Sheets fails
+                try {
+                    console.log("Attempting fallback to local JSON...");
+                    const eventsRes = await fetch('/data/events.json');
+                    if (eventsRes.ok) {
+                        const eventsData = await eventsRes.json();
+                        setAllEvents(eventsData);
+                        console.log("Successfully loaded from fallback JSON");
+                    }
+                } catch (fallbackError) {
+                    console.error("Fallback to JSON also failed:", fallbackError);
+                }
             } finally {
                 setLoading(false);
             }
