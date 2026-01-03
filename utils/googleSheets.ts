@@ -189,3 +189,11 @@ export async function fetchCommittees() {
 
   return Array.from(committeesMap.values());
 }
+
+/**
+ * Fetches president's message from Google Sheets
+ */
+export async function fetchPresidentMessage() {
+  const data = await fetchSheetData('presidentMessage');
+  return data.length > 0 ? data[0] : null;
+}

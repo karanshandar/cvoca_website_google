@@ -109,10 +109,10 @@ export interface MembershipData {
 }
 
 export interface OutreachContact {
-    name: string;
-    contact: string; // Phone number or URL
-    type: 'whatsapp' | 'phone' | 'email';
-    label?: string;
+  name: string;
+  contact: string; // Phone number or URL
+  type: 'whatsapp' | 'phone' | 'email';
+  label?: string;
 }
 
 export interface OutreachInitiative {
@@ -170,4 +170,9 @@ export interface SocialMediaPlatform {
 
 export interface SocialMediaData {
   platforms: SocialMediaPlatform[];
+}
+
+export interface PresidentMessage {
+  date: string;
+  message: string;
 }
