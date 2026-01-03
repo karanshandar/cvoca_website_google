@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 import useSEO from '../hooks/useSEO';
-import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports } from '../utils/googleSheets';
+import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports, fetchPastPresidents } from '../utils/googleSheets';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -58,14 +58,14 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
 
     return (
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/30">
-            <button 
+            <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50"
             >
                 <div className="flex-1">
                     <h4 className="text-lg font-bold text-gray-900 dark:text-white">{committee.name}</h4>
                 </div>
-                
+
                 {/* Chairperson Preview in Header */}
                 {committee.chairperson && (
                     <div className="flex items-center gap-3 md:border-l md:pl-4 border-gray-100 dark:border-gray-700">
@@ -85,7 +85,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
                 )}
 
                 <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''} text-gray-400`}>
-                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </div>
             </button>
 
@@ -128,11 +128,11 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
 
             {/* Featured Card */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-slate-800 dark:to-slate-900 text-white shadow-2xl p-6 md:p-12 mb-10 border border-blue-500/30 dark:border-gray-700">
-                 {/* Background decoration */}
-                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/30 dark:bg-blue-600/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
-                 
-                 <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8">
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/30 dark:bg-blue-600/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
+
+                <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8">
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-4">
                             <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-white/20 dark:bg-blue-500/20 backdrop-blur-sm border border-white/20 dark:border-blue-500/30 text-white dark:text-blue-100 rounded-full">
@@ -150,29 +150,29 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                         </p>
                     </div>
                     <div className="flex-shrink-0 w-full lg:w-auto mt-4 lg:mt-0">
-                        <a 
-                            href={featuredReport.link} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                        <a
+                            href={featuredReport.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-4 bg-white dark:bg-primary text-blue-700 dark:text-white font-bold rounded-xl hover:bg-blue-50 dark:hover:bg-primary-dark transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 whitespace-nowrap"
                         >
                             <span>Download PDF</span>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         </a>
                     </div>
-                 </div>
+                </div>
             </div>
 
             {/* Toggle Button */}
             {previousReports.length > 0 && (
                 <div className="flex flex-col items-center">
-                     <button 
+                    <button
                         onClick={() => setShowAll(!showAll)}
                         className="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:shadow-md hover:text-primary dark:hover:text-primary transition-all mb-8 z-10 relative"
-                     >
+                    >
                         {showAll ? 'Hide Archive' : 'View Archive'}
                         <svg className={`w-4 h-4 transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                     </button>
+                    </button>
                 </div>
             )}
 
@@ -212,7 +212,7 @@ const About: React.FC = () => {
     const [committees, setCommittees] = useState<Committee[]>([]);
     const [annualReports, setAnnualReports] = useState<AnnualReport[]>([]);
     const [loading, setLoading] = useState(true);
-    
+
     // Core Committee Search
     const [coreSearch, setCoreSearch] = useState('');
 
@@ -235,14 +235,9 @@ const About: React.FC = () => {
                 setCommittees(cData);
                 setAnnualReports(arData);
 
-                // TODO: Add pastPresidents sheet later
-                // For now, fallback to JSON
-                const ppRes = await fetch('/data/pastPresidents.json');
-                if (ppRes.ok) {
-                    const ppData = await ppRes.json();
-                    const ppWithSr = ppData.map((p: any, i: number) => ({ ...p, srNo: i + 1 }));
-                    setPastPresidents(ppWithSr);
-                }
+                // Fetch Past Presidents from Google Sheets
+                const ppData = await fetchPastPresidents();
+                setPastPresidents(ppData);
             } catch (error) {
                 console.error("Failed to fetch about page data:", error);
                 // Fallback to JSON files
@@ -295,8 +290,8 @@ const About: React.FC = () => {
                 );
             case 'core':
                 // Helper to check if a member string includes search term
-                const checkMember = (member: CoreMember | undefined) => 
-                    member?.name.toLowerCase().includes(coreSearch.toLowerCase()) || 
+                const checkMember = (member: CoreMember | undefined) =>
+                    member?.name.toLowerCase().includes(coreSearch.toLowerCase()) ||
                     member?.nativePlace.toLowerCase().includes(coreSearch.toLowerCase());
 
                 const filteredCommittees = committees.filter(c => {
@@ -335,7 +330,7 @@ const About: React.FC = () => {
                                 <CommitteeAccordion key={index} committee={committee} />
                             ))}
                         </div>
-                        
+
                         {filteredCommittees.length === 0 && (
                             <div className="text-center py-12">
                                 <p className="text-gray-500 dark:text-gray-400">No committees found matching "{coreSearch}"</p>
@@ -346,17 +341,17 @@ const About: React.FC = () => {
             case 'past':
                 // Filtering and Sorting Logic
                 const sortedAndFilteredPresidents = [...pastPresidents]
-                    .filter(p => 
-                        p.name.toLowerCase().includes(ppSearch.toLowerCase()) || 
+                    .filter(p =>
+                        p.name.toLowerCase().includes(ppSearch.toLowerCase()) ||
                         p.term.includes(ppSearch) ||
                         (p.village && p.village.toLowerCase().includes(ppSearch.toLowerCase()))
                     )
                     .sort((a, b) => {
                         const key = ppSort.key;
                         const dir = ppSort.direction === 'asc' ? 1 : -1;
-                        
+
                         if (key === 'srNo') {
-                             return ((a.srNo || 0) - (b.srNo || 0)) * dir;
+                            return ((a.srNo || 0) - (b.srNo || 0)) * dir;
                         }
                         if (key === 'name') {
                             return a.name.localeCompare(b.name) * dir;
@@ -376,17 +371,17 @@ const About: React.FC = () => {
                         direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
                     }));
                 };
-                
+
                 const SortIcon = ({ column }: { column: keyof PastPresident }) => {
                     if (ppSort.key !== column) return <svg className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-50 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>;
-                    return ppSort.direction === 'asc' 
+                    return ppSort.direction === 'asc'
                         ? <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
                         : <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>;
                 };
 
                 return (
                     <div className="space-y-6">
-                         {/* Filter Bar */}
+                        {/* Filter Bar */}
                         <div className="flex justify-end">
                             <div className="relative w-full md:w-72 group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -406,26 +401,26 @@ const About: React.FC = () => {
                         <div className="md:hidden space-y-4">
                             {sortedAndFilteredPresidents.map((president) => (
                                 <div key={president.name} className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-3">
-                                     <div className="flex justify-between items-start">
-                                         <div className="flex items-center gap-3">
-                                              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 text-xs font-bold text-gray-500 dark:text-gray-400">
-                                                  {president.srNo ? String(president.srNo).padStart(2, '0') : '-'}
-                                              </span>
-                                              <h4 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{president.name}</h4>
-                                         </div>
-                                     </div>
-                                     <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700/50 mt-1">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex items-center gap-3">
+                                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 text-xs font-bold text-gray-500 dark:text-gray-400">
+                                                {president.srNo ? String(president.srNo).padStart(2, '0') : '-'}
+                                            </span>
+                                            <h4 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{president.name}</h4>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700/50 mt-1">
                                         <div className="flex flex-col">
                                             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Term</span>
                                             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 font-mono">{president.term}</span>
                                         </div>
                                         <div className="flex flex-col items-end">
                                             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Native Place</span>
-                                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800 mt-1">
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800 mt-1">
                                                 {president.village}
                                             </span>
                                         </div>
-                                     </div>
+                                    </div>
                                 </div>
                             ))}
                             {sortedAndFilteredPresidents.length === 0 && (
@@ -441,8 +436,8 @@ const About: React.FC = () => {
                                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead className="bg-gray-50 dark:bg-slate-900/50">
                                         <tr>
-                                            <th 
-                                                scope="col" 
+                                            <th
+                                                scope="col"
                                                 onClick={() => handleSort('srNo')}
                                                 className="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-20"
                                             >
@@ -451,8 +446,8 @@ const About: React.FC = () => {
                                                     <SortIcon column="srNo" />
                                                 </div>
                                             </th>
-                                            <th 
-                                                scope="col" 
+                                            <th
+                                                scope="col"
                                                 onClick={() => handleSort('name')}
                                                 className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none"
                                             >
@@ -461,8 +456,8 @@ const About: React.FC = () => {
                                                     <SortIcon column="name" />
                                                 </div>
                                             </th>
-                                            <th 
-                                                scope="col" 
+                                            <th
+                                                scope="col"
                                                 onClick={() => handleSort('term')}
                                                 className="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-40"
                                             >
@@ -471,8 +466,8 @@ const About: React.FC = () => {
                                                     <SortIcon column="term" />
                                                 </div>
                                             </th>
-                                            <th 
-                                                scope="col" 
+                                            <th
+                                                scope="col"
                                                 onClick={() => handleSort('village')}
                                                 className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-48"
                                             >
@@ -528,7 +523,7 @@ const About: React.FC = () => {
         <div className="animate-fadeIn bg-gray-50 dark:bg-background-dark min-h-screen">
             {/* Hero Section */}
             <section className="relative bg-slate-900 pt-32 pb-24 text-center overflow-hidden">
-                 <div className="absolute inset-0">
+                <div className="absolute inset-0">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
                     <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
                 </div>
@@ -544,7 +539,7 @@ const About: React.FC = () => {
             </section>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20 -mt-12 relative z-10">
-                
+
                 {/* Organization Profile */}
                 <section className="bg-white dark:bg-slate-800 rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 dark:border-gray-700">
                     <div className="max-w-3xl mx-auto text-center">
@@ -556,8 +551,8 @@ const About: React.FC = () => {
                     </div>
                 </section>
 
-                 {/* Vision and Mission */}
-                 <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Vision and Mission */}
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-3xl border border-blue-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
                         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Our Vision</h2>
@@ -594,29 +589,29 @@ const About: React.FC = () => {
                             <li>Leadership summits</li>
                         </ServiceCard>
                         <ServiceCard title="Knowledge & Research">
-                           <li>Monthly bulletins (CVO CA News)</li>
-                           <li>Research publications</li>
-                           <li>Digital resource library</li>
+                            <li>Monthly bulletins (CVO CA News)</li>
+                            <li>Research publications</li>
+                            <li>Digital resource library</li>
                         </ServiceCard>
-                         <ServiceCard title="Member Support">
-                           <li>Networking forums</li>
-                           <li>Career guidance & mentorship</li>
-                           <li>Practice management tools</li>
+                        <ServiceCard title="Member Support">
+                            <li>Networking forums</li>
+                            <li>Career guidance & mentorship</li>
+                            <li>Practice management tools</li>
                         </ServiceCard>
-                         <ServiceCard title="Student Initiatives">
-                           <li>Educational assistance</li>
-                           <li>Study circles & libraries</li>
-                           <li>Soft skills training</li>
+                        <ServiceCard title="Student Initiatives">
+                            <li>Educational assistance</li>
+                            <li>Study circles & libraries</li>
+                            <li>Soft skills training</li>
                         </ServiceCard>
-                         <ServiceCard title="Advocacy">
-                           <li>Policy representations to Govt.</li>
-                           <li>Regulatory updates</li>
-                           <li>Industry feedback forums</li>
+                        <ServiceCard title="Advocacy">
+                            <li>Policy representations to Govt.</li>
+                            <li>Regulatory updates</li>
+                            <li>Industry feedback forums</li>
                         </ServiceCard>
-                         <ServiceCard title="Community & Social">
-                           <li>Cultural festivals & gatherings</li>
-                           <li>Sports tournaments</li>
-                           <li>Digital outreach programs</li>
+                        <ServiceCard title="Community & Social">
+                            <li>Cultural festivals & gatherings</li>
+                            <li>Sports tournaments</li>
+                            <li>Digital outreach programs</li>
                         </ServiceCard>
                     </div>
                 </section>
@@ -627,7 +622,7 @@ const About: React.FC = () => {
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Leadership & Structure</h2>
                         <p className="mt-2 text-gray-500 dark:text-gray-400">The dedicated teams driving our mission forward</p>
                     </div>
-                    
+
                     <div className="flex justify-center mb-10">
                         <nav className="flex p-1 space-x-2 bg-gray-100 dark:bg-slate-800 rounded-full">
                             <TabButton active={activeTab === 'managing'} onClick={() => setActiveTab('managing')}>Managing Committee</TabButton>
@@ -635,7 +630,7 @@ const About: React.FC = () => {
                             <TabButton active={activeTab === 'past'} onClick={() => setActiveTab('past')}>Past Presidents</TabButton>
                         </nav>
                     </div>
-                    
+
                     <div className="min-h-[400px]">
                         {renderTabContent()}
                     </div>
