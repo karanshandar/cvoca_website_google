@@ -5,6 +5,7 @@ import useSEO from '../hooks/useSEO';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
 import { fetchEvents } from '../utils/googleSheets';
+import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 
 const getGoogleCalendarUrl = (event: CvoEvent): string => {
     // Safely parse YYYY-MM-DD to avoid timezone issues
@@ -175,7 +176,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                 {event.imageUrl ? (
                     <>
                         <img
-                            src={event.imageUrl}
+                            src={getOptimizedImageUrl(event.imageUrl, ImageSizePresets.EVENT_CARD)}
                             alt={event.title}
                             loading="lazy"
                             decoding="async"

@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { HomeData, CvoEvent, OutreachInitiative, PresidentMessage } from '../types';
 import useSEO from '../hooks/useSEO';
-import { fetchPresidentMessage } from '../utils/googleSheets';
+import { fetchPresidentMessage, fetchManagingCommittee } from '../utils/googleSheets';
+import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 
 const StatCard: React.FC<{ value: string; label: string; delay: string }> = ({ value, label, delay }) => (
     <div className={`bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 text-center transform transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl animate-fade-in-up`} style={{ animationDelay: delay }}>
@@ -120,23 +121,47 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [homeRes, eventsRes, outreachRes, committeeRes, messageData] = await Promise.all([
+                const [homeRes, eventsRes, outreachRes, messageData] = await Promise.all([
                     fetch('/data/home.json'),
                     fetch('/data/events.json'),
                     fetch('/data/digitalOutreach.json'),
-                    fetch('/data/managingCommittee.json'),
                     fetchPresidentMessage()
                 ]);
 
                 if (homeRes.ok) setHomeData(await homeRes.json());
                 if (eventsRes.ok) setEvents(await eventsRes.json());
                 if (outreachRes.ok) setOutreach(await outreachRes.json());
-                if (committeeRes.ok) {
-                    const committee = await committeeRes.json();
-                    const president = committee.find((member: any) => member.role === 'President');
-                    if (president?.photoUrl) setPresidentPhoto(president.photoUrl);
-                }
                 if (messageData) setPresidentMessageData(messageData);
+
+                // Fetch managing committee from Google Sheets for president photo
+                try {
+                    const committee = await fetchManagingCommittee();
+                    const president = committee.find((member: any) => member.role === 'President');
+                    if (president?.photoUrl) {
+                        setPresidentPhoto(president.photoUrl);
+                    } else {
+                        // Fallback to local JSON if no president found in Google Sheets
+                        const fallbackRes = await fetch('/data/managingCommittee.json');
+                        if (fallbackRes.ok) {
+                            const fallbackCommittee = await fallbackRes.json();
+                            const fallbackPresident = fallbackCommittee.find((member: any) => member.role === 'President');
+                            if (fallbackPresident?.photoUrl) setPresidentPhoto(fallbackPresident.photoUrl);
+                        }
+                    }
+                } catch (committeeErr) {
+                    console.error("Failed to fetch committee from Google Sheets, trying fallback:", committeeErr);
+                    // Fallback to local JSON on error
+                    try {
+                        const fallbackRes = await fetch('/data/managingCommittee.json');
+                        if (fallbackRes.ok) {
+                            const fallbackCommittee = await fallbackRes.json();
+                            const fallbackPresident = fallbackCommittee.find((member: any) => member.role === 'President');
+                            if (fallbackPresident?.photoUrl) setPresidentPhoto(fallbackPresident.photoUrl);
+                        }
+                    } catch (fallbackErr) {
+                        console.error("Fallback also failed:", fallbackErr);
+                    }
+                }
             } catch (err) {
                 console.error("Failed to fetch data", err);
             } finally {
@@ -223,7 +248,7 @@ const Home: React.FC = () => {
                         <div className="flex-shrink-0 relative group">
                             <div className="absolute -inset-1 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full opacity-75 blur transition duration-500 group-hover:opacity-100"></div>
                             <img
-                                src={presidentPhoto}
+                                src={getOptimizedImageUrl(presidentPhoto, ImageSizePresets.TEAM_PHOTO)}
                                 alt="CVOCA President"
                                 loading="lazy"
                                 decoding="async"

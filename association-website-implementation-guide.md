@@ -26,7 +26,19 @@ Version 2.0
 
 A static website that pulls content from Google Sheets, making it easy for non-technical members to update events and team information. Images are hosted on Cloudinary for easy drag-and-drop management.
 
-### 1.2 Architecture
+### 1.2 Implementation Status
+
+| Component | Status | Last Updated |
+|-----------|--------|--------------|
+| ✅ Google Sheets API Integration | **COMPLETE** | January 2026 |
+| ✅ Environment Configuration | **COMPLETE** | January 2026 |
+| ✅ Data Fetching (7 data types) | **COMPLETE** | January 2026 |
+| ✅ Error Handling & Fallback | **COMPLETE** | January 2026 |
+| ✅ Type Safety (TypeScript) | **COMPLETE** | January 2026 |
+| 🟡 Cloudinary Integration | **READY** (setup required) | January 2026 |
+| ✅ Documentation | **COMPLETE** | January 2026 |
+
+### 1.3 Architecture
 
 The system consists of four components working together:
 
@@ -42,7 +54,7 @@ The system consists of four components working together:
 Google Sheets + Cloudinary Images → Website Code (GitHub) → Hosting Platform → Visitors
 ```
 
-### 1.3 Primary & Fallback Strategy
+### 1.4 Primary & Fallback Strategy
 
 | Layer | Plan A (Primary) | Plan B (Fallback) |
 |-------|------------------|-------------------|
@@ -50,7 +62,7 @@ Google Sheets + Cloudinary Images → Website Code (GitHub) → Hosting Platform
 | **Images** | Cloudinary | GitHub Repository |
 | **Hosting** | Netlify or Render | Either works |
 
-### 1.4 Cost Summary
+### 1.5 Cost Summary
 
 | Service | Free Limit | Typical Usage | Long-term Viability |
 |---------|------------|---------------|---------------------|
@@ -65,13 +77,46 @@ Google Sheets + Cloudinary Images → Website Code (GitHub) → Hosting Platform
 
 ## 2. Google Sheets Setup
 
-### 2.1 Understanding the Data Flow
+### 2.1 ✅ Current Implementation
+
+**Status: COMPLETE & WORKING**
+
+The Google Sheets API integration has been successfully implemented with the following features:
+
+#### Implemented Features
+- ✅ Generic `fetchSheetData<T>()` utility function
+- ✅ 7 specialized data fetch functions:
+  - Events data
+  - Managing Committee members
+  - Annual Reports
+  - Past Presidents
+  - Core Committees
+  - President's Message
+  - Custom committee member grouping
+- ✅ Smart type conversions (numbers, booleans, dates, arrays)
+- ✅ Date format conversion (DD/MM/YYYY → YYYY-MM-DD)
+- ✅ CSV parsing for comma-separated fields (tags)
+- ✅ Comprehensive error handling with try/catch
+- ✅ Fallback to local JSON on API failure
+- ✅ Loading states in all pages
+- ✅ TypeScript type safety
+- ✅ Environment variables properly configured (.env.local not tracked)
+
+#### Key Files
+- `utils/googleSheets.ts` - Core API integration (200 lines)
+- `.env.local` - API credentials (git-ignored)
+- `.env.example` - Environment template
+- `pages/Events.tsx` - Events data integration
+- `pages/About.tsx` - Multiple data sources in parallel
+- `pages/Home.tsx` - President's message integration
+
+### 2.2 Understanding the Data Flow
 
 Google Sheets stores your content, but websites cannot read spreadsheets directly. We need a **bridge** — a way for the website's code to request and receive that spreadsheet data.
 
 There are two methods to achieve this, and we recommend having both ready.
 
-### 2.2 Plan A: Google Sheets API (Recommended)
+### 2.3 Plan A: Google Sheets API (Recommended) ✅
 
 **What it is:** The official Google API that returns structured JSON data. Requires a free API key from Google Cloud Console.
 
@@ -117,7 +162,7 @@ Since this is a client-side application, your API key will be visible in the bro
 5. Set a daily quota limit (e.g., 10,000 requests)
 6. Click **Save**
 
-### 2.3 Plan B: Publish to Web (Fallback)
+### 2.4 Plan B: Publish to Web (Fallback)
 
 **What it is:** Google Sheets can publish your data as a web-accessible CSV file. Your website fetches this URL and parses the data.
 
@@ -141,7 +186,7 @@ Since this is a client-side application, your API key will be visible in the bro
 https://docs.google.com/spreadsheets/d/e/[LONG_ID]/pub?gid=0&single=true&output=csv
 ```
 
-### 2.4 Create the Spreadsheet
+### 2.5 Create the Spreadsheet ✅
 
 Create a Google Sheet with **two tabs**:
 
@@ -166,7 +211,7 @@ Create a Google Sheet with **two tabs**:
 - **Set sharing:** Click Share → Anyone with the link → Viewer
 - **Copy the Sheet ID** from the URL: `https://docs.google.com/spreadsheets/d/[THIS_IS_YOUR_SHEET_ID]/edit`
 
-### 2.5 Protecting Your Sheet
+### 2.6 Protecting Your Sheet
 
 To prevent accidental changes to structure:
 
@@ -187,7 +232,28 @@ To prevent accidental changes to structure:
 
 ## 3. Cloudinary Image Hosting
 
-### 3.1 What is Cloudinary?
+### 3.1 🟡 Current Implementation Status
+
+**Status: READY FOR SETUP**
+
+The website code is already Cloudinary-ready! No code changes are required.
+
+#### What's Already Working
+- ✅ Image URL fields in Google Sheets (imageUrl, photoUrl)
+- ✅ Image display in all pages (Events, About, Home)
+- ✅ Error handling for broken images (fallback placeholders)
+- ✅ Responsive image rendering
+- ✅ Loading states while images load
+
+#### What You Need to Do
+1. Create a Cloudinary account (5 minutes)
+2. Set up folder structure (2 minutes)
+3. Upload images and paste URLs into Google Sheets
+4. (Optional) Add `VITE_CLOUDINARY_CLOUD_NAME` to `.env.local`
+
+**See the detailed guide:** [docs/cloudinary-guide.md](docs/cloudinary-guide.md)
+
+### 3.2 What is Cloudinary?
 
 Cloudinary is a cloud service that stores, optimizes, and delivers images. Instead of uploading images to GitHub (which requires technical knowledge), you upload them to Cloudinary using simple drag-and-drop, then paste the URL into your Google Sheet.
 
@@ -201,7 +267,7 @@ Cloudinary is a cloud service that stores, optimizes, and delivers images. Inste
 | URL handling | Filename must match exactly | Just copy/paste URL |
 | Non-technical friendly | ❌ No | ✅ Yes |
 
-### 3.2 Free Tier Limits
+### 3.3 Free Tier Limits
 
 Cloudinary's free plan is **not time-limited**. You can use it indefinitely as long as you stay within the usage limits.
 
@@ -226,7 +292,7 @@ You can flexibly use credits across these three areas based on your needs. For a
 
 **25 credits is more than enough for most association websites.**
 
-### 3.3 Setup Steps
+### 3.4 Setup Steps
 
 1. Go to [cloudinary.com](https://cloudinary.com) and sign up (no credit card required)
 2. Note your **Cloud Name** from the dashboard
@@ -242,7 +308,7 @@ You can flexibly use credits across these three areas based on your needs. For a
    - Click **Copy URL** (or right-click → Copy link address)
 7. Paste the full URL into your Google Sheet's image column
 
-### 3.4 Recommended Folder Structure
+### 3.5 Recommended Folder Structure
 
 ```
 your-cloud-name/
@@ -257,7 +323,7 @@ your-cloud-name/
         └── placeholder.jpg
 ```
 
-### 3.5 Auto-Optimization URLs (Bonus)
+### 3.6 Auto-Optimization URLs (Bonus)
 
 Cloudinary can resize and optimize images automatically by modifying the URL. This means you upload ONE high-resolution image and Cloudinary serves optimized versions.
 
@@ -280,7 +346,7 @@ Optimized URL (400px, auto format/quality):
 https://res.cloudinary.com/yourcloud/image/upload/w_400,f_auto,q_auto/v123456/association-site/team/john-doe.jpg
 ```
 
-### 3.6 Plan B: GitHub for Images
+### 3.7 Plan B: GitHub for Images
 
 If Cloudinary is ever unavailable or you exceed limits, images can be stored in GitHub as a fallback.
 
