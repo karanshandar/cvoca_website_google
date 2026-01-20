@@ -39,7 +39,17 @@ cd cvoca_website_google
 npm install
 ```
 
-3. Run the development server:
+3. Set up environment variables:
+```bash
+# Copy the environment template
+cp .env.example .env.local
+
+# Edit .env.local and add your actual API keys
+# - VITE_GOOGLE_SHEETS_API_KEY: Your Google Sheets API key
+# - VITE_GOOGLE_SHEET_ID: Your Google Sheet ID
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 ```
@@ -97,7 +107,19 @@ git push origin main
 
 ### Environment Variables
 
-No environment variables are currently required for production deployment.
+**Required for Development:**
+
+Create a `.env.local` file in the root directory (copy from `.env.example`):
+
+| Variable | Description | How to Get |
+|----------|-------------|------------|
+| `VITE_GOOGLE_SHEETS_API_KEY` | Google Sheets API key | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| `VITE_GOOGLE_SHEET_ID` | Your Google Sheet ID | From spreadsheet URL: `docs.google.com/spreadsheets/d/[SHEET_ID]/edit` |
+| `VITE_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (optional) | [Cloudinary Dashboard](https://cloudinary.com/console) |
+
+**For Production:**
+- Environment variables should be configured in your hosting platform (Render, Netlify, etc.)
+- Never commit `.env.local` to version control (already in `.gitignore`)
 
 ## Project Structure
 
@@ -127,6 +149,7 @@ cvoca_website_google/
 
 - ✅ Build-time Tailwind CSS generation (66KB → 10KB gzipped)
 - ✅ WebP image format (72% smaller than PNG)
+- ✅ Automatic Cloudinary image optimization (auto format, quality, and resizing)
 - ✅ Lazy-loaded routes for code splitting
 - ✅ Lazy-loaded images (below-the-fold)
 - ✅ Minified JSON data files (16% reduction)
