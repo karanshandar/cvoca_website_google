@@ -41,6 +41,7 @@ export interface CvoEvent {
   fullPricing?: string;
   description: string;
   registrationLink?: string;
+  readMoreLink?: string;
   imageUrl?: string;
 }
 
