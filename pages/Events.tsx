@@ -5,7 +5,9 @@ import useSEO from '../hooks/useSEO';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
 import { fetchEvents } from '../utils/googleSheets';
+import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const getGoogleCalendarUrl = (event: CvoEvent): string => {
     // Safely parse YYYY-MM-DD to avoid timezone issues
@@ -383,23 +385,10 @@ const Events: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Fetch from Google Sheets
-                const eventsData = await fetchEvents();
+                const eventsData = await fetchWithFallback(fetchEvents, '/data/events.json');
                 setAllEvents(eventsData);
             } catch (error) {
-                console.error("Failed to fetch events data from Google Sheets:", error);
-                // Fallback to local JSON if Google Sheets fails
-                try {
-                    console.log("Attempting fallback to local JSON...");
-                    const eventsRes = await fetch('/data/events.json');
-                    if (eventsRes.ok) {
-                        const eventsData = await eventsRes.json();
-                        setAllEvents(eventsData);
-                        console.log("Successfully loaded from fallback JSON");
-                    }
-                } catch (fallbackError) {
-                    console.error("Fallback to JSON also failed:", fallbackError);
-                }
+                console.error("Failed to fetch events data:", error);
             } finally {
                 setLoading(false);
             }
@@ -503,9 +492,7 @@ const Events: React.FC = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-12 relative z-10">
                 {loading ? (
-                    <div className="flex justify-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-                    </div>
+                    <LoadingSpinner />
                 ) : (
                     <>
                         {/* Filters */}

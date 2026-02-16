@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { HomeData, CvoEvent, OutreachInitiative, PresidentMessage } from '../types';
+import { HomeData, CvoEvent, OutreachInitiative, PresidentMessage, CommitteeMember } from '../types';
 import useSEO from '../hooks/useSEO';
 import { fetchPresidentMessage, fetchManagingCommittee } from '../utils/googleSheets';
+import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const StatCard: React.FC<{ value: string; label: string; delay: string }> = ({ value, label, delay }) => (
     <div className={`bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 text-center transform transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl animate-fade-in-up`} style={{ animationDelay: delay }}>
@@ -121,46 +123,34 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [homeRes, eventsRes, outreachRes, messageData] = await Promise.all([
+                // Fetch static JSON data (always available)
+                const [homeRes, eventsRes, outreachRes] = await Promise.all([
                     fetch('/data/home.json'),
                     fetch('/data/events.json'),
                     fetch('/data/digitalOutreach.json'),
-                    fetchPresidentMessage()
                 ]);
 
                 if (homeRes.ok) setHomeData(await homeRes.json());
                 if (eventsRes.ok) setEvents(await eventsRes.json());
                 if (outreachRes.ok) setOutreach(await outreachRes.json());
-                if (messageData) setPresidentMessageData(messageData);
 
-                // Fetch managing committee from Google Sheets for president photo
+                // Fetch Google Sheets data separately so failures don't block the page
                 try {
-                    const committee = await fetchManagingCommittee();
-                    const president = committee.find((member: any) => member.role === 'President');
-                    if (president?.photoUrl) {
-                        setPresidentPhoto(president.photoUrl);
-                    } else {
-                        // Fallback to local JSON if no president found in Google Sheets
-                        const fallbackRes = await fetch('/data/managingCommittee.json');
-                        if (fallbackRes.ok) {
-                            const fallbackCommittee = await fallbackRes.json();
-                            const fallbackPresident = fallbackCommittee.find((member: any) => member.role === 'President');
-                            if (fallbackPresident?.photoUrl) setPresidentPhoto(fallbackPresident.photoUrl);
-                        }
-                    }
+                    const messageData = await fetchPresidentMessage();
+                    if (messageData) setPresidentMessageData(messageData);
+                } catch (msgErr) {
+                    console.error("Failed to fetch president message:", msgErr);
+                }
+
+                try {
+                    const committee = await fetchWithFallback(
+                        fetchManagingCommittee,
+                        '/data/managingCommittee.json'
+                    );
+                    const president = committee.find((member: CommitteeMember) => member.role === 'President');
+                    if (president?.photoUrl) setPresidentPhoto(president.photoUrl);
                 } catch (committeeErr) {
-                    console.error("Failed to fetch committee from Google Sheets, trying fallback:", committeeErr);
-                    // Fallback to local JSON on error
-                    try {
-                        const fallbackRes = await fetch('/data/managingCommittee.json');
-                        if (fallbackRes.ok) {
-                            const fallbackCommittee = await fallbackRes.json();
-                            const fallbackPresident = fallbackCommittee.find((member: any) => member.role === 'President');
-                            if (fallbackPresident?.photoUrl) setPresidentPhoto(fallbackPresident.photoUrl);
-                        }
-                    } catch (fallbackErr) {
-                        console.error("Fallback also failed:", fallbackErr);
-                    }
+                    console.error("Failed to fetch committee data:", committeeErr);
                 }
             } catch (err) {
                 console.error("Failed to fetch data", err);
@@ -188,7 +178,7 @@ const Home: React.FC = () => {
     }, [outreach]);
 
     if (loading || !homeData) {
-        return <div className="min-h-screen flex justify-center items-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>;
+        return <LoadingSpinner />;
     }
 
     return (

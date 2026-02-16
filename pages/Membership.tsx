@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MembershipData } from '../types';
 import useSEO from '../hooks/useSEO';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const BenefitCard: React.FC<{ title: string; iconPath: string; children: React.ReactNode }> = ({ title, iconPath, children }) => (
     <div className="group flex items-start p-6 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-gray-700 hover:border-primary/30 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
@@ -189,7 +190,7 @@ const Membership: React.FC = () => {
     }, []);
 
     if (loading || !data) {
-        return <div className="min-h-screen flex justify-center items-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>;
+        return <LoadingSpinner />;
     }
 
     return (

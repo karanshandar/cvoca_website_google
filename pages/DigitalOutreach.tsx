@@ -2,9 +2,25 @@
 import React, { useState, useEffect } from 'react';
 import { OutreachInitiative, OutreachContact } from '../types';
 import useSEO from '../hooks/useSEO';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+interface CardTheme {
+    isDarkCard: boolean;
+    bg: string;
+    text: string;
+    accent: string;
+    border: string;
+    button: string;
+    iconBg: string;
+    pillBg: string;
+    featureIcon: string;
+    statBg: string;
+    statText: string;
+    statLabel: string;
+}
 
 // Theme configuration maps for dynamic styling based on category
-const THEMES: Record<string, any> = {
+const THEMES: Record<string, CardTheme> = {
     "Investment Community": {
         // Updated to match the light theme style of other cards (Emerald variant)
         isDarkCard: false,
@@ -116,7 +132,7 @@ const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ image
 };
 
 // Coordinator Pill Component
-const CoordinatorPill: React.FC<{ contact: OutreachContact; theme: any }> = ({ contact, theme }) => {
+const CoordinatorPill: React.FC<{ contact: OutreachContact; theme: CardTheme }> = ({ contact, theme }) => {
     return (
         <a href={contact.contact} target="_blank" rel="noopener noreferrer" className={`group flex items-center gap-3 p-2 pr-4 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme.isDarkCard ? 'bg-white/10 text-white' : 'bg-gray-100 text-gray-600'}`}>
@@ -330,9 +346,7 @@ const DigitalOutreach: React.FC = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 relative z-10">
                 {loading ? (
-                    <div className="flex justify-center py-12">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-                    </div>
+                    <LoadingSpinner />
                 ) : (
                     <div className="flex flex-col gap-16">
                         {initiatives.map((initiative, idx) => (

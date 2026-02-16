@@ -4,6 +4,7 @@ import { ContactData } from '../types';
 import useSEO from '../hooks/useSEO';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/schema';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; delay: string }> = ({ icon, label, value, delay }) => (
     <div 
@@ -56,7 +57,7 @@ const Contact: React.FC = () => {
     }, []);
 
     if (loading || !contactData) {
-        return <div className="min-h-screen flex justify-center items-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>;
+        return <LoadingSpinner />;
     }
 
     // Breadcrumb schema for Contact page

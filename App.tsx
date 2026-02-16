@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
 import SchemaMarkup from './components/SchemaMarkup';
 import { getOrganizationSchema, getWebsiteSchema } from './utils/schema';
 
@@ -15,6 +16,7 @@ const Blog = lazy(() => import('./pages/Blog'));
 const DigitalOutreach = lazy(() => import('./pages/DigitalOutreach'));
 const Contact = lazy(() => import('./pages/Contact'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -50,6 +52,7 @@ const App: React.FC = () => {
         <Header theme={theme} toggleTheme={toggleTheme} />
         {/* Removed pt-24 to allow Hero sections to sit behind the transparent header */}
         <main className="flex-grow">
+          <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -60,8 +63,10 @@ const App: React.FC = () => {
               <Route path="/digital-outreach" element={<DigitalOutreach />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
+          </ErrorBoundary>
         </main>
         <Footer />
       </div>

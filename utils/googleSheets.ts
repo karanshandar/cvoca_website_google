@@ -20,7 +20,7 @@ const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
  * @param tabName - The name of the sheet tab (e.g., 'Events', 'Managing Committee')
  * @returns Array of objects with data from the sheet
  */
-export async function fetchSheetData<T = any>(tabName: string): Promise<T[]> {
+export async function fetchSheetData<T = Record<string, unknown>>(tabName: string): Promise<T[]> {
   try {
     const url = `${SHEETS_API_BASE}/${SHEET_ID}/values/${encodeURIComponent(tabName)}?key=${API_KEY}`;
 
@@ -47,8 +47,8 @@ export async function fetchSheetData<T = any>(tabName: string): Promise<T[]> {
     const rows = data.values.slice(1); // Remaining rows are data
 
     // Map each row to an object using headers as keys
-    const jsonData = rows.map((row: any[]) => {
-      const obj: any = {};
+    const jsonData = rows.map((row: string[]) => {
+      const obj: Record<string, unknown> = {};
       headers.forEach((header: string, index: number) => {
         const value = row[index] || ''; // Use empty string if cell is empty
 
@@ -70,7 +70,7 @@ export async function fetchSheetData<T = any>(tabName: string): Promise<T[]> {
 /**
  * Convert string values to appropriate types based on field name
  */
-function convertValue(fieldName: string, value: string): any {
+function convertValue(fieldName: string, value: string): string | number | boolean | string[] {
   // Empty values
   if (value === '' || value === null || value === undefined) {
     return fieldName === 'tags' ? [] : value;
@@ -132,7 +132,7 @@ export async function fetchAnnualReports() {
 export async function fetchPastPresidents() {
   const data = await fetchSheetData('pastPresidents');
   // Add serial numbers
-  return data.map((president: any, index: number) => ({
+  return data.map((president: Record<string, unknown>, index: number) => ({
     ...president,
     srNo: index + 1
   }));
@@ -147,7 +147,7 @@ export async function fetchCommittees() {
   // Group members by committee name
   const committeesMap = new Map();
 
-  members.forEach((member: any) => {
+  members.forEach((member: Record<string, unknown>) => {
     const committeeName = member.committeeName;
 
     if (!committeesMap.has(committeeName)) {

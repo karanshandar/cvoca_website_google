@@ -3,7 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 import useSEO from '../hooks/useSEO';
 import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports, fetchPastPresidents } from '../utils/googleSheets';
+import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -225,42 +227,19 @@ const About: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Fetch from Google Sheets
-                const [mcData, cData, arData] = await Promise.all([
-                    fetchManagingCommittee(),
-                    fetchCommittees(),
-                    fetchAnnualReports()
+                const [mcData, cData, arData, ppData] = await Promise.all([
+                    fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json'),
+                    fetchWithFallback(fetchCommittees, '/data/committees.json'),
+                    fetchWithFallback(fetchAnnualReports, '/data/annualReports.json'),
+                    fetchWithFallback(fetchPastPresidents, '/data/pastPresidents.json'),
                 ]);
 
                 setManagingCommittee(mcData);
                 setCommittees(cData);
                 setAnnualReports(arData);
-
-                // Fetch Past Presidents from Google Sheets
-                const ppData = await fetchPastPresidents();
                 setPastPresidents(ppData);
             } catch (error) {
                 console.error("Failed to fetch about page data:", error);
-                // Fallback to JSON files
-                try {
-                    console.log("Attempting fallback to local JSON...");
-                    const [mcRes, ppRes, cRes, arRes] = await Promise.all([
-                        fetch('/data/managingCommittee.json'),
-                        fetch('/data/pastPresidents.json'),
-                        fetch('/data/committees.json'),
-                        fetch('/data/annualReports.json')
-                    ]);
-
-                    if (mcRes.ok) setManagingCommittee(await mcRes.json());
-                    if (ppRes.ok) {
-                        const ppData = await ppRes.json();
-                        setPastPresidents(ppData.map((p: any, i: number) => ({ ...p, srNo: i + 1 })));
-                    }
-                    if (cRes.ok) setCommittees(await cRes.json());
-                    if (arRes.ok) setAnnualReports(await arRes.json());
-                } catch (fallbackError) {
-                    console.error("Fallback also failed:", fallbackError);
-                }
             } finally {
                 setLoading(false);
             }
@@ -270,7 +249,7 @@ const About: React.FC = () => {
 
     const renderTabContent = () => {
         if (loading) {
-            return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>;
+            return <LoadingSpinner />;
         }
         switch (activeTab) {
             case 'managing':

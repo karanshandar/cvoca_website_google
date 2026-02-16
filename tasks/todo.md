@@ -128,9 +128,8 @@ Added `useSEO` hook to all 8 page components with page-specific:
 
 ### Domain Placeholder
 - All URLs use `https://cvoca.org` as placeholder
-- Update in these files when production domain is confirmed:
-  - `hooks/useSEO.ts` (BASE_URL constant)
-  - `utils/schema.ts` (BASE_URL constant)
+- BASE_URL is now centralized in `constants.ts` — update there only
+- Other files to update when domain changes:
   - `public/sitemap.xml` (all URLs)
   - `public/robots.txt` (Sitemap directive)
   - `index.html` (canonical and OG URLs)

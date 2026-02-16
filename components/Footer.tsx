@@ -42,7 +42,11 @@ const Footer: React.FC = () => {
     }, []);
 
     if (loading || !contactData || !socialData) {
-        return null; // Return nothing while loading to avoid layout shift
+        return (
+            <footer className="bg-card-light dark:bg-card-dark border-t border-gray-200 dark:border-gray-700">
+                <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[200px]" />
+            </footer>
+        );
     }
 
     return (

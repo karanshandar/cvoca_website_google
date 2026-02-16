@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { BASE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from '../constants';
 
 interface SEOProps {
   title: string;
@@ -10,10 +11,7 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
-// Base URL - update this when production domain is confirmed
-const BASE_URL = 'https://cvoca.org';
-const DEFAULT_IMAGE = '/images/logo-light-theme.webp';
-const SITE_NAME = 'CVOCA - CVO Chartered & Cost Accountants Association';
+const DEFAULT_IMAGE = DEFAULT_OG_IMAGE;
 
 /**
  * Custom hook to manage SEO meta tags dynamically per page

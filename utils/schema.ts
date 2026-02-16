@@ -3,8 +3,7 @@
  * These schemas help search engines understand the content and display rich results
  */
 
-// Base URL - update when production domain is confirmed
-const BASE_URL = 'https://cvoca.org';
+import { BASE_URL } from '../constants';
 
 /**
  * Organization Schema - For the main organization info
@@ -151,30 +150,6 @@ export const getEventSchema = (event: EventData) => {
 };
 
 /**
- * Person Schema Generator - For committee members
- */
-export interface PersonData {
-  name: string;
-  role: string;
-  email?: string;
-  photoUrl?: string;
-}
-
-export const getPersonSchema = (person: PersonData) => ({
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": person.name,
-  "jobTitle": person.role,
-  ...(person.email && { "email": person.email }),
-  ...(person.photoUrl && { "image": person.photoUrl }),
-  "worksFor": {
-    "@type": "Organization",
-    "name": "CVOCA",
-    "url": BASE_URL
-  }
-});
-
-/**
  * BreadcrumbList Schema Generator - For navigation context
  */
 export interface BreadcrumbItem {
@@ -193,60 +168,3 @@ export const getBreadcrumbSchema = (items: BreadcrumbItem[]) => ({
   }))
 });
 
-/**
- * Article Schema Generator - For blog posts
- */
-export interface ArticleData {
-  title: string;
-  description: string;
-  datePublished: string;
-  imageUrl?: string;
-  author?: string;
-  url: string;
-}
-
-export const getArticleSchema = (article: ArticleData) => ({
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": article.title,
-  "description": article.description,
-  "datePublished": article.datePublished,
-  "image": article.imageUrl || `${BASE_URL}/images/logo-light-theme.webp`,
-  "author": {
-    "@type": "Organization",
-    "name": article.author || "CVOCA"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "CVOCA",
-    "logo": {
-      "@type": "ImageObject",
-      "url": `${BASE_URL}/images/logo-light-theme.webp`
-    }
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": article.url
-  }
-});
-
-/**
- * FAQ Schema Generator - For FAQ sections
- */
-export interface FAQItem {
-  question: string;
-  answer: string;
-}
-
-export const getFAQSchema = (faqs: FAQItem[]) => ({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": faqs.map(faq => ({
-    "@type": "Question",
-    "name": faq.question,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": faq.answer
-    }
-  }))
-});

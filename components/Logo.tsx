@@ -8,10 +8,7 @@ interface LogoProps {
 }
 
 const Logo: React.FC<LogoProps> = ({ className = "w-full h-full", variant }) => {
-  // Access the base path defined in vite.config.ts
-  // We use a safe check (import.meta.env && ...) to prevent errors if env is undefined in the current runtime
-  // Cast import.meta to any to avoid TypeScript errors regarding missing 'env' property if vite types are not loaded
-  const baseUrl = ((import.meta as any).env && (import.meta as any).env.BASE_URL) || '/cvoca_website_google/';
+  const baseUrl = import.meta.env.BASE_URL || '/';
   
   const lightLogo = `${baseUrl}images/logo-light-theme.webp`;
   const darkLogo = `${baseUrl}images/logo-dark-theme.webp`;
