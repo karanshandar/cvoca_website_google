@@ -4,8 +4,8 @@ import useSEO from '../hooks/useSEO';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const BenefitCard: React.FC<{ title: string; iconPath: string; children: React.ReactNode }> = ({ title, iconPath, children }) => (
-    <div className="group flex items-start p-6 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-gray-700 hover:border-primary/30 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-        <div className="flex-shrink-0 h-12 w-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-primary group-hover:bg-primary group-hover:text-white flex items-center justify-center mr-5 transition-colors duration-300">
+    <div className="group flex items-start p-6 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-gray-700 hover:border-primary/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+        <div className="flex-shrink-0 h-12 w-12 rounded-2xl bg-primary-50 dark:bg-primary-900/20 text-primary group-hover:bg-primary group-hover:text-white flex items-center justify-center mr-5 transition-colors duration-300">
              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={iconPath} />
             </svg>
@@ -23,13 +23,13 @@ const TierCard: React.FC<{ tier: string; price: string; period: string; benefits
     
     // Theme configurations
     const theme = {
-        primaryColor: isStudent ? 'text-cyan-600 dark:text-cyan-400' : 'text-blue-600 dark:text-blue-400',
-        gradientBg: isStudent ? 'from-cyan-400 to-teal-500' : 'from-blue-500 to-indigo-600',
-        lightBg: isStudent ? 'bg-cyan-50 dark:bg-cyan-900/20' : 'bg-blue-50 dark:bg-blue-900/20',
-        buttonGradient: isStudent ? 'bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 shadow-cyan-500/30' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/30',
-        iconBg: isStudent ? 'bg-gradient-to-br from-cyan-400 to-teal-500' : 'bg-gradient-to-br from-blue-500 to-indigo-600',
-        borderColor: isStudent ? 'group-hover:border-cyan-200 dark:group-hover:border-cyan-800' : 'group-hover:border-blue-200 dark:group-hover:border-blue-800',
-        glowColor: isStudent ? 'group-hover:shadow-cyan-500/20' : 'group-hover:shadow-blue-500/20'
+        primaryColor: isStudent ? 'text-secondary dark:text-secondary-light' : 'text-primary dark:text-primary-light',
+        gradientBg: isStudent ? 'from-secondary-light to-secondary-dark' : 'from-primary to-accent',
+        lightBg: isStudent ? 'bg-secondary-50 dark:bg-secondary-900/20' : 'bg-primary-50 dark:bg-primary-900/20',
+        buttonGradient: isStudent ? 'bg-gradient-to-r from-secondary to-secondary-dark hover:from-secondary-dark hover:to-secondary-700 shadow-secondary/30' : 'bg-gradient-to-r from-primary to-accent hover:from-primary-dark hover:to-accent-dark shadow-primary/30',
+        iconBg: isStudent ? 'bg-gradient-to-br from-secondary-light to-secondary-dark' : 'bg-gradient-to-br from-primary to-accent',
+        borderColor: isStudent ? 'group-hover:border-secondary-200 dark:group-hover:border-secondary-800' : 'group-hover:border-primary-200 dark:group-hover:border-primary-800',
+        glowColor: isStudent ? 'group-hover:shadow-secondary/20' : 'group-hover:shadow-primary/20'
     };
 
     return (
@@ -96,7 +96,7 @@ const EligibilitySection: React.FC = () => (
                 {/* Life Members */}
                 <div className="flex flex-col h-full">
                     <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4 mb-6">
-                         <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                         <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary dark:text-primary-light">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                          </div>
                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Life Members</h3>
@@ -113,8 +113,8 @@ const EligibilitySection: React.FC = () => (
                         </ul>
                     </div>
 
-                     <div className="mt-8 p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/20 text-sm flex-1">
-                        <p className="text-blue-800 dark:text-blue-300 leading-relaxed">
+                     <div className="mt-8 p-5 bg-primary-50 dark:bg-primary-900/10 rounded-xl border border-primary-100 dark:border-primary-900/20 text-sm flex-1">
+                        <p className="text-primary-800 dark:text-primary-300 leading-relaxed">
                             <span className="font-bold italic">Note:</span> Only Life Members shall be regarded as members of the Association for all purposes under the Rules and Regulations and the Societies Registration Act, 1860.
                         </p>
                     </div>
@@ -123,7 +123,7 @@ const EligibilitySection: React.FC = () => (
                 {/* Students */}
                  <div className="flex flex-col h-full">
                      <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4 mb-6">
-                         <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                         <div className="w-12 h-12 rounded-full bg-secondary-100 dark:bg-secondary-900/30 flex items-center justify-center text-secondary dark:text-secondary-light">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>
                          </div>
                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Student Associates</h3>
@@ -203,7 +203,7 @@ const Membership: React.FC = () => {
                 </div>
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
-                        Invest in Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Professional Future</span>
+                        Invest in Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-secondary-light">Professional Future</span>
                     </h1>
                     <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
                         Join an elite community of Chartered & Cost Accountants. Unlock exclusive resources, networking, and growth opportunities.

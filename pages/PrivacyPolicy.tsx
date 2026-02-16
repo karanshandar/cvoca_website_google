@@ -21,9 +21,9 @@ const PrivacyPolicy: React.FC = () => {
 
     return (
         <div className="animate-fadeIn">
-            <div className="bg-primary/10 dark:bg-primary/5 pt-32 pb-16">
+            <div className="bg-primary/10 dark:bg-primary/5 pt-32 pb-24">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter">Privacy Policy</h1>
+                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">Privacy Policy</h1>
                     <p className="mt-2 text-gray-600 dark:text-gray-300">Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
             </div>

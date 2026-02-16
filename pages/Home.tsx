@@ -47,12 +47,12 @@ const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
                 <div className="p-6 flex-grow flex flex-col pt-5">
                     {/* Tags Row - Updated to match Events page styling */}
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shadow-sm">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border border-primary-200 dark:border-primary-800 shadow-sm">
                             {event.committee}
                         </span>
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-sm border ${event.cost === 'Free'
-                            ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
-                            : 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
+                            ? 'bg-success-50 text-success-700 border-success-100 dark:bg-success-700/30 dark:text-success-light dark:border-success-dark'
+                            : 'bg-primary-50 text-primary border-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800'
                             }`}>
                             {event.cost === 'Free' ? 'Free' : `${event.cost}`}
                         </span>
@@ -81,7 +81,7 @@ const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
 };
 
 const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ initiative }) => (
-    <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 h-full hover:-translate-y-1">
+    <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 h-full hover:-translate-y-1">
         <div className="relative h-48 overflow-hidden flex-shrink-0">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
             <img src={initiative.image} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700" />
@@ -198,7 +198,7 @@ const Home: React.FC = () => {
                         </span>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                        Empowering <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Financial Visionaries</span>
+                        Empowering <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-secondary-light">Financial Visionaries</span>
                     </h1>
                     <p className="mt-6 max-w-2xl mx-auto text-xl text-slate-300 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                         The official CVO Chartered & Cost Accountants Association. Knowledge, networking, and innovation for the modern finance professional.
@@ -228,7 +228,7 @@ const Home: React.FC = () => {
             {/* President's Message Strip */}
             <section className="relative w-full py-12 mt-16 mb-12 overflow-hidden">
                 {/* Background with gradient and pattern */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-50/80 via-white to-indigo-50/80 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 border-y border-blue-100/50 dark:border-slate-700"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-50/80 via-white to-blue-50/80 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 border-y border-cyan-100/50 dark:border-slate-700"></div>
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#2563eb 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -236,7 +236,7 @@ const Home: React.FC = () => {
 
                         {/* Photo & Identity */}
                         <div className="flex-shrink-0 relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full opacity-75 blur transition duration-500 group-hover:opacity-100"></div>
+                            <div className="absolute -inset-1 bg-gradient-to-br from-primary to-accent rounded-full opacity-75 blur transition duration-500 group-hover:opacity-100"></div>
                             <img
                                 src={getOptimizedImageUrl(presidentPhoto, ImageSizePresets.TEAM_PHOTO)}
                                 alt="CVOCA President"
@@ -245,7 +245,7 @@ const Home: React.FC = () => {
                                 className="relative w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-2xl"
                             />
                             {/* Decorative Badge - Center Aligned */}
-                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full border-2 border-white dark:border-slate-800 shadow-sm tracking-wider whitespace-nowrap z-20">
+                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full border-2 border-white dark:border-slate-800 shadow-sm tracking-wider whitespace-nowrap z-20">
                                 PRESIDENT
                             </div>
                         </div>
@@ -253,11 +253,11 @@ const Home: React.FC = () => {
                         {/* Content */}
                         <div className="flex-1 text-center lg:text-left relative">
                             {/* Large Decorative Quote Mark */}
-                            <svg className="absolute -top-6 -left-6 w-16 h-16 text-blue-200 dark:text-slate-700 opacity-50 transform -scale-x-100" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.054 15.392 14.471 17.227 14.102C17.388 14.07 17.483 14.043 17.483 14.043C17.483 14.043 17.483 12.879 17.483 12.022C16.326 12.022 15.196 11.537 14.378 10.72C13.56 9.902 13.076 8.771 13.076 7.614C13.076 6.457 13.56 5.326 14.378 4.509C15.196 3.691 16.326 3.206 17.483 3.206C18.64 3.206 19.77 3.691 20.588 4.509C21.406 5.326 21.89 6.457 21.89 7.614C21.89 10.966 20.73 17.062 16.738 20.551L16.273 21H14.017ZM3.132 21L3.132 18C3.132 16.054 4.507 14.471 6.342 14.102C6.503 14.07 6.598 14.043 6.598 14.043C6.598 14.043 6.598 12.879 6.598 12.022C5.441 12.022 4.311 11.537 3.493 10.72C2.675 9.902 2.191 8.771 2.191 7.614C2.191 6.457 2.675 5.326 3.493 4.509C4.311 3.691 5.441 3.206 6.598 3.206C7.755 3.206 8.885 3.691 9.703 4.509C10.521 5.326 11.005 6.457 11.005 7.614C11.005 10.966 9.845 17.062 5.853 20.551L5.388 21H3.132Z" /></svg>
+                            <svg className="absolute -top-6 -left-6 w-16 h-16 text-primary-100 dark:text-slate-800 opacity-40 transform -scale-x-100 pointer-events-none" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.054 15.392 14.471 17.227 14.102C17.388 14.07 17.483 14.043 17.483 14.043C17.483 14.043 17.483 12.879 17.483 12.022C16.326 12.022 15.196 11.537 14.378 10.72C13.56 9.902 13.076 8.771 13.076 7.614C13.076 6.457 13.56 5.326 14.378 4.509C15.196 3.691 16.326 3.206 17.483 3.206C18.64 3.206 19.77 3.691 20.588 4.509C21.406 5.326 21.89 6.457 21.89 7.614C21.89 10.966 20.73 17.062 16.738 20.551L16.273 21H14.017ZM3.132 21L3.132 18C3.132 16.054 4.507 14.471 6.342 14.102C6.503 14.07 6.598 14.043 6.598 14.043C6.598 14.043 6.598 12.879 6.598 12.022C5.441 12.022 4.311 11.537 3.493 10.72C2.675 9.902 2.191 8.771 2.191 7.614C2.191 6.457 2.675 5.326 3.493 4.509C4.311 3.691 5.441 3.206 6.598 3.206C7.755 3.206 8.885 3.691 9.703 4.509C10.521 5.326 11.005 6.457 11.005 7.614C11.005 10.966 9.845 17.062 5.853 20.551L5.388 21H3.132Z" /></svg>
 
                             <div className="flex flex-wrap items-center gap-3 mb-3">
-                                <h3 className="relative text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">President's Communication</h3>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800 uppercase tracking-wide">
+                                <h3 className="relative text-sm font-bold text-primary dark:text-primary-light uppercase tracking-widest">President's Communication</h3>
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary-50 text-primary border border-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800 uppercase tracking-wide">
                                     {(() => {
                                         const dateStr = presidentMessageData?.date;
                                         if (!dateStr) return "January 1, 2026";
@@ -285,10 +285,10 @@ const Home: React.FC = () => {
                                 href="https://blog.cvoca.org/category/presidents-communication/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 text-gray-900 dark:text-white font-semibold rounded-full shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-gray-100 dark:border-gray-600"
+                                className="group inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 text-primary dark:text-white font-semibold rounded-full shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-gray-100 dark:border-gray-600 whitespace-nowrap"
                             >
-                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 font-bold">Read Full Message</span>
-                                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                <span className="font-bold">Read Full Message</span>
+                                <svg className="w-5 h-5 text-primary dark:text-primary-light transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                             </a>
                         </div>
                     </div>

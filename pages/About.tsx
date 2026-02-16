@@ -60,7 +60,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/30">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/30">
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50"
@@ -130,15 +130,15 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
             </div>
 
             {/* Featured Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-slate-800 dark:to-slate-900 text-white shadow-2xl p-6 md:p-12 mb-10 border border-blue-500/30 dark:border-gray-700">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent dark:from-slate-800 dark:to-slate-900 text-white shadow-2xl p-6 md:p-12 mb-10 border border-primary/30 dark:border-gray-700">
                 {/* Background decoration */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/30 dark:bg-blue-600/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/30 dark:bg-primary/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
 
                 <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8">
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-4">
-                            <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-white/20 dark:bg-blue-500/20 backdrop-blur-sm border border-white/20 dark:border-blue-500/30 text-white dark:text-blue-100 rounded-full">
+                            <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-white/20 dark:bg-primary/20 backdrop-blur-sm border border-white/20 dark:border-primary/30 text-white dark:text-primary-100 rounded-full">
                                 Latest Release
                             </span>
                             <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-emerald-500/20 dark:bg-emerald-500/10 backdrop-blur-sm border border-emerald-400/30 dark:border-emerald-500/20 text-emerald-100 dark:text-emerald-300 rounded-full">
@@ -148,7 +148,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                         <h3 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-3 tracking-tight break-words leading-tight text-white">
                             {featuredReport.title}
                         </h3>
-                        <p className="text-blue-100 dark:text-gray-300 text-base md:text-lg font-medium leading-relaxed max-w-2xl">
+                        <p className="text-primary-100 dark:text-gray-300 text-base md:text-lg font-medium leading-relaxed max-w-2xl">
                             {featuredReport.description || 'Comprehensive review of financials, events, and strategic initiatives for the fiscal year.'}
                         </p>
                     </div>
@@ -157,7 +157,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                             href={featuredReport.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-4 bg-white dark:bg-primary text-blue-700 dark:text-white font-bold rounded-xl hover:bg-blue-50 dark:hover:bg-primary-dark transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 whitespace-nowrap"
+                            className="flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-4 bg-white dark:bg-primary text-primary dark:text-white font-bold rounded-xl hover:bg-primary-50 dark:hover:bg-primary-dark transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 whitespace-nowrap"
                         >
                             <span>Download PDF</span>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
@@ -396,7 +396,7 @@ const About: React.FC = () => {
                                         </div>
                                         <div className="flex flex-col items-end">
                                             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Native Place</span>
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800 mt-1">
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border border-primary-100 dark:border-primary-800 mt-1">
                                                 {president.village}
                                             </span>
                                         </div>
@@ -471,7 +471,7 @@ const About: React.FC = () => {
                                                     {president.term}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800">
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border border-primary-100 dark:border-primary-800">
                                                         {president.village}
                                                     </span>
                                                 </td>
@@ -504,8 +504,8 @@ const About: React.FC = () => {
             {/* Hero Section */}
             <section className="relative bg-slate-900 pt-32 pb-24 text-center overflow-hidden">
                 <div className="absolute inset-0">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
+                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
                 </div>
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full mb-6">
@@ -533,13 +533,13 @@ const About: React.FC = () => {
 
                 {/* Vision and Mission */}
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-3xl border border-blue-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
+                    <div className="bg-gradient-to-br from-primary-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-3xl border border-primary-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
                         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Our Vision</h2>
                         <ul className="space-y-4">
                             {["Most reputed knowledge organization", "Nucleus of activity & unity", "Proactive economic development"].map((item, i) => (
                                 <li key={i} className="flex items-center p-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
-                                    <span className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary mr-4">
+                                    <span className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary mr-4">
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                     </span>
                                     <span className="text-gray-700 dark:text-gray-200 font-medium">{item}</span>
@@ -547,8 +547,8 @@ const About: React.FC = () => {
                             ))}
                         </ul>
                     </div>
-                    <div className="bg-gradient-to-br from-cyan-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-3xl border border-cyan-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/10 transition-colors"></div>
+                    <div className="bg-gradient-to-br from-secondary-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-3xl border border-secondary-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
                         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Our Mission</h2>
                         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
                             To foster professional excellence, promote ethical practices, and create a supportive community while driving innovation and growth in the financial sector. We strive to be the catalyst for our members' success in a rapidly evolving global economy.

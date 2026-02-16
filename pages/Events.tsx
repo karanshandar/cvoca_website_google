@@ -225,12 +225,12 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
 
                 {/* Header: Committee & Cost */}
                 <div className="flex flex-wrap justify-between items-start mb-4 gap-3">
-                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shadow-sm">
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border border-primary-200 dark:border-primary-800 shadow-sm">
                         {event.committee}
                     </span>
                     <span className={`shrink-0 inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm border ${event.cost === 'Free'
-                        ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
-                        : 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
+                        ? 'bg-success-50 text-success-700 border-success-100 dark:bg-success-700/30 dark:text-success-light dark:border-success-dark'
+                        : 'bg-primary-50 text-primary border-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800'
                         }`}>
                         {event.cost === 'Free' ? 'Free' : `${event.cost}`}
                     </span>
@@ -244,7 +244,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                 {/* Meta Info */}
                 <div className="space-y-4 mb-6">
                     <div className="flex items-start gap-4">
-                        <IconWrapper className="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 border-blue-100 dark:border-blue-800">
+                        <IconWrapper className="bg-primary-50 text-primary dark:bg-primary-900/20 dark:text-primary-light border-primary-100 dark:border-primary-800">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -349,7 +349,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                                 href={event.readMoreLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="col-span-1 sm:col-span-2 px-4 py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-bold text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors duration-200 flex items-center justify-center gap-2"
+                                className="col-span-1 sm:col-span-2 px-4 py-2.5 rounded-xl border border-primary-200 dark:border-primary-800 text-primary-700 dark:text-primary-300 font-bold text-sm hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors duration-200 flex items-center justify-center gap-2"
                             >
                                 Read More
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -479,14 +479,14 @@ const Events: React.FC = () => {
             <SchemaMarkup schema={[...eventSchemas, breadcrumbSchema]} />
 
             {/* Hero Section */}
-            <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 py-32 pb-24 text-center text-white relative overflow-hidden">
+            <section className="bg-gradient-to-br from-slate-900 via-primary-900 to-slate-900 pt-32 pb-24 text-center text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-3xl mix-blend-screen"></div>
-                    <div className="absolute bottom-0 right-0 w-80 h-80 bg-purple-500 rounded-full blur-3xl mix-blend-screen"></div>
+                    <div className="absolute bottom-0 right-0 w-80 h-80 bg-accent rounded-full blur-3xl mix-blend-screen"></div>
                 </div>
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">Upcoming Events</h1>
-                    <p className="text-xl text-blue-100 max-w-2xl mx-auto font-light">Connect, learn, and grow with our curated professional gatherings.</p>
+                    <p className="text-xl text-primary-100 max-w-2xl mx-auto font-light">Connect, learn, and grow with our curated professional gatherings.</p>
                 </div>
             </section>
 
