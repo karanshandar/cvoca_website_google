@@ -5,7 +5,9 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
-      - key: GEMINI_API_KEY
+      - key: VITE_GOOGLE_SHEETS_API_KEY
+        sync: false
+      - key: VITE_GOOGLE_SHEET_ID
         sync: false
     headers:
       - path: /*
@@ -19,7 +21,7 @@ services:
         value: 1; mode=block
       - path: /*
         name: Content-Security-Policy
-        value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://aistudiocdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://aistudiocdn.com; frame-src https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;"
+        value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://sheets.googleapis.com; frame-src https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;"
       - path: /*
         name: Strict-Transport-Security
         value: "max-age=31536000; includeSubDomains; preload"

@@ -24,7 +24,7 @@ export async function fetchSheetData<T = Record<string, unknown>>(tabName: strin
   try {
     const url = `${SHEETS_API_BASE}/${SHEET_ID}/values/${encodeURIComponent(tabName)}?key=${API_KEY}`;
 
-    console.log(`Fetching data from Google Sheets tab: ${tabName}`);
+    if (import.meta.env.DEV) console.log(`Fetching data from Google Sheets tab: ${tabName}`);
 
     const response = await fetch(url);
 
@@ -58,7 +58,7 @@ export async function fetchSheetData<T = Record<string, unknown>>(tabName: strin
       return obj;
     });
 
-    console.log(`Successfully fetched ${jsonData.length} records from ${tabName}`);
+    if (import.meta.env.DEV) console.log(`Successfully fetched ${jsonData.length} records from ${tabName}`);
     return jsonData;
 
   } catch (error) {
