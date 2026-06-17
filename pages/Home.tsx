@@ -118,7 +118,6 @@ const Home: React.FC = () => {
     const [outreach, setOutreach] = useState<OutreachInitiative[]>([]);
     const [presidentPhoto, setPresidentPhoto] = useState<string>('');
     const [presidentMessageData, setPresidentMessageData] = useState<PresidentMessage | null>(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -154,8 +153,6 @@ const Home: React.FC = () => {
                 }
             } catch (err) {
                 console.error("Failed to fetch data", err);
-            } finally {
-                setLoading(false);
             }
         };
         fetchData();
@@ -177,7 +174,7 @@ const Home: React.FC = () => {
         return outreach.slice(0, 3);
     }, [outreach]);
 
-    if (loading || !homeData) {
+    if (!homeData) {
         return <LoadingSpinner />;
     }
 
@@ -237,13 +234,20 @@ const Home: React.FC = () => {
                         {/* Photo & Identity */}
                         <div className="flex-shrink-0 relative group">
                             <div className="absolute -inset-1 bg-gradient-to-br from-primary to-accent rounded-full opacity-75 blur transition duration-500 group-hover:opacity-100"></div>
-                            <img
-                                src={getOptimizedImageUrl(presidentPhoto, ImageSizePresets.TEAM_PHOTO)}
-                                alt="CVOCA President"
-                                loading="lazy"
-                                decoding="async"
-                                className="relative w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-2xl"
-                            />
+                            {presidentPhoto ? (
+                                <img
+                                    src={getOptimizedImageUrl(presidentPhoto, ImageSizePresets.TEAM_PHOTO)}
+                                    alt="CVOCA President"
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="relative w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-2xl"
+                                />
+                            ) : (
+                                <div
+                                    aria-hidden="true"
+                                    className="relative w-32 h-32 rounded-full border-4 border-white dark:border-slate-800 shadow-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"
+                                />
+                            )}
                             {/* Decorative Badge - Center Aligned */}
                             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full border-2 border-white dark:border-slate-800 shadow-sm tracking-wider whitespace-nowrap z-20">
                                 PRESIDENT
