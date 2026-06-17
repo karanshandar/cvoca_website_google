@@ -1,12 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import useFetch from '../hooks/useFetch';
 import { Link } from 'react-router-dom';
 import { HomeData, CvoEvent, OutreachInitiative, PresidentMessage, CommitteeMember } from '../types';
 import useSEO from '../hooks/useSEO';
+import { canonical } from '../constants';
 import { fetchPresidentMessage, fetchManagingCommittee } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Icon from '../components/Icon';
 
 const StatCard: React.FC<{ value: string; label: string; delay: string }> = ({ value, label, delay }) => (
     <div className={`bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 text-center transform transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl animate-fade-in-up`} style={{ animationDelay: delay }}>
@@ -66,11 +69,11 @@ const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
 
                     <div className="space-y-3 mb-2 mt-auto">
                         <div className="flex items-start text-sm text-gray-600 dark:text-gray-400">
-                            <svg className="w-4 h-4 mr-2.5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <Icon name="clock" className="w-4 h-4 mr-2.5 text-gray-400 mt-0.5 flex-shrink-0" />
                             <span>{event.time}</span>
                         </div>
                         <div className="flex items-start text-sm text-gray-600 dark:text-gray-400">
-                            <svg className="w-4 h-4 mr-2.5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <Icon name="location" className="w-4 h-4 mr-2.5 text-gray-400 mt-0.5 flex-shrink-0" />
                             <span className="line-clamp-1">{event.location}</span>
                         </div>
                     </div>
@@ -84,7 +87,7 @@ const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ ini
     <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 h-full hover:-translate-y-1">
         <div className="relative h-48 overflow-hidden flex-shrink-0">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-            <img src={initiative.image} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700" />
+            <img src={getOptimizedImageUrl(initiative.image, ImageSizePresets.EVENT_CARD)} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700" />
             <div className="absolute bottom-4 left-4 z-20">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/30">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +101,7 @@ const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ ini
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{initiative.title}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 flex-grow">{initiative.description}</p>
             <Link to="/digital-outreach" className="text-primary text-sm font-bold hover:text-primary-dark inline-flex items-center mt-auto">
-                Learn more <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                Learn more <Icon name="arrow-right" className="w-4 h-4 ml-1" />
             </Link>
         </div>
     </div>
@@ -109,54 +112,38 @@ const Home: React.FC = () => {
     useSEO({
         title: 'Home',
         description: 'CVOCA - CVO Chartered & Cost Accountants Association. Premier professional body for CAs and CMAs in Mumbai since 1973. Join 2,400+ members for networking, events, and professional growth.',
-        canonicalUrl: 'https://cvoca.org/',
+        canonicalUrl: canonical('/'),
         keywords: 'CVOCA, Chartered Accountants Mumbai, Cost Accountants Association, CA networking India, professional accountants community'
     });
 
-    const [homeData, setHomeData] = useState<HomeData | null>(null);
-    const [events, setEvents] = useState<CvoEvent[]>([]);
-    const [outreach, setOutreach] = useState<OutreachInitiative[]>([]);
-    const [presidentPhoto, setPresidentPhoto] = useState<string>('');
-    const [presidentMessageData, setPresidentMessageData] = useState<PresidentMessage | null>(null);
+    // Local JSON (always available) — the page renders as soon as homeData resolves.
+    const { data: homeData } = useFetch<HomeData>(
+        () => fetch('/data/home.json').then((r) => r.json()),
+    );
+    const { data: eventsData } = useFetch<CvoEvent[]>(
+        () => fetch('/data/events.json').then((r) => r.json()),
+    );
+    const { data: outreachData } = useFetch<OutreachInitiative[]>(
+        () => fetch('/data/digitalOutreach.json').then((r) => r.json()),
+    );
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch static JSON data (always available)
-                const [homeRes, eventsRes, outreachRes] = await Promise.all([
-                    fetch('/data/home.json'),
-                    fetch('/data/events.json'),
-                    fetch('/data/digitalOutreach.json'),
-                ]);
+    // Google Sheets data — hydrates the president section after first paint;
+    // failures fall back without blocking the page.
+    const { data: presidentMessageData } = useFetch<PresidentMessage | null>(
+        () => fetchPresidentMessage().catch(() => null) as unknown as Promise<PresidentMessage | null>,
+    );
+    const { data: committee } = useFetch<CommitteeMember[]>(
+        () =>
+            fetchWithFallback(
+                fetchManagingCommittee,
+                '/data/managingCommittee.json',
+            ) as unknown as Promise<CommitteeMember[]>,
+    );
 
-                if (homeRes.ok) setHomeData(await homeRes.json());
-                if (eventsRes.ok) setEvents(await eventsRes.json());
-                if (outreachRes.ok) setOutreach(await outreachRes.json());
-
-                // Fetch Google Sheets data separately so failures don't block the page
-                try {
-                    const messageData = await fetchPresidentMessage();
-                    if (messageData) setPresidentMessageData(messageData);
-                } catch (msgErr) {
-                    console.error("Failed to fetch president message:", msgErr);
-                }
-
-                try {
-                    const committee = await fetchWithFallback(
-                        fetchManagingCommittee,
-                        '/data/managingCommittee.json'
-                    );
-                    const president = committee.find((member: CommitteeMember) => member.role === 'President');
-                    if (president?.photoUrl) setPresidentPhoto(president.photoUrl);
-                } catch (committeeErr) {
-                    console.error("Failed to fetch committee data:", committeeErr);
-                }
-            } catch (err) {
-                console.error("Failed to fetch data", err);
-            }
-        };
-        fetchData();
-    }, []);
+    const events = eventsData ?? [];
+    const outreach = outreachData ?? [];
+    const president = committee?.find((m) => m.role === 'President');
+    const presidentPhoto = president?.photoUrl ?? '';
 
     // Logic to filter upcoming events (Next 2, as we have 1 static card)
     const upcomingEvents = React.useMemo(() => {
@@ -257,14 +244,13 @@ const Home: React.FC = () => {
                         {/* Content */}
                         <div className="flex-1 text-center lg:text-left relative">
                             {/* Large Decorative Quote Mark */}
-                            <svg className="absolute -top-6 -left-6 w-16 h-16 text-primary-100 dark:text-slate-800 opacity-40 transform -scale-x-100 pointer-events-none" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.054 15.392 14.471 17.227 14.102C17.388 14.07 17.483 14.043 17.483 14.043C17.483 14.043 17.483 12.879 17.483 12.022C16.326 12.022 15.196 11.537 14.378 10.72C13.56 9.902 13.076 8.771 13.076 7.614C13.076 6.457 13.56 5.326 14.378 4.509C15.196 3.691 16.326 3.206 17.483 3.206C18.64 3.206 19.77 3.691 20.588 4.509C21.406 5.326 21.89 6.457 21.89 7.614C21.89 10.966 20.73 17.062 16.738 20.551L16.273 21H14.017ZM3.132 21L3.132 18C3.132 16.054 4.507 14.471 6.342 14.102C6.503 14.07 6.598 14.043 6.598 14.043C6.598 14.043 6.598 12.879 6.598 12.022C5.441 12.022 4.311 11.537 3.493 10.72C2.675 9.902 2.191 8.771 2.191 7.614C2.191 6.457 2.675 5.326 3.493 4.509C4.311 3.691 5.441 3.206 6.598 3.206C7.755 3.206 8.885 3.691 9.703 4.509C10.521 5.326 11.005 6.457 11.005 7.614C11.005 10.966 9.845 17.062 5.853 20.551L5.388 21H3.132Z" /></svg>
+                            <Icon name="quote" className="absolute -top-6 -left-6 w-16 h-16 text-primary-100 dark:text-slate-800 opacity-40 transform -scale-x-100 pointer-events-none" />
 
                             <div className="flex flex-wrap items-center gap-3 mb-3">
                                 <h3 className="relative text-sm font-bold text-primary dark:text-primary-light uppercase tracking-widest">President's Communication</h3>
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary-50 text-primary border border-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800 uppercase tracking-wide">
                                     {(() => {
-                                        const dateStr = presidentMessageData?.date;
-                                        if (!dateStr) return "January 1, 2026";
+                                        const dateStr = presidentMessageData?.date ?? homeData.presidentDefault.date;
                                         try {
                                             const [year, month, day] = dateStr.split('-').map(Number);
                                             const date = new Date(year, month - 1, day);
@@ -276,10 +262,10 @@ const Home: React.FC = () => {
                                 </span>
                             </div>
                             <blockquote className="relative text-xl md:text-2xl font-serif italic text-gray-800 dark:text-gray-100 leading-relaxed">
-                                {presidentMessageData?.message ? `"${presidentMessageData.message}"` : '"Wishing all a prosperous Vikram Samvat 2082. With new opportunities come increased responsibilities for professionals. Looking forward to your active participation in our exciting events and initiatives ahead."'}
+                                {presidentMessageData?.message ? `"${presidentMessageData.message}"` : `"${homeData.presidentDefault.message}"`}
                             </blockquote>
                             <div className="mt-4 flex flex-col lg:flex-row items-center lg:items-start gap-1">
-                                <span className="font-bold text-gray-900 dark:text-white">— CA Harsh Hasmukh Dedhia</span>
+                                <span className="font-bold text-gray-900 dark:text-white">— {president?.name ?? homeData.presidentDefault.name}</span>
                             </div>
                         </div>
 
@@ -292,7 +278,7 @@ const Home: React.FC = () => {
                                 className="group inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 text-primary dark:text-white font-semibold rounded-full shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-gray-100 dark:border-gray-600 whitespace-nowrap"
                             >
                                 <span className="font-bold">Read Full Message</span>
-                                <svg className="w-5 h-5 text-primary dark:text-primary-light transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                <Icon name="arrow-long-right" className="w-5 h-5 text-primary dark:text-primary-light transform group-hover:translate-x-1 transition-transform" />
                             </a>
                         </div>
                     </div>
@@ -340,9 +326,7 @@ const Home: React.FC = () => {
                                     <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-cyan-100 text-cyan-800 dark:bg-cyan-900/50 dark:text-cyan-200 border border-cyan-200 dark:border-cyan-800">
                                         Monthly Resource
                                     </span>
-                                    <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
+                                    <Icon name="calendar" className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                                 </div>
                                 {/* Content */}
                                 <div className="p-6 flex-grow flex flex-col relative z-10">
@@ -359,9 +343,7 @@ const Home: React.FC = () => {
                                     </p>
                                     <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white text-sm font-bold rounded-xl shadow-md shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group-hover:shadow-lg">
                                         View Deadlines
-                                        <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                        </svg>
+                                        <Icon name="arrow-long-right" className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                     </button>
                                 </div>
                             </div>
@@ -376,7 +358,7 @@ const Home: React.FC = () => {
                         {upcomingEvents.length === 0 && (
                             <div className="col-span-1 md:col-span-2 text-center py-16 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center">
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 mb-4">
-                                    <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                    <Icon name="calendar" className="w-8 h-8 text-gray-400" />
                                 </div>
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">More Events Coming Soon</h3>
                             </div>
@@ -386,7 +368,7 @@ const Home: React.FC = () => {
                     <div className="mt-12 text-center">
                         <Link to="/events" className="inline-flex items-center px-6 py-3 rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all shadow-md hover:shadow-lg group">
                             See All Upcoming Events
-                            <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            <Icon name="arrow-long-right" className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
                 </div>
@@ -412,7 +394,7 @@ const Home: React.FC = () => {
                 <div className="text-center mt-12">
                     <Link to="/digital-outreach" className="inline-flex items-center px-6 py-3 rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-secondary hover:text-white dark:hover:bg-secondary dark:hover:text-white transition-all shadow-md hover:shadow-lg group">
                         View All Initiatives
-                        <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        <Icon name="arrow-long-right" className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
             </section>

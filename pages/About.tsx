@@ -1,11 +1,14 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 import useSEO from '../hooks/useSEO';
+import { canonical } from '../constants';
 import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports, fetchPastPresidents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Icon from '../components/Icon';
+import useFetch from '../hooks/useFetch';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -74,9 +77,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
                     <div className="flex items-center gap-3 md:border-l md:pl-4 border-gray-100 dark:border-gray-700">
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                             {/* Crown/User Icon for Chairperson */}
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
+                            <Icon name="shield-check" className="w-5 h-5" />
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Chairperson</span>
@@ -88,7 +89,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
                 )}
 
                 <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''} text-gray-400`}>
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    <Icon name="chevron-down" className="w-5 h-5" />
                 </div>
             </button>
 
@@ -160,7 +161,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                             className="flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-4 bg-white dark:bg-primary text-primary dark:text-white font-bold rounded-xl hover:bg-primary-50 dark:hover:bg-primary-dark transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 whitespace-nowrap"
                         >
                             <span>Download PDF</span>
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            <Icon name="download" className="w-5 h-5" />
                         </a>
                     </div>
                 </div>
@@ -174,7 +175,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                         className="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:shadow-md hover:text-primary dark:hover:text-primary transition-all mb-8 z-10 relative"
                     >
                         {showAll ? 'Hide Archive' : 'View Archive'}
-                        <svg className={`w-4 h-4 transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        <Icon name="chevron-down" className={`w-4 h-4 transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`} />
                     </button>
                 </div>
             )}
@@ -191,7 +192,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                         </div>
                         <a href={report.link} target="_blank" rel="noopener noreferrer" className="mt-auto w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 dark:bg-slate-700/50 hover:bg-primary hover:text-white dark:hover:bg-primary text-gray-600 dark:text-gray-300 text-sm font-semibold rounded-lg transition-all">
                             Download
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            <Icon name="download" className="w-4 h-4" />
                         </a>
                     </div>
                 ))}
@@ -205,16 +206,11 @@ const About: React.FC = () => {
     useSEO({
         title: 'About Us',
         description: 'Learn about CVOCA - CVO Chartered & Cost Accountants Association. Established in 1973, we are a premier professional body serving 2,400+ members in Mumbai with networking and development opportunities.',
-        canonicalUrl: 'https://cvoca.org/about',
+        canonicalUrl: canonical('/about'),
         keywords: 'CVOCA history, about CVOCA, chartered accountants association Mumbai, managing committee, past presidents'
     });
 
     const [activeTab, setActiveTab] = useState<'managing' | 'core' | 'past'>('managing');
-    const [managingCommittee, setManagingCommittee] = useState<CommitteeMember[]>([]);
-    const [pastPresidents, setPastPresidents] = useState<PastPresident[]>([]);
-    const [committees, setCommittees] = useState<Committee[]>([]);
-    const [annualReports, setAnnualReports] = useState<AnnualReport[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Core Committee Search
     const [coreSearch, setCoreSearch] = useState('');
@@ -223,29 +219,16 @@ const About: React.FC = () => {
     const [ppSearch, setPpSearch] = useState('');
     const [ppSort, setPpSort] = useState<{ key: keyof PastPresident; direction: 'asc' | 'desc' }>({ key: 'srNo', direction: 'asc' });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const [mcData, cData, arData, ppData] = await Promise.all([
-                    fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json'),
-                    fetchWithFallback(fetchCommittees, '/data/committees.json'),
-                    fetchWithFallback(fetchAnnualReports, '/data/annualReports.json'),
-                    fetchWithFallback(fetchPastPresidents, '/data/pastPresidents.json'),
-                ]);
-
-                setManagingCommittee(mcData);
-                setCommittees(cData);
-                setAnnualReports(arData);
-                setPastPresidents(ppData);
-            } catch (error) {
-                console.error("Failed to fetch about page data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
+    const { data, loading } = useFetch<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>(
+        () =>
+            Promise.all([
+                fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json'),
+                fetchWithFallback(fetchCommittees, '/data/committees.json'),
+                fetchWithFallback(fetchAnnualReports, '/data/annualReports.json'),
+                fetchWithFallback(fetchPastPresidents, '/data/pastPresidents.json'),
+            ]) as unknown as Promise<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>,
+    );
+    const [managingCommittee, committees, annualReports, pastPresidents] = data ?? [[], [], [], []];
 
     const renderTabContent = () => {
         if (loading) {
@@ -292,7 +275,7 @@ const About: React.FC = () => {
                         <div className="flex justify-end mb-6">
                             <div className="relative w-full md:w-96 group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <Icon name="search" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
                                 </div>
                                 <input
                                     type="text"
@@ -353,10 +336,10 @@ const About: React.FC = () => {
                 };
 
                 const SortIcon = ({ column }: { column: keyof PastPresident }) => {
-                    if (ppSort.key !== column) return <svg className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-50 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>;
+                    if (ppSort.key !== column) return <Icon name="sort" className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-50 transition-opacity" />;
                     return ppSort.direction === 'asc'
-                        ? <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
-                        : <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>;
+                        ? <Icon name="chevron-up" className="w-4 h-4 text-primary" />
+                        : <Icon name="chevron-down" className="w-4 h-4 text-primary" />;
                 };
 
                 return (
@@ -365,7 +348,7 @@ const About: React.FC = () => {
                         <div className="flex justify-end">
                             <div className="relative w-full md:w-72 group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <Icon name="search" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
                                 </div>
                                 <input
                                     type="text"
@@ -540,7 +523,7 @@ const About: React.FC = () => {
                             {["Most reputed knowledge organization", "Nucleus of activity & unity", "Proactive economic development"].map((item, i) => (
                                 <li key={i} className="flex items-center p-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
                                     <span className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary mr-4">
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        <Icon name="check" className="w-5 h-5" strokeWidth={3} />
                                     </span>
                                     <span className="text-gray-700 dark:text-gray-200 font-medium">{item}</span>
                                 </li>

@@ -1,5 +1,6 @@
 import React from 'react';
 import useSEO from '../hooks/useSEO';
+import { canonical } from '../constants';
 
 const Section: React.FC<{ title: string; id: string; children: React.ReactNode }> = ({ title, id, children }) => (
     <section id={id} className="mb-8">
@@ -15,7 +16,7 @@ const PrivacyPolicy: React.FC = () => {
     useSEO({
         title: 'Privacy Policy',
         description: 'CVOCA Privacy Policy - Learn how we collect, use, and protect your personal information. Our commitment to data privacy and security for members and visitors.',
-        canonicalUrl: 'https://cvoca.org/privacy-policy',
+        canonicalUrl: canonical('/privacy-policy'),
         noIndex: true
     });
 

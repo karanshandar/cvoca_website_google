@@ -65,18 +65,16 @@ export interface HomeFeature {
   iconPath: string; // Storing SVG path data string
 }
 
-export interface HomeNews {
-  badge: string;
-  badgeColor: string;
+export interface PresidentDefault {
+  name: string;
+  message: string;
   date: string;
-  title: string;
-  description: string;
 }
 
 export interface HomeData {
   stats: HomeStat[];
   features: HomeFeature[];
-  news: HomeNews[];
+  presidentDefault: PresidentDefault;
 }
 
 export interface BlogPost {

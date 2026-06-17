@@ -2,7 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { OutreachInitiative, OutreachContact } from '../types';
 import useSEO from '../hooks/useSEO';
+import { canonical } from '../constants';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Icon from '../components/Icon';
+import useFetch from '../hooks/useFetch';
+import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 
 interface CardTheme {
     isDarkCard: boolean;
@@ -124,9 +128,9 @@ const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ image
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md transition-opacity duration-300 animate-fade-in-up" onClick={onClose}>
             <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50">
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                <Icon name="close" className="w-8 h-8" />
             </button>
-            <img src={imageUrl} alt="Enlarged view" className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={(e) => e.stopPropagation()} />
+            <img src={getOptimizedImageUrl(imageUrl, ImageSizePresets.LARGE)} alt="Enlarged view" className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={(e) => e.stopPropagation()} />
         </div>
     );
 };
@@ -139,7 +143,7 @@ const CoordinatorPill: React.FC<{ contact: OutreachContact; theme: CardTheme }> 
                 {contact.type === 'whatsapp' ? (
                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.017-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                 ) : (
-                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                     <Icon name="phone" className="w-4 h-4" />
                 )}
             </div>
             <div className="flex flex-col">
@@ -166,7 +170,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
             
             {/* IMAGE SIDE (40%) */}
             <div className="lg:w-5/12 relative min-h-[350px] lg:min-h-full cursor-pointer group overflow-hidden" onClick={() => onImageClick(initiative.image)}>
-                <img src={initiative.image} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img src={getOptimizedImageUrl(initiative.image, ImageSizePresets.EVENT_CARD)} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent lg:bg-black/10"></div>
                 
                 {/* Floating Badge */}
@@ -183,7 +187,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
 
                  {/* Zoom Hint */}
                  <div className={`absolute bottom-4 ${isReverse ? 'left-4' : 'right-4'} bg-black/40 backdrop-blur-sm p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden lg:block`}>
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+                    <Icon name="zoom-in" className="w-5 h-5" />
                 </div>
             </div>
 
@@ -221,7 +225,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                         <ul className="space-y-3">
                             {initiative.features.map((feature, idx) => (
                                 <li key={idx} className={`flex items-start gap-3 text-sm font-medium ${theme.isDarkCard ? 'text-gray-200' : 'text-gray-700 dark:text-gray-200'}`}>
-                                    <svg className={`w-5 h-5 flex-shrink-0 ${theme.featureIcon}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                    <Icon name="check" className={`w-5 h-5 flex-shrink-0 ${theme.featureIcon}`} />
                                     <span className="leading-snug">{feature}</span>
                                 </li>
                             ))}
@@ -270,7 +274,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                                 className={`w-full md:w-auto px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap ${theme.button}`}
                             >
                                 <span>{initiative.ctaText}</span>
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                <Icon name="arrow-long-right" className="w-5 h-5" />
                             </a>
                         </div>
                     )}
@@ -282,7 +286,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                                 href={initiative.contacts[0].contact} 
                                 className={`w-full md:w-auto px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 whitespace-nowrap ${theme.button}`}
                             >
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                <Icon name="phone" className="w-5 h-5" />
                                 <div className="flex flex-col items-start leading-none">
                                     <span className="text-[10px] uppercase font-bold opacity-80 mb-0.5">{initiative.ctaText}</span>
                                     <span className="text-lg">{initiative.contacts[0].label}</span>
@@ -302,26 +306,15 @@ const DigitalOutreach: React.FC = () => {
     useSEO({
         title: 'Digital Outreach',
         description: 'CVOCA Digital Outreach initiatives - Value Investing Club, Tech & AI Study Group, Student Mentorship (BUDDY/MITRAM), and Financial Aid programs for CA students and professionals.',
-        canonicalUrl: 'https://cvoca.org/digital-outreach',
+        canonicalUrl: canonical('/digital-outreach'),
         keywords: 'CVOCA outreach, value investing club, CA mentorship, student support, tech and AI accounting'
     });
 
-    const [initiatives, setInitiatives] = useState<OutreachInitiative[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { data, loading } = useFetch<OutreachInitiative[]>(
+        () => fetch('/data/digitalOutreach.json').then((res) => res.json()),
+    );
+    const initiatives = data ?? [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-    useEffect(() => {
-        fetch('/data/digitalOutreach.json')
-            .then(res => res.json())
-            .then(data => {
-                setInitiatives(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error("Failed to fetch initiatives", err);
-                setLoading(false);
-            });
-    }, []);
 
     return (
         <div className="animate-fadeIn bg-gray-50 dark:bg-slate-950 min-h-screen font-sans selection:bg-primary/20">

@@ -2,12 +2,15 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CvoEvent } from '../types';
 import useSEO from '../hooks/useSEO';
+import { canonical } from '../constants';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
 import { fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Icon from '../components/Icon';
+import useFetch from '../hooks/useFetch';
 
 const getGoogleCalendarUrl = (event: CvoEvent): string => {
     // Safely parse YYYY-MM-DD to avoid timezone issues
@@ -106,9 +109,7 @@ const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ image
                     className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10 font-medium text-sm"
                     title="Open Full Size (Zoom)"
                 >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
+                    <Icon name="external-link" className="w-5 h-5" />
                     <span className="hidden sm:inline">Open Full Size</span>
                 </a>
                 <button
@@ -116,14 +117,12 @@ const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ image
                     className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
                     aria-label="Close"
                 >
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <Icon name="close" className="w-6 h-6" />
                 </button>
             </div>
 
             <img
-                src={imageUrl}
+                src={getOptimizedImageUrl(imageUrl, ImageSizePresets.LARGE)}
                 alt="Event Flyer"
                 className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
@@ -186,9 +185,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                         {/* Zoom overlay hint */}
                         <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all duration-300 flex items-center justify-center">
                             <div className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-full shadow-lg opacity-0 group-hover/image:opacity-100 transform translate-y-4 group-hover/image:translate-y-0 transition-all duration-300 scale-90 group-hover/image:scale-100">
-                                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                                </svg>
+                                <Icon name="zoom-in" className="w-5 h-5 text-primary" />
                             </div>
                         </div>
                     </>
@@ -245,9 +242,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                 <div className="space-y-4 mb-6">
                     <div className="flex items-start gap-4">
                         <IconWrapper className="bg-primary-50 text-primary dark:bg-primary-900/20 dark:text-primary-light border-primary-100 dark:border-primary-800">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <Icon name="clock" className="w-5 h-5" />
                         </IconWrapper>
                         <div className="flex-1 py-0.5 min-w-0">
                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Time</p>
@@ -257,9 +252,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
 
                     <div className="flex items-start gap-4">
                         <IconWrapper className="bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 border-rose-100 dark:border-rose-800">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
+                            <Icon name="location" className="w-5 h-5" />
                         </IconWrapper>
                         <div className="flex-1 py-0.5 min-w-0">
                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Location</p>
@@ -272,9 +265,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                         <div className="flex items-start gap-4">
                             <IconWrapper className="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800">
                                 {/* Ticket Icon - Outlined */}
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                                </svg>
+                                <Icon name="ticket" className="w-5 h-5" />
                             </IconWrapper>
                             <div className="flex-1 py-0.5 min-w-0">
                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Entry Fee</p>
@@ -301,7 +292,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                                 className="text-primary text-xs font-bold hover:text-primary-dark flex items-center gap-1 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded transition-colors duration-200"
                             >
                                 {isExpanded ? 'Collapse' : 'Expand'}
-                                <svg className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'group-hover/btn:translate-y-0.5'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                <Icon name="chevron-down" className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'group-hover/btn:translate-y-0.5'}`} />
                             </button>
                         </div>
                     )}
@@ -324,7 +315,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                             rel="noopener noreferrer"
                             className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold text-sm hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-white transition-colors duration-200 flex items-center justify-center gap-2 group/cal"
                         >
-                            <svg className="w-4 h-4 text-gray-400 group-hover/cal:text-primary dark:group-hover/cal:text-white transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            <Icon name="calendar" className="w-4 h-4 text-gray-400 group-hover/cal:text-primary dark:group-hover/cal:text-white transition-colors duration-200" />
                             Add to Calendar
                         </a>
 
@@ -336,7 +327,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                                 className="px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
                             >
                                 Register Now
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                <Icon name="arrow-long-right" className="w-4 h-4" />
                             </a>
                         ) : (
                             <button disabled className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 text-sm font-bold rounded-xl cursor-not-allowed flex items-center justify-center border border-transparent">
@@ -352,7 +343,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                                 className="col-span-1 sm:col-span-2 px-4 py-2.5 rounded-xl border border-primary-200 dark:border-primary-800 text-primary-700 dark:text-primary-300 font-bold text-sm hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors duration-200 flex items-center justify-center gap-2"
                             >
                                 Read More
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                <Icon name="external-link" className="w-4 h-4" />
                             </a>
                         )}
                     </div>
@@ -368,7 +359,7 @@ const Events: React.FC = () => {
     useSEO({
         title: 'Events',
         description: 'Discover upcoming CVOCA events - conferences, workshops, seminars, and networking sessions for Chartered and Cost Accountants in Mumbai. Register for professional development events.',
-        canonicalUrl: 'https://cvoca.org/events',
+        canonicalUrl: canonical('/events'),
         keywords: 'CVOCA events, chartered accountants events Mumbai, CA conferences, accounting workshops, professional seminars',
         ogType: 'event'
     });
@@ -377,24 +368,11 @@ const Events: React.FC = () => {
     const [organizerFilter, setOrganizerFilter] = useState('all');
     const [tagFilter, setTagFilter] = useState('all');
     const [timeFilter, setTimeFilter] = useState('upcoming'); // Default to Upcoming events
-    const [allEvents, setAllEvents] = useState<CvoEvent[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { data, loading } = useFetch<CvoEvent[]>(
+        () => fetchWithFallback(fetchEvents, '/data/events.json') as unknown as Promise<CvoEvent[]>,
+    );
+    const allEvents = data ?? [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const eventsData = await fetchWithFallback(fetchEvents, '/data/events.json');
-                setAllEvents(eventsData);
-            } catch (error) {
-                console.error("Failed to fetch events data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
 
     const allOrganizers = useMemo(() => {
         const organizers = new Set<string>();
@@ -469,8 +447,8 @@ const Events: React.FC = () => {
     }));
 
     const breadcrumbSchema = getBreadcrumbSchema([
-        { name: 'Home', url: 'https://cvoca.org/' },
-        { name: 'Events', url: 'https://cvoca.org/events' }
+        { name: 'Home', url: canonical('/') },
+        { name: 'Events', url: canonical('/events') }
     ]);
 
     return (
@@ -499,7 +477,7 @@ const Events: React.FC = () => {
                         <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-3xl shadow-xl mb-12 border border-white/20 dark:border-gray-700">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                    <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                    <Icon name="filter" className="w-5 h-5 text-primary" />
                                     Filter Events
                                 </h2>
                                 {hasActiveFilters && (
@@ -509,7 +487,7 @@ const Events: React.FC = () => {
                                         title="Remove all filters"
                                     >
                                         <span>Clear</span>
-                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                        <Icon name="close" className="w-3.5 h-3.5" />
                                     </button>
                                 )}
                             </div>
@@ -517,7 +495,7 @@ const Events: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 <div className="relative group">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                        <Icon name="search" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
                                     </div>
                                     <input
                                         type="text"
@@ -542,7 +520,7 @@ const Events: React.FC = () => {
                                         <option value="all">All Events</option>
                                     </select>
                                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                        <Icon name="calendar" className="h-5 w-5 text-gray-400" />
                                     </div>
                                 </div>
 
@@ -557,7 +535,7 @@ const Events: React.FC = () => {
                                         {allOrganizers.filter(org => org !== 'all').map(org => <option key={org} value={org}>{org}</option>)}
                                     </select>
                                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                        <Icon name="chevron-down" className="h-5 w-5 text-gray-400" />
                                     </div>
                                 </div>
                                 <div className="relative">
@@ -570,7 +548,7 @@ const Events: React.FC = () => {
                                         {allTags.map(tag => <option key={tag} value={tag} className="capitalize">{tag === 'all' ? 'All Tags' : tag}</option>)}
                                     </select>
                                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
+                                        <Icon name="tag" className="h-5 w-5 text-gray-400" />
                                     </div>
                                 </div>
                             </div>
@@ -586,7 +564,7 @@ const Events: React.FC = () => {
                         ) : (
                             <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-gray-600">
                                 <div className="mx-auto h-16 w-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
-                                    <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                    <Icon name="calendar" className="h-8 w-8 text-gray-400" />
                                 </div>
                                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">No events found</h3>
                                 <p className="mt-2 text-gray-500 dark:text-gray-400">
