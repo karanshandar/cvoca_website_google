@@ -204,7 +204,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                     {shouldTruncate && (
                         <button 
                             onClick={() => setIsExpanded(!isExpanded)}
-                            className={`mt-2 text-sm font-bold ${theme.accent} hover:underline focus:outline-none`}
+                            className={`mt-2 text-sm font-bold ${theme.accent} hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded`}
                         >
                             {isExpanded ? "Read Less" : "Read More"}
                         </button>

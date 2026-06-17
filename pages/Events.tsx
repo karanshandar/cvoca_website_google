@@ -298,7 +298,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                             {!isExpanded && <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white dark:from-slate-800 to-transparent pointer-events-none"></div>}
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="text-primary text-xs font-bold hover:text-primary-dark flex items-center gap-1 group/btn focus:outline-none transition-colors duration-200"
+                                className="text-primary text-xs font-bold hover:text-primary-dark flex items-center gap-1 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded transition-colors duration-200"
                             >
                                 {isExpanded ? 'Collapse' : 'Expand'}
                                 <svg className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'group-hover/btn:translate-y-0.5'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -522,18 +522,20 @@ const Events: React.FC = () => {
                                     <input
                                         type="text"
                                         placeholder="Search events..."
+                                        aria-label="Search events"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                        className="w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-all"
                                     />
                                 </div>
 
                                 {/* Time Filter */}
                                 <div className="relative">
                                     <select
+                                        aria-label="Filter events by time"
                                         value={timeFilter}
                                         onChange={(e) => setTimeFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none transition-all cursor-pointer font-medium"
+                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer font-medium"
                                     >
                                         <option value="upcoming">Upcoming Events</option>
                                         <option value="past">Past Events</option>
@@ -546,9 +548,10 @@ const Events: React.FC = () => {
 
                                 <div className="relative">
                                     <select
+                                        aria-label="Filter events by organizer"
                                         value={organizerFilter}
                                         onChange={(e) => setOrganizerFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none transition-all cursor-pointer"
+                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
                                     >
                                         <option value="all">All Organizers</option>
                                         {allOrganizers.filter(org => org !== 'all').map(org => <option key={org} value={org}>{org}</option>)}
@@ -559,9 +562,10 @@ const Events: React.FC = () => {
                                 </div>
                                 <div className="relative">
                                     <select
+                                        aria-label="Filter events by tag"
                                         value={tagFilter}
                                         onChange={(e) => setTagFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none transition-all cursor-pointer"
+                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
                                     >
                                         {allTags.map(tag => <option key={tag} value={tag} className="capitalize">{tag === 'all' ? 'All Tags' : tag}</option>)}
                                     </select>

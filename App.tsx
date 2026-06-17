@@ -49,9 +49,15 @@ const App: React.FC = () => {
       {/* Global SEO Schema - Organization and Website */}
       <SchemaMarkup schema={[getOrganizationSchema(), getWebsiteSchema()]} />
       <div className="flex flex-col min-h-screen font-sans">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-primary focus:text-white focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         <Header theme={theme} toggleTheme={toggleTheme} />
         {/* Removed pt-24 to allow Hero sections to sit behind the transparent header */}
-        <main className="flex-grow">
+        <main id="main-content" className="flex-grow">
           <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>

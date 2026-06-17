@@ -144,7 +144,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
                 <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 <button 
                   onClick={() => setIsOpen(!isOpen)} 
-                  className={`p-2 rounded-full focus:outline-none transition-colors ${!scrolled && isDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                  className={`p-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors ${!scrolled && isDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
                   aria-label="Toggle menu"
                 >
                   {isOpen ? (

@@ -10,7 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
         onClick={onClick}
-        className={`px-6 py-3 text-sm font-bold rounded-full focus:outline-none transition-all duration-300 transform ${active ? 'bg-primary text-white shadow-lg scale-105' : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-gray-700'
+        className={`px-6 py-3 text-sm font-bold rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all duration-300 transform ${active ? 'bg-primary text-white shadow-lg scale-105' : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-gray-700'
             }`}
     >
         {children}
@@ -299,7 +299,7 @@ const About: React.FC = () => {
                                     placeholder="Search committee or member..."
                                     value={coreSearch}
                                     onChange={(e) => setCoreSearch(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all shadow-sm"
                                 />
                             </div>
                         </div>
@@ -372,7 +372,7 @@ const About: React.FC = () => {
                                     placeholder="Search by name, year or village..."
                                     value={ppSearch}
                                     onChange={(e) => setPpSearch(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm"
+                                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all shadow-sm"
                                 />
                             </div>
                         </div>
