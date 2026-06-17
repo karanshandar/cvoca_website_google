@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { HomeData, CvoEvent, OutreachInitiative, PresidentMessage, CommitteeMember } from '../types';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
-import { fetchPresidentMessage, fetchManagingCommittee } from '../utils/googleSheets';
+import { fetchPresidentMessage, fetchManagingCommittee, fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -120,15 +120,15 @@ const Home: React.FC = () => {
     const { data: homeData } = useFetch<HomeData>(
         () => fetch('/data/home.json').then((r) => r.json()),
     );
-    const { data: eventsData } = useFetch<CvoEvent[]>(
-        () => fetch('/data/events.json').then((r) => r.json()),
-    );
     const { data: outreachData } = useFetch<OutreachInitiative[]>(
         () => fetch('/data/digitalOutreach.json').then((r) => r.json()),
     );
 
-    // Google Sheets data — hydrates the president section after first paint;
+    // Google Sheets data (with local JSON fallback) — hydrates after first paint;
     // failures fall back without blocking the page.
+    const { data: eventsData } = useFetch<CvoEvent[]>(
+        () => fetchWithFallback(fetchEvents, '/data/events.json') as unknown as Promise<CvoEvent[]>,
+    );
     const { data: presidentMessageData } = useFetch<PresidentMessage | null>(
         () => fetchPresidentMessage().catch(() => null) as unknown as Promise<PresidentMessage | null>,
     );
