@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "node scripts/minify-json.js && node scripts/generate-sitemap.js && vite build",
     "preview": "vite preview",
-    "minify-json": "node scripts/minify-json.js"
+    "minify-json": "node scripts/minify-json.js",
+    "design:lint": "npx --yes -p @google/design.md@0.3.0 designmd lint DESIGN.md",
+    "design:export": "npx --yes -p @google/design.md@0.3.0 designmd export --format json-tailwind DESIGN.md"
   },
   "dependencies": {
     "react": "^19.2.0",
