@@ -265,18 +265,29 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                     )}
 
                     {/* Main CTA Button */}
-                    {initiative.ctaText && initiative.ctaLink && initiative.ctaLink !== '#' && (
+                    {initiative.registrationClosed ? (
                         <div className="w-full md:w-auto">
-                           <a 
-                                href={initiative.ctaLink} 
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`w-full md:w-auto px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap ${theme.button}`}
+                            <button
+                                disabled
+                                className="w-full md:w-auto px-8 py-3.5 rounded-xl font-bold bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap border border-transparent"
                             >
-                                <span>{initiative.ctaText}</span>
-                                <Icon name="arrow-long-right" className="w-5 h-5" />
-                            </a>
+                                <span>Registrations Closed</span>
+                            </button>
                         </div>
+                    ) : (
+                        initiative.ctaText && initiative.ctaLink && initiative.ctaLink !== '#' && (
+                            <div className="w-full md:w-auto">
+                               <a 
+                                    href={initiative.ctaLink} 
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`w-full md:w-auto px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap ${theme.button}`}
+                                >
+                                    <span>{initiative.ctaText}</span>
+                                    <Icon name="arrow-long-right" className="w-5 h-5" />
+                                </a>
+                            </div>
+                        )
                     )}
 
                     {/* Special Case: Phone Button (e.g. Helpline) */}

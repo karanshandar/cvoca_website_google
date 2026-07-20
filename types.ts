@@ -126,6 +126,7 @@ export interface OutreachInitiative {
   ctaText?: string;
   ctaLink?: string;
   contacts?: OutreachContact[];
+  registrationClosed?: boolean;
 }
 
 export interface AnnualReport {
