@@ -1,6 +1,6 @@
 import React from 'react';
+import { useSetHeroTone, type HeroTone } from './heroTone';
 
-type HeroTone = 'dark' | 'light';
 type HeroSize = 'default' | 'large';
 
 interface PageHeroProps {
@@ -16,6 +16,7 @@ interface PageHeroProps {
 }
 
 const PageHero: React.FC<PageHeroProps> = ({ title, eyebrow, lede, tone = 'dark', size = 'default', children }) => {
+  useSetHeroTone(tone);
   const isDark = tone === 'dark';
   const isLarge = size === 'large';
 

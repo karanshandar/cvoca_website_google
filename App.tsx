@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import SchemaMarkup from './components/SchemaMarkup';
+import { HeroToneProvider } from './components/ui/heroTone';
 import { getOrganizationSchema, getWebsiteSchema } from './utils/schema';
 
 // Lazy load page components for code splitting
@@ -55,6 +56,7 @@ const App: React.FC = () => {
         >
           Skip to main content
         </a>
+        <HeroToneProvider>
         <Header theme={theme} toggleTheme={toggleTheme} />
         {/* Removed pt-24 to allow Hero sections to sit behind the transparent header */}
         <main id="main-content" className="flex-grow">
@@ -74,6 +76,7 @@ const App: React.FC = () => {
           </Suspense>
           </ErrorBoundary>
         </main>
+        </HeroToneProvider>
         <Footer />
       </div>
     </BrowserRouter>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Logo from './Logo';
 import Icon from './Icon';
+import { useHeroTone } from './ui/heroTone';
 
 interface HeaderProps {
   theme: string;
@@ -129,9 +130,11 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
     };
   }, [isOpen]);
 
-  // Identify pages with dark hero sections where we need white text initially
+  // The PageHero on screen reports its tone. The path list is a temporary
+  // fallback for pages that don't use PageHero yet.
+  const heroTone = useHeroTone();
   const darkHeroPaths = ['/', '/about', '/membership', '/events', '/digital-outreach', '/blog', '/contact'];
-  const isDarkHero = darkHeroPaths.includes(location.pathname);
+  const isDarkHero = heroTone ? heroTone === 'dark' : darkHeroPaths.includes(location.pathname);
 
   // White header content only while transparent over a dark hero.
   // The open mobile menu has a light background, so treat it like scrolled.

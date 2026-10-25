@@ -83,12 +83,12 @@ All files are new and nothing imports them yet, so the site is unchanged after t
 
 ## Step 2 — Hero tone context (one commit)
 
-- [ ] `components/ui/heroTone.tsx`: `HeroToneProvider` holds `tone: 'dark' | 'light' | null`. `useSetHeroTone(tone)` sets it in a `useLayoutEffect` (before paint, so no flash) and resets it to `null` on unmount. `useHeroTone()` reads it.
-- [ ] `PageHero` calls `useSetHeroTone(tone)`.
-- [ ] `App.tsx`: wrap `Header` and `main` in `HeroToneProvider`.
-- [ ] `Header.tsx`: `isDarkHero = heroTone ? heroTone === 'dark' : darkHeroPaths.includes(location.pathname)`.
+- [x] `components/ui/heroTone.tsx`: `HeroToneProvider` holds `tone: 'dark' | 'light' | null`. `useSetHeroTone(tone)` sets it in a `useLayoutEffect` (before paint, so no flash) and resets it to `null` on unmount. `useHeroTone()` reads it.
+- [x] `PageHero` calls `useSetHeroTone(tone)`.
+- [x] `App.tsx`: wrap `Header` and `main` in `HeroToneProvider`.
+- [x] `Header.tsx`: `isDarkHero = heroTone ? heroTone === 'dark' : darkHeroPaths.includes(location.pathname)`.
   - The list stays as a **temporary fallback** so pages not yet migrated keep working. Step 12 deletes it once every page uses `PageHero`.
-- [ ] Verify: no visual change on any route. Commit: `feat(header): read hero tone from PageHero, with path list as fallback`.
+- [x] Verify: no visual change on any route. Commit: `feat(header): read hero tone from PageHero, with path list as fallback`.
 
 ## Steps 3–11 — Migrate one page per commit
 
