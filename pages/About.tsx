@@ -12,8 +12,10 @@ import useFetch from '../hooks/useFetch';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
+        role="tab"
+        aria-selected={active}
         onClick={onClick}
-        className={`px-6 py-3 text-sm font-bold rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all duration-300 transform ${active ? 'bg-primary text-white shadow-lg scale-105' : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-gray-700'
+        className={`flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm leading-tight sm:leading-normal font-bold rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all duration-300 ${active ? 'bg-primary text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-gray-700'
             }`}
     >
         {children}
@@ -587,7 +589,7 @@ const About: React.FC = () => {
                     </div>
 
                     <div className="flex justify-center mb-10">
-                        <nav className="flex p-1 space-x-2 bg-gray-100 dark:bg-slate-800 rounded-full">
+                        <nav role="tablist" aria-label="Leadership and structure" className="flex w-full sm:w-auto p-1 space-x-1 sm:space-x-2 bg-gray-100 dark:bg-slate-800 rounded-full">
                             <TabButton active={activeTab === 'managing'} onClick={() => setActiveTab('managing')}>Managing Committee</TabButton>
                             <TabButton active={activeTab === 'core'} onClick={() => setActiveTab('core')}>Core Committees</TabButton>
                             <TabButton active={activeTab === 'past'} onClick={() => setActiveTab('past')}>Past Presidents</TabButton>
