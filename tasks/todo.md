@@ -47,39 +47,39 @@ There is no test runner yet (Vitest is a deferred plan), so each commit is check
 
 All files are new and nothing imports them yet, so the site is unchanged after this commit.
 
-- [ ] `components/ui/Button.tsx`
+- [x] `components/ui/Button.tsx`
   - Props: `variant: 'primary' | 'secondary' | 'outline'` (the three DESIGN.md defines), `size: 'md' | 'sm'`, plus one of `to` (renders router `<Link>`), `href` (renders `<a>`) or neither (renders `<button type="button">`).
   - Built on the existing `.btn-primary/secondary/outline` classes, so there is one source of truth. `sm` = `px-4 py-2 text-sm min-h-11` (keeps the 44 px tap target).
   - When `target="_blank"`: add `rel="noopener noreferrer"`, the `external-link` icon and sr-only "(opens in new tab)".
   - `index.css`: `.btn-outline` uses `bg-card-light dark:bg-card-dark` instead of `bg-white dark:bg-slate-800` (same colours, tokenised). Add `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2` to all three `.btn-*` classes.
-- [ ] `components/ui/Card.tsx`
+- [x] `components/ui/Card.tsx`
   - Props: `as` (`div` default, also `article`, `section`, `li`), `padding: 'none' | 'md' | 'lg' | 'xl'` (DESIGN spacing: `md` = `p-4`, `lg` = `p-6`, `xl` = `p-8`; default `lg`), `emphasis` (`shadow-xl` instead of `shadow-lg`), `interactive`, `className` (layout only, e.g. grid/flex).
   - Base: `bg-card-light dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-700 shadow-lg`.
   - `interactive`: `transition hover:-translate-y-1 hover:shadow-2xl hover:border-primary/30`. Use it only when the whole card is clickable (fixes the Events "false lift" finding).
-- [ ] `components/ui/Badge.tsx`
+- [x] `components/ui/Badge.tsx`
   - Props: `tone: 'primary' | 'success' | 'warning' | 'danger' | 'neutral'`, `children`.
   - Base: `inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wide border shadow-sm`.
   - Tones, light then dark: primary `bg-primary-50 text-primary-700` / `bg-primary-900/30 text-primary-300`; success `bg-success-50 text-success-700` / `bg-success/20 text-success-light`; warning and danger follow the success pattern; neutral `bg-gray-100 text-gray-700` / `bg-gray-700 text-gray-200`. Check each pair against 4.5:1 during the step.
-- [ ] `hooks/useFocusTrap.ts`
+- [x] `hooks/useFocusTrap.ts`
   - `useFocusTrap(ref, active)`. While `active`: remember `document.activeElement`, focus the first focusable element in `ref`, keep Tab and Shift+Tab inside. On deactivate, restore focus to the remembered element.
   - A separate hook so the Header mobile menu can reuse it in Step 12.
-- [ ] `components/ui/Modal.tsx`
+- [x] `components/ui/Modal.tsx`
   - Props: `open`, `onClose`, `label` (becomes `aria-label`), `children`.
   - Renders through `createPortal` into `document.body`, so transformed ancestors (e.g. hover-lifted cards) can't clip it.
   - `role="dialog"`, `aria-modal="true"`, `useFocusTrap`, Escape closes, a backdrop click closes, body scroll lock (the same `overflow` approach the current modals use).
   - Overlay `fixed inset-0 z-[100] bg-background-dark/95`, and a built-in 44 px close button with `aria-label="Close"`.
-- [ ] `components/ui/ImageLightbox.tsx`
+- [x] `components/ui/ImageLightbox.tsx`
   - A small wrapper on `Modal` for the image, the "Open full size" link and the hint. Events and DigitalOutreach each have their own diverging copy of this exact UI today.
   - Props: `imageUrl` (`string | null`), `alt`, `onClose`. Keeps the existing `getOptimizedImageUrl(…, LARGE)` call.
-- [ ] `components/ui/SearchInput.tsx`
+- [x] `components/ui/SearchInput.tsx`
   - Props: `label` (required; rendered as an sr-only `<label>` tied to the input by a `useId` id), `value`, `onChange(value: string)`, `placeholder`, `className` (width only).
   - `type="search"`, search icon `aria-hidden`, `rounded-lg` (the DESIGN.md radius for inputs), `bg-card-light dark:bg-card-dark`, `placeholder:text-gray-500`, and the same `focus-visible:ring-primary/50` the current fields use.
-- [ ] `components/ui/PageHero.tsx`
+- [x] `components/ui/PageHero.tsx`
   - Props: `title` (ReactNode, so a gradient `<span>` can be passed), `eyebrow?`, `lede?`, `tone: 'dark' | 'light'` (default `dark`), `size: 'default' | 'large'` (`large` is Home's taller hero, with room for the overlapping stats), `children?` (e.g. Home's CTAs).
   - Dark: `bg-background-dark` (the same value as `slate-900`), two blur blobs in `primary/10` and `secondary/10` (this drops the `accent` and `purple-500` blobs), white `h1`, lede `text-gray-300`. Eyebrow: the existing white/10 chip with `caption` type.
   - Light (Privacy only): `bg-primary-50 dark:bg-background-dark`, `text-gray-900 dark:text-white`.
   - Reports its tone to the Header (Step 2).
-- [ ] `typecheck` and `build` pass. Commit: `feat(ui): add shared Button, Card, Badge, Modal, SearchInput and PageHero`.
+- [x] `typecheck` and `build` pass. Commit: `feat(ui): add shared Button, Card, Badge, Modal, SearchInput and PageHero`.
 
 ## Step 2 — Hero tone context (one commit)
 
