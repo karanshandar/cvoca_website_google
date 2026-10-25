@@ -10,6 +10,10 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
+import PageHero from '../components/ui/PageHero';
+import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import SearchInput from '../components/ui/SearchInput';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -24,7 +28,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 );
 
 const ServiceCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-    <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow">
+    <Card padding="xl">
         <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">{title}</h3>
         <ul className="space-y-2">
             {React.Children.map(children, child => (
@@ -34,7 +38,7 @@ const ServiceCard: React.FC<{ title: string; children: React.ReactNode }> = ({ t
                 </div>
             ))}
         </ul>
-    </div>
+    </Card>
 );
 
 const CommitteeRoleSection: React.FC<{ title: string; members?: CoreMember[] | CoreMember }> = ({ title, members }) => {
@@ -66,7 +70,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/30">
+        <Card padding="none" className="overflow-hidden">
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50"
@@ -110,7 +114,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
                     </div>
                 </div>
             </div>
-        </div>
+        </Card>
     );
 };
 
@@ -142,12 +146,8 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                 <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8">
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-4">
-                            <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-white/20 dark:bg-primary/20 backdrop-blur-sm border border-white/20 dark:border-primary/30 text-white dark:text-primary-100 rounded-full">
-                                Latest Release
-                            </span>
-                            <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-emerald-500/20 dark:bg-emerald-500/10 backdrop-blur-sm border border-emerald-400/30 dark:border-emerald-500/20 text-emerald-100 dark:text-emerald-300 rounded-full">
-                                {featuredReport.year}
-                            </span>
+                            <Badge>Latest Release</Badge>
+                            <Badge tone="success">{featuredReport.year}</Badge>
                         </div>
                         <h3 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-3 tracking-tight break-words leading-tight text-white">
                             {featuredReport.title}
@@ -186,10 +186,10 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
             {/* Grid Reveal */}
             <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-all duration-500 ease-in-out ${showAll ? 'opacity-100 translate-y-0' : 'hidden opacity-0 -translate-y-4'}`}>
                 {previousReports.map((report, idx) => (
-                    <div key={idx} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-md transition-all flex flex-col justify-between group h-full">
+                    <Card key={idx} padding="md" className="flex flex-col justify-between group h-full">
                         <div className="mb-4">
                             <div className="flex justify-between items-start mb-2">
-                                <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-slate-700/50 px-2 py-1 rounded">FY {report.year}</span>
+                                <Badge tone="neutral">FY {report.year}</Badge>
                             </div>
                             <h4 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">{report.title}</h4>
                         </div>
@@ -197,7 +197,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                             Download
                             <Icon name="download" className="w-4 h-4" />
                         </a>
-                    </div>
+                    </Card>
                 ))}
             </div>
         </div>
@@ -248,14 +248,14 @@ const About: React.FC = () => {
                     // Using 3 columns max to prevent name wrapping on desktop
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {managingCommittee.map(member => (
-                            <div key={member.name} className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 text-center border border-gray-100 dark:border-gray-700 hover:-translate-y-1">
+                            <Card key={member.name} className="group text-center">
                                 <div className="relative w-28 h-28 mx-auto mb-5">
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-full opacity-20 group-hover:opacity-40 transition-opacity blur-md"></div>
                                     <img src={getOptimizedImageUrl(member.photoUrl, ImageSizePresets.TEAM_PHOTO)} alt={member.name} loading="lazy" decoding="async" className="relative w-full h-full rounded-full object-cover shadow-md border-2 border-white dark:border-slate-700" />
                                 </div>
                                 <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight">{member.name}</h4>
                                 <p className="text-sm font-medium text-primary dark:text-primary-light">{member.role}</p>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 );
@@ -281,18 +281,13 @@ const About: React.FC = () => {
                     <div className="space-y-6">
                         {/* Search for Core Committees */}
                         <div className="flex justify-end mb-6">
-                            <div className="relative w-full md:w-96 group">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Icon name="search" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-                                </div>
-                                <input
-                                    type="text"
-                                    placeholder="Search committee or member..."
-                                    value={coreSearch}
-                                    onChange={(e) => setCoreSearch(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all shadow-sm"
-                                />
-                            </div>
+                            <SearchInput
+                                label="Search committees or members"
+                                placeholder="Search committee or member..."
+                                value={coreSearch}
+                                onChange={setCoreSearch}
+                                className="w-full md:w-96"
+                            />
                         </div>
 
                         {/* Accordion List */}
@@ -354,24 +349,19 @@ const About: React.FC = () => {
                     <div className="space-y-6">
                         {/* Filter Bar */}
                         <div className="flex justify-end">
-                            <div className="relative w-full md:w-72 group">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Icon name="search" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-                                </div>
-                                <input
-                                    type="text"
-                                    placeholder="Search by name, year or village..."
-                                    value={ppSearch}
-                                    onChange={(e) => setPpSearch(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all shadow-sm"
-                                />
-                            </div>
+                            <SearchInput
+                                label="Search past presidents"
+                                placeholder="Search by name, year or village..."
+                                value={ppSearch}
+                                onChange={setPpSearch}
+                                className="w-full md:w-72"
+                            />
                         </div>
 
                         {/* Mobile View: Card Layout */}
                         <div className="md:hidden space-y-4">
                             {sortedAndFilteredPresidents.map((president) => (
-                                <div key={president.name} className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-3">
+                                <Card key={president.name} padding="md" className="flex flex-col gap-3">
                                     <div className="flex justify-between items-start">
                                         <div className="flex items-center gap-3">
                                             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 text-xs font-bold text-gray-500 dark:text-gray-400">
@@ -392,7 +382,7 @@ const About: React.FC = () => {
                                             </span>
                                         </div>
                                     </div>
-                                </div>
+                                </Card>
                             ))}
                             {sortedAndFilteredPresidents.length === 0 && (
                                 <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
@@ -402,7 +392,7 @@ const About: React.FC = () => {
                         </div>
 
                         {/* Desktop View: Table Layout */}
-                        <div className="hidden md:block bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
+                        <Card padding="none" className="hidden md:block overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead className="bg-gray-50 dark:bg-slate-900/50">
@@ -478,7 +468,7 @@ const About: React.FC = () => {
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
+                        </Card>
                         <div className="text-right text-xs text-gray-400 italic">
                             Showing {sortedAndFilteredPresidents.length} records
                         </div>
@@ -493,26 +483,16 @@ const About: React.FC = () => {
     return (
         <div className="animate-fadeIn bg-gray-50 dark:bg-background-dark min-h-screen">
             {/* Hero Section */}
-            <section className="relative bg-slate-900 pt-32 pb-24 text-center overflow-hidden">
-                <div className="absolute inset-0">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
-                </div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full mb-6">
-                        Legacy of Excellence
-                    </span>
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">About CVOCA</h1>
-                    <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto">
-                        Five decades of empowering Chartered & Cost Accountants through knowledge, networking, and professional growth.
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                eyebrow="Legacy of Excellence"
+                title="About CVOCA"
+                lede="Five decades of empowering Chartered & Cost Accountants through knowledge, networking, and professional growth."
+            />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20 -mt-12 relative z-10">
 
                 {/* Organization Profile */}
-                <section className="bg-white dark:bg-slate-800 rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 dark:border-gray-700">
+                <Card as="section" padding="xl" emphasis>
                     <div className="max-w-3xl mx-auto text-center">
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Heritage</h2>
                         <div className="space-y-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -520,7 +500,7 @@ const About: React.FC = () => {
                             <p>We proudly serve Chartered Accountants, Cost Accountants, and Company Secretaries from the Cutchi Visa Oswal (CVO) community, building an impeccable reputation for upholding ethical values and promoting excellence across multiple disciplines.</p>
                         </div>
                     </div>
-                </section>
+                </Card>
 
                 {/* Vision and Mission */}
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
