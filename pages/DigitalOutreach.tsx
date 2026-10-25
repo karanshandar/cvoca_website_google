@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { OutreachInitiative, OutreachContact } from '../types';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
@@ -9,6 +9,9 @@ import { fetchJson } from '../utils/fetchJson';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
+import PageHero from '../components/ui/PageHero';
+import Button from '../components/ui/Button';
+import ImageLightbox from '../components/ui/ImageLightbox';
 
 interface CardTheme {
     isDarkCard: boolean;
@@ -16,7 +19,6 @@ interface CardTheme {
     text: string;
     accent: string;
     border: string;
-    button: string;
     iconBg: string;
     pillBg: string;
     featureIcon: string;
@@ -34,7 +36,6 @@ const THEMES: Record<string, CardTheme> = {
         text: "text-gray-900 dark:text-white",
         accent: "text-emerald-600 dark:text-emerald-400",
         border: "border-gray-100 dark:border-gray-700",
-        button: "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20",
         iconBg: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
         pillBg: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
         featureIcon: "text-emerald-600 dark:text-emerald-400",
@@ -48,7 +49,6 @@ const THEMES: Record<string, CardTheme> = {
         text: "text-gray-900 dark:text-white",
         accent: "text-violet-600 dark:text-violet-400",
         border: "border-gray-100 dark:border-gray-700",
-        button: "bg-violet-600 hover:bg-violet-700 text-white shadow-violet-500/20",
         iconBg: "bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400",
         pillBg: "bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300",
         featureIcon: "text-violet-600 dark:text-violet-400",
@@ -62,7 +62,6 @@ const THEMES: Record<string, CardTheme> = {
         text: "text-gray-900 dark:text-white",
         accent: "text-amber-600 dark:text-amber-400",
         border: "border-gray-100 dark:border-gray-700",
-        button: "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/20",
         iconBg: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
         pillBg: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
         featureIcon: "text-amber-500 dark:text-amber-400",
@@ -76,7 +75,6 @@ const THEMES: Record<string, CardTheme> = {
         text: "text-gray-900 dark:text-white",
         accent: "text-blue-600 dark:text-blue-400",
         border: "border-gray-100 dark:border-gray-700",
-        button: "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20",
         iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
         pillBg: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
         featureIcon: "text-blue-600 dark:text-blue-400",
@@ -90,7 +88,6 @@ const THEMES: Record<string, CardTheme> = {
         text: "text-gray-900 dark:text-white",
         accent: "text-rose-600 dark:text-rose-400",
         border: "border-gray-100 dark:border-gray-700",
-        button: "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-500/20",
         iconBg: "bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400",
         pillBg: "bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
         featureIcon: "text-rose-600 dark:text-rose-400",
@@ -104,7 +101,6 @@ const THEMES: Record<string, CardTheme> = {
         text: "text-gray-900 dark:text-white",
         accent: "text-gray-600 dark:text-gray-400",
         border: "border-gray-200 dark:border-gray-700",
-        button: "bg-gray-800 hover:bg-gray-900 text-white",
         iconBg: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
         pillBg: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
         featureIcon: "text-primary",
@@ -115,27 +111,6 @@ const THEMES: Record<string, CardTheme> = {
 };
 
 const getTheme = (category: string) => THEMES[category] || THEMES["default"];
-
-const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ imageUrl, onClose }) => {
-    useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-        window.addEventListener('keydown', handleEsc);
-        document.body.style.overflow = 'hidden';
-        return () => {
-            window.removeEventListener('keydown', handleEsc);
-            document.body.style.overflow = 'unset';
-        };
-    }, [onClose]);
-
-    return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md transition-opacity duration-300 animate-fade-in-up" onClick={onClose}>
-            <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50">
-                <Icon name="close" className="w-8 h-8" />
-            </button>
-            <img src={getOptimizedImageUrl(imageUrl, ImageSizePresets.LARGE)} alt="Enlarged view" className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl" onClick={(e) => e.stopPropagation()} />
-        </div>
-    );
-};
 
 // Coordinator Pill Component
 const CoordinatorPill: React.FC<{ contact: OutreachContact; theme: CardTheme }> = ({ contact, theme }) => {
@@ -173,8 +148,13 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
         <div className={`flex flex-col ${isReverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} ${theme.bg} rounded-[2.5rem] shadow-xl overflow-hidden border ${theme.border} hover:shadow-2xl transition-all duration-300`}>
             
             {/* IMAGE SIDE (40%) */}
-            <div className="lg:w-5/12 relative min-h-[350px] lg:min-h-full cursor-pointer group overflow-hidden" onClick={() => onImageClick(initiative.image)}>
-                <img src={getOptimizedImageUrl(initiative.image, ImageSizePresets.EVENT_CARD)} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <button
+                type="button"
+                onClick={() => onImageClick(initiative.image)}
+                aria-label={`View image for ${initiative.title}`}
+                className="lg:w-5/12 relative min-h-[350px] lg:min-h-full cursor-pointer group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+            >
+                <img src={getOptimizedImageUrl(initiative.image, ImageSizePresets.EVENT_CARD)} alt={initiative.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent lg:bg-black/10"></div>
                 
                 {/* Floating Badge */}
@@ -193,7 +173,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                  <div className={`absolute bottom-4 ${isReverse ? 'left-4' : 'right-4'} bg-black/40 backdrop-blur-sm p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden lg:block`}>
                     <Icon name="zoom-in" className="w-5 h-5" />
                 </div>
-            </div>
+            </button>
 
             {/* CONTENT SIDE (60%) */}
             <div className="lg:w-7/12 p-8 lg:p-12 flex flex-col">
@@ -281,15 +261,9 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                     ) : (
                         initiative.ctaText && initiative.ctaLink && initiative.ctaLink !== '#' && (
                             <div className="w-full md:w-auto">
-                               <a 
-                                    href={initiative.ctaLink} 
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`w-full md:w-auto px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap ${theme.button}`}
-                                >
-                                    <span>{initiative.ctaText}</span>
-                                    <Icon name="arrow-long-right" className="w-5 h-5" />
-                                </a>
+                                <Button href={initiative.ctaLink} target="_blank" className="w-full md:w-auto whitespace-nowrap">
+                                    {initiative.ctaText}
+                                </Button>
                             </div>
                         )
                     )}
@@ -297,16 +271,13 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                     {/* Special Case: Phone Button (e.g. Helpline) */}
                     {phoneCta && (
                         <div className="w-full md:w-auto">
-                            <a
-                                href={phoneCta.contact}
-                                className={`w-full md:w-auto px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 whitespace-nowrap ${theme.button}`}
-                            >
+                            <Button href={phoneCta.contact} className="w-full md:w-auto gap-3 whitespace-nowrap">
                                 <Icon name="phone" className="w-5 h-5" />
                                 <div className="flex flex-col items-start leading-none">
                                     <span className="text-[10px] uppercase font-bold opacity-80 mb-0.5">{initiative.ctaText}</span>
                                     <span className="text-lg">{phoneCta.label}</span>
                                 </div>
-                            </a>
+                            </Button>
                         </div>
                     )}
                 </div>
@@ -330,27 +301,16 @@ const DigitalOutreach: React.FC = () => {
     );
     const initiatives = data ?? [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const closeLightbox = useCallback(() => setSelectedImage(null), []);
 
     return (
         <div className="animate-fadeIn bg-gray-50 dark:bg-slate-950 min-h-screen font-sans selection:bg-primary/20">
             {/* Hero Section */}
-            <section className="relative bg-slate-900 pt-32 pb-24 text-center overflow-hidden">
-                 <div className="absolute inset-0">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
-                </div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full mb-6">
-                        CVOCA Initiatives
-                    </span>
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
-                        Community <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-secondary-light">Outreach</span>
-                    </h1>
-                    <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        Driving change through education, technology, and mentorship. Explore our active programs designed for the modern professional.
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                eyebrow="CVOCA Initiatives"
+                title={<>Community <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-secondary-light">Outreach</span></>}
+                lede="Driving change through education, technology, and mentorship. Explore our active programs designed for the modern professional."
+            />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 relative z-10">
                 {loading ? (
@@ -370,7 +330,7 @@ const DigitalOutreach: React.FC = () => {
                     </div>
                 )}
             </div>
-             {selectedImage && <ImageModal imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />}
+             <ImageLightbox imageUrl={selectedImage} alt="Initiative image" onClose={closeLightbox} />
         </div>
     );
 };
