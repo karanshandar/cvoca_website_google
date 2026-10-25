@@ -130,12 +130,8 @@ export async function fetchAnnualReports() {
  * Fetches past presidents data from Google Sheets
  */
 export async function fetchPastPresidents() {
-  const data = await fetchSheetData('pastPresidents');
-  // Add serial numbers
-  return data.map((president: Record<string, unknown>, index: number) => ({
-    ...president,
-    srNo: index + 1
-  }));
+  // Serial numbers are assigned on the About page, so Sheets and the JSON fallback match
+  return fetchSheetData('pastPresidents');
 }
 
 /**
@@ -184,6 +180,8 @@ export async function fetchCommittees() {
       case 'subCommittee':
         committee.subCommittee.push(coreMember);
         break;
+      default:
+        console.warn(`Unknown committee role "${member.role}" for ${member.memberName} in ${committeeName}; member not shown`);
     }
   });
 

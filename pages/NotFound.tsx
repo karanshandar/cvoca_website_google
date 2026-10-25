@@ -4,7 +4,7 @@ import useSEO from '../hooks/useSEO';
 
 const NotFound: React.FC = () => {
     useSEO({
-        title: 'Page Not Found - CVOCA',
+        title: 'Page Not Found',
         description: 'The page you are looking for does not exist.',
         noIndex: true,
     });

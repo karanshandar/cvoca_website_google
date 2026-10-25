@@ -160,6 +160,8 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
     const theme = getTheme(initiative.category);
     const hasStats = initiative.stats && initiative.stats.length > 0;
     const hasContacts = initiative.contacts && initiative.contacts.length > 0;
+    // A phone contact named like the CTA (e.g. a helpline) is shown as the main button
+    const phoneCta = initiative.contacts?.find(c => c.type === 'phone' && c.name === initiative.ctaText);
     
     const [isExpanded, setIsExpanded] = useState(false);
     const shouldTruncate = initiative.description.length > 250;
@@ -293,16 +295,16 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                     )}
 
                     {/* Special Case: Phone Button (e.g. Helpline) */}
-                    {initiative.contacts?.find(c => c.type === 'phone' && c.name === initiative.ctaText) && (
+                    {phoneCta && (
                         <div className="w-full md:w-auto">
-                            <a 
-                                href={initiative.contacts[0].contact} 
+                            <a
+                                href={phoneCta.contact}
                                 className={`w-full md:w-auto px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 whitespace-nowrap ${theme.button}`}
                             >
                                 <Icon name="phone" className="w-5 h-5" />
                                 <div className="flex flex-col items-start leading-none">
                                     <span className="text-[10px] uppercase font-bold opacity-80 mb-0.5">{initiative.ctaText}</span>
-                                    <span className="text-lg">{initiative.contacts[0].label}</span>
+                                    <span className="text-lg">{phoneCta.label}</span>
                                 </div>
                             </a>
                         </div>

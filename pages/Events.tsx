@@ -429,10 +429,10 @@ const Events: React.FC = () => {
         setSearchTerm('');
         setOrganizerFilter('all');
         setTagFilter('all');
-        setTimeFilter('all');
+        setTimeFilter('upcoming');
     };
 
-    const hasActiveFilters = searchTerm !== '' || organizerFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'all';
+    const hasActiveFilters = searchTerm !== '' || organizerFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'upcoming';
 
     // Generate Event schema for upcoming events
     const eventSchemas = filteredEvents.slice(0, 10).map(event => getEventSchema({
@@ -464,7 +464,9 @@ const Events: React.FC = () => {
                     <div className="absolute bottom-0 right-0 w-80 h-80 bg-accent rounded-full blur-3xl mix-blend-screen"></div>
                 </div>
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">Upcoming Events</h1>
+                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+                        {timeFilter === 'past' ? 'Past Events' : timeFilter === 'all' ? 'All Events' : 'Upcoming Events'}
+                    </h1>
                     <p className="text-xl text-primary-100 max-w-2xl mx-auto font-light">Connect, learn, and grow with our curated professional gatherings.</p>
                 </div>
             </section>
@@ -575,7 +577,9 @@ const Events: React.FC = () => {
                                         ? "There are no upcoming events scheduled at the moment."
                                         : "We couldn't find any events matching your filters."}
                                 </p>
-                                <button onClick={clearFilters} className="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg">Clear all filters</button>
+                                {hasActiveFilters && (
+                                    <button onClick={clearFilters} className="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg">Clear all filters</button>
+                                )}
                             </div>
                         )}
                     </>

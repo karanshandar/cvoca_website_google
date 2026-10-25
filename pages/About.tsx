@@ -231,7 +231,9 @@ const About: React.FC = () => {
                 fetchWithFallback(fetchPastPresidents, '/data/pastPresidents.json'),
             ]) as unknown as Promise<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>,
     );
-    const [managingCommittee, committees, annualReports, pastPresidents] = data ?? [[], [], [], []];
+    const [managingCommittee, committees, annualReports, presidentRows] = data ?? [[], [], [], []];
+    // Number past presidents in source order (Sheets or the JSON fallback, which has no srNo)
+    const pastPresidents = presidentRows.map((president, index) => ({ ...president, srNo: index + 1 }));
 
     const renderTabContent = () => {
         if (loading) {
