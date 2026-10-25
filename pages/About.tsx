@@ -7,6 +7,7 @@ import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports, fetchPastP
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LoadError from '../components/LoadError';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
 
@@ -221,7 +222,7 @@ const About: React.FC = () => {
     const [ppSearch, setPpSearch] = useState('');
     const [ppSort, setPpSort] = useState<{ key: keyof PastPresident; direction: 'asc' | 'desc' }>({ key: 'srNo', direction: 'asc' });
 
-    const { data, loading } = useFetch<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>(
+    const { data, loading, error } = useFetch<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>(
         () =>
             Promise.all([
                 fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json'),
@@ -235,6 +236,9 @@ const About: React.FC = () => {
     const renderTabContent = () => {
         if (loading) {
             return <LoadingSpinner />;
+        }
+        if (error) {
+            return <LoadError />;
         }
         switch (activeTab) {
             case 'managing':

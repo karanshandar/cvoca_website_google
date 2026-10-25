@@ -9,6 +9,8 @@ import { fetchPresidentMessage, fetchManagingCommittee, fetchEvents } from '../u
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LoadError from '../components/LoadError';
+import { fetchJson } from '../utils/fetchJson';
 import Icon from '../components/Icon';
 
 const StatCard: React.FC<{ value: string; label: string; delay: string }> = ({ value, label, delay }) => (
@@ -117,11 +119,11 @@ const Home: React.FC = () => {
     });
 
     // Local JSON (always available) — the page renders as soon as homeData resolves.
-    const { data: homeData } = useFetch<HomeData>(
-        () => fetch('/data/home.json').then((r) => r.json()),
+    const { data: homeData, error: homeError } = useFetch<HomeData>(
+        () => fetchJson<HomeData>('/data/home.json'),
     );
     const { data: outreachData } = useFetch<OutreachInitiative[]>(
-        () => fetch('/data/digitalOutreach.json').then((r) => r.json()),
+        () => fetchJson<OutreachInitiative[]>('/data/digitalOutreach.json'),
     );
 
     // Google Sheets data (with local JSON fallback) — hydrates after first paint;
@@ -160,6 +162,10 @@ const Home: React.FC = () => {
     const featuredOutreach = React.useMemo(() => {
         return outreach.slice(0, 3);
     }, [outreach]);
+
+    if (homeError) {
+        return <LoadError fullPage />;
+    }
 
     if (!homeData) {
         return <LoadingSpinner fullPage />;

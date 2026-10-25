@@ -9,6 +9,7 @@ import { fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LoadError from '../components/LoadError';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
 
@@ -368,7 +369,7 @@ const Events: React.FC = () => {
     const [organizerFilter, setOrganizerFilter] = useState('all');
     const [tagFilter, setTagFilter] = useState('all');
     const [timeFilter, setTimeFilter] = useState('upcoming'); // Default to Upcoming events
-    const { data, loading } = useFetch<CvoEvent[]>(
+    const { data, loading, error } = useFetch<CvoEvent[]>(
         () => fetchWithFallback(fetchEvents, '/data/events.json') as unknown as Promise<CvoEvent[]>,
     );
     const allEvents = data ?? [];
@@ -471,6 +472,8 @@ const Events: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-12 relative z-10">
                 {loading ? (
                     <LoadingSpinner />
+                ) : error ? (
+                    <LoadError />
                 ) : (
                     <>
                         {/* Filters */}

@@ -4,6 +4,8 @@ import useFetch from '../hooks/useFetch';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LoadError from '../components/LoadError';
+import { fetchJson } from '../utils/fetchJson';
 import Icon from '../components/Icon';
 
 const BenefitCard: React.FC<{ title: string; iconPath: string; children: React.ReactNode }> = ({ title, iconPath, children }) => (
@@ -174,9 +176,13 @@ const Membership: React.FC = () => {
         keywords: 'CVOCA membership, join CVOCA, chartered accountants membership Mumbai, student membership, life membership'
     });
 
-    const { data, loading } = useFetch<MembershipData>(
-        () => fetch('/data/membership.json').then((res) => res.json()),
+    const { data, loading, error } = useFetch<MembershipData>(
+        () => fetchJson<MembershipData>('/data/membership.json'),
     );
+
+    if (error) {
+        return <LoadError fullPage />;
+    }
 
     if (loading || !data) {
         return <LoadingSpinner fullPage />;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { ContactData, SocialMediaData } from '../types';
+import { fetchJson } from '../utils/fetchJson';
 
 const SocialIcon: React.FC<{ href: string, path: string, name: string }> = ({ href, path, name }) => (
     <a
@@ -20,34 +21,17 @@ const SocialIcon: React.FC<{ href: string, path: string, name: string }> = ({ hr
 const Footer: React.FC = () => {
     const [contactData, setContactData] = useState<ContactData | null>(null);
     const [socialData, setSocialData] = useState<SocialMediaData | null>(null);
-    const [loading, setLoading] = useState(true);
 
+    // The static parts of the footer always render; contact info and social
+    // icons appear once their data loads, and are simply omitted if it fails.
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [contactRes, socialRes] = await Promise.all([
-                    fetch('/data/contact.json'),
-                    fetch('/data/socialMedia.json')
-                ]);
-
-                if (contactRes.ok) setContactData(await contactRes.json());
-                if (socialRes.ok) setSocialData(await socialRes.json());
-            } catch (err) {
-                console.error("Failed to fetch footer data", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        fetchJson<ContactData>('/data/contact.json')
+            .then(setContactData)
+            .catch((err) => console.error("Failed to fetch footer contact data", err));
+        fetchJson<SocialMediaData>('/data/socialMedia.json')
+            .then(setSocialData)
+            .catch((err) => console.error("Failed to fetch footer social data", err));
     }, []);
-
-    if (loading || !contactData || !socialData) {
-        return (
-            <footer className="bg-card-light dark:bg-card-dark border-t border-gray-200 dark:border-gray-700">
-                <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[200px]" />
-            </footer>
-        );
-    }
 
     return (
         <footer className="bg-card-light dark:bg-card-dark border-t border-gray-200 dark:border-gray-700">
@@ -63,16 +47,18 @@ const Footer: React.FC = () => {
                         <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
                             Empowering professionals through knowledge, networking, and innovation in the dynamic world of accounting and finance.
                         </p>
-                        <div className="mt-6 flex space-x-6">
-                            {socialData.platforms.map((platform) => (
-                                <SocialIcon
-                                    key={platform.id}
-                                    href={platform.url}
-                                    path={platform.svgPath}
-                                    name={platform.name}
-                                />
-                            ))}
-                        </div>
+                        {socialData && (
+                            <div className="mt-6 flex space-x-6">
+                                {socialData.platforms.map((platform) => (
+                                    <SocialIcon
+                                        key={platform.id}
+                                        href={platform.url}
+                                        path={platform.svgPath}
+                                        name={platform.name}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <div>
                         <h3 className="text-sm font-semibold tracking-wider uppercase">Quick Links</h3>
@@ -85,15 +71,17 @@ const Footer: React.FC = () => {
                             <li><Link to="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Contact</Link></li>
                         </ul>
                     </div>
-                    <div>
-                        <h3 className="text-sm font-semibold tracking-wider uppercase">Contact Info</h3>
-                        <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                            <li>{contactData.contactInfo.find(info => info.id === 'address')?.value}</li>
-                            <li>{contactData.contactInfo.find(info => info.id === 'mobile')?.value}</li>
-                            <li>{contactData.contactInfo.find(info => info.id === 'email')?.value}</li>
-                            <li>{contactData.contactInfo.find(info => info.id === 'hours')?.value}</li>
-                        </ul>
-                    </div>
+                    {contactData && (
+                        <div>
+                            <h3 className="text-sm font-semibold tracking-wider uppercase">Contact Info</h3>
+                            <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                                <li>{contactData.contactInfo.find(info => info.id === 'address')?.value}</li>
+                                <li>{contactData.contactInfo.find(info => info.id === 'mobile')?.value}</li>
+                                <li>{contactData.contactInfo.find(info => info.id === 'email')?.value}</li>
+                                <li>{contactData.contactInfo.find(info => info.id === 'hours')?.value}</li>
+                            </ul>
+                        </div>
+                    )}
                 </div>
                 <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                     <p>&copy; {new Date().getFullYear()} CVOCA. All rights reserved.</p>

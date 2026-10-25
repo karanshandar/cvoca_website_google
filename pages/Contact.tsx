@@ -7,6 +7,8 @@ import { canonical } from '../constants';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/schema';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LoadError from '../components/LoadError';
+import { fetchJson } from '../utils/fetchJson';
 import Icon from '../components/Icon';
 
 const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; delay: string }> = ({ icon, label, value, delay }) => (
@@ -43,9 +45,13 @@ const Contact: React.FC = () => {
         keywords: 'CVOCA contact, CVOCA address Mumbai, chartered accountants association Dadar, CVOCA phone number'
     });
 
-    const { data: contactData, loading } = useFetch<ContactData>(
-        () => fetch('/data/contact.json').then((res) => res.json()),
+    const { data: contactData, loading, error } = useFetch<ContactData>(
+        () => fetchJson<ContactData>('/data/contact.json'),
     );
+
+    if (error) {
+        return <LoadError fullPage />;
+    }
 
     if (loading || !contactData) {
         return <LoadingSpinner fullPage />;

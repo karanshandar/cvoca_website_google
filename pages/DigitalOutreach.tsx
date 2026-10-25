@@ -4,6 +4,8 @@ import { OutreachInitiative, OutreachContact } from '../types';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LoadError from '../components/LoadError';
+import { fetchJson } from '../utils/fetchJson';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
@@ -321,8 +323,8 @@ const DigitalOutreach: React.FC = () => {
         keywords: 'CVOCA outreach, value investing club, CA mentorship, student support, tech and AI accounting'
     });
 
-    const { data, loading } = useFetch<OutreachInitiative[]>(
-        () => fetch('/data/digitalOutreach.json').then((res) => res.json()),
+    const { data, loading, error } = useFetch<OutreachInitiative[]>(
+        () => fetchJson<OutreachInitiative[]>('/data/digitalOutreach.json'),
     );
     const initiatives = data ?? [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -351,6 +353,8 @@ const DigitalOutreach: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 relative z-10">
                 {loading ? (
                     <LoadingSpinner />
+                ) : error ? (
+                    <LoadError />
                 ) : (
                     <div className="flex flex-col gap-16">
                         {initiatives.map((initiative, idx) => (
