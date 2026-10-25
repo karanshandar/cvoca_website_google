@@ -1,6 +1,6 @@
 # Shared UI Components from DESIGN.md Tokens
 
-## Status: APPROVED (2026-10-25). In progress.
+## Status: DONE (2026-10-25). Steps 1–13 committed on `main`, not pushed. See Review below.
 
 Source: `tasks/review-design.md` §6 (component inventory), §7 (a11y audit) and §8 items 4, 7 and 12.
 Branch: work directly on `main` (as requested). One commit per step below. Nothing is pushed.
@@ -113,9 +113,9 @@ Ordered from smallest to largest, so the primitives are proven on simple pages f
 
 ## Step 13 — Docs (one commit)
 
-- [ ] `DESIGN.md` Components section: one short paragraph pointing to `components/ui/*` as the implementation of the button, card, badge and hero patterns, and saying new UI should use them.
-- [ ] Fill in the Review section below: commits, what changed visibly on each page, deviations, and what's left.
-- [ ] Commit: `docs: record shared UI components work in tasks/todo.md`.
+- [x] `DESIGN.md` Components section: one short paragraph pointing to `components/ui/*` as the implementation of the button, card, badge and hero patterns, and saying new UI should use them.
+- [x] Fill in the Review section below: commits, what changed visibly on each page, deviations, and what's left.
+- [x] Commit: `docs: record shared UI components work in tasks/todo.md`.
 
 ---
 
@@ -132,4 +132,60 @@ Ordered from smallest to largest, so the primitives are proven on simple pages f
 
 ## Review
 
-_To be filled in when the work is done._
+### Commits (on `main`, not pushed)
+
+| Commit | Step |
+|---|---|
+| `277fbca` | Record decisions on the open questions |
+| `003d923` | 1. Primitives (`components/ui/*`, `hooks/useFocusTrap.ts`, focus ring on `.btn-*`) |
+| `275f9b3` | 2. Hero tone context, with path list as fallback |
+| `fbdce84` | 3. NotFound, LoadError, ErrorBoundary |
+| `e0a13aa` | 4. PrivacyPolicy |
+| `ae6648f` | 5. Contact |
+| `1dc0455` | 6. Blog |
+| `be1b7f7` | 7. Membership |
+| `186ea4b` | 8. Home |
+| `0cd9d4b` | 9. Events |
+| `aa67c66` | 10. About |
+| `50a516b` | 11. DigitalOutreach |
+| `f93c70e` | 12. Header cleanup and mobile-menu focus trap |
+| (this commit) | 13. Docs |
+
+### What changed visibly
+- **All heroes:** one pattern. `bg-background-dark` with primary/secondary blobs (accent/purple blobs and the Events/Membership custom backgrounds are gone). h1 is `text-4xl md:text-5xl` (Home `md:text-6xl`), lede `text-gray-300`, eyebrow uses the `caption` style.
+- **All buttons that moved to `Button`:** visible focus ring (`ring-primary`, offset 2). External links get the external-link icon and sr-only "(opens in new tab)".
+- **NotFound:** `pt-24` so the header can't cover it; h1 extrabold. LoadError/ErrorBoundary buttons look like `.btn-primary`.
+- **Privacy:** hero background `primary-50` (was `primary/10`).
+- **Contact:** cards `rounded-2xl` (were `rounded-3xl`); map card padding `p-4` (was `p-2`).
+- **Blog:** stats bar and the two action cards on `Card`. The secondary card loses its slate gradient. Lift is now `-translate-y-1`.
+- **Membership:** tier/benefit/eligibility cards `rounded-2xl`. Both Register CTAs are the primary pill (no more cyan/accent gradients or coloured glow shadows). The eligibility note uses `warning-*` tokens. Benefit cards no longer lift on hover (they aren't clickable).
+- **Home:** "About CVOCA" hero button is now the white `outline` button. Event pills are `text-xs` Badges. The president date pill is a Badge. "Read Full Message", "See All Upcoming Events" and "View All Initiatives" are outline Buttons. The nested `<button>` inside the compliance link is now a `<span>`. Stat, feature and outreach cards no longer lift (not clickable).
+- **Events:** card `rounded-2xl`, no false lift. Search input labelled. Selects `rounded-lg` and `py-3`, so all four controls are 50px tall. The flyer is a real `<button>` and opens the shared lightbox (dialog, focus trap, Escape, focus restore, portal).
+- **About:** heritage/service/committee/report/past-president cards on `Card`. Both searches labelled. "Latest Release" and the year are Badges (emerald → `success`). FY labels are neutral Badges.
+- **DigitalOutreach:** CTAs are the primary pill, so the white-on-amber Register Now (2.15:1) is gone. The image is a keyboard-operable button and opens the shared lightbox.
+- **Header:** light-mode text is dark on 404, loading and error screens (it was white on white). In the open mobile menu, Tab stays inside the header and menu.
+
+### Deviations from the plan
+1. **Hand-over note missing.** `…\side-session-notes\local_9742148c-…\shared-ui-handover.md` did not exist; worked from this plan alone.
+2. **Setup:** `node_modules` lacked `@types/react`/`@types/react-dom`, so `typecheck` failed on clean `main` (ErrorBoundary). Ran `npm install` from the lockfile; no `package.json`/lock change.
+3. **`npm run build` rewrites `public/sitemap.xml`** (lastmod dates). It was restored after every build and not committed.
+4. **Contact:** no gradient span in the title: the title comes from `contact.json`.
+5. **Blog:** there are no category pills or post cards, only two full-card links. They became `<a>` wrapping `Card interactive` (Card has no `as="a"`). "Start Reading" stays text inside the link (a Button there would nest interactive elements). "Search the archives" stays an inline text link, because a pill mid-sentence would restructure the line.
+6. **Membership:** coloured glow shadows dropped (token whitelist).
+7. **Home:** the primary-coloured CTA band ("Join CVOCA Today" / "Contact Support") was left as is. It needs an on-colour variant, and decision 3 chose not to add one.
+8. **Events:** the in-card actions (Add to Calendar / Register Now / Read More / Registration Closed) were left: a `rounded-xl` button grid not in the plan's list. The lightbox alt is the generic "Event flyer".
+9. **About:** vision/mission gradient panels, the featured-report gradient panel, village pills, the archive toggle and the download buttons were left. Heritage padding is `p-8` at all sizes (was `md:p-12`).
+10. **DigitalOutreach:** removed `CardTheme.button` (dead once the CTAs moved to `Button`). Made the initiative image `absolute inset-0`. Inside the new `<button>` the old `h-full` (which never resolved against a `min-height` box) left the image centred with grey bands. Before, it sat at the top with an empty band below.
+11. **Header trap:** the wrapper-`div` option (around header bar and overlay), as the smaller diff.
+
+### Verification
+- `npm run typecheck` and `npm run build` passed on every commit.
+- Browser (built-in, dev server): each changed page at 375 and 1440 px in light and dark. No horizontal overflow; console showed only the known Sheets 400s. **768 px was not checked separately.**
+- Header colour checked on every route at both widths and themes, plus loading (fetch never resolves) and error (fetch rejects) states. Mobile menu trap checked: Tab and Shift+Tab wrap inside, Escape closes, focus returns to the toggle.
+- Lightbox (Events, DigitalOutreach): opens with Enter, focus lands on Close, Tab stays inside, Escape closes, focus returns to the trigger, scroll lock released.
+- Contrast: badge and button pairs come from the token whitelist (e.g. `warning-700` on `warning-50` ≈ 4.8:1). They were not measured element by element with a tool.
+
+### What's left
+- The plan's out-of-scope list (`SectionHeader`, `Container`, `IconTile`, `Stat`, `EmptyState`, `Disclosure`; contrast/heading sweeps; THEMES collapse; `prefers-color-scheme`; Tailwind config; content fixes).
+- The leftovers in deviations 5, 7, 8 and 9 (on-colour buttons, Events card actions, About gradient panels).
+- `.claude/launch.json` (dev-server config for the browser pane) is untracked and was not committed.

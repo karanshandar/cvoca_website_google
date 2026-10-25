@@ -192,6 +192,11 @@ Do not invent shadow values outside this scale.
 
 ## Components
 
+These patterns are implemented as shared React components in `components/ui/`:
+`Button`, `Card`, `Badge`, `PageHero`, `SearchInput`, `Modal` and
+`ImageLightbox`. New UI should use them instead of re-creating the classes by
+hand. `PageHero` also tells the header whether it sits over a dark or light hero.
+
 - **Buttons** (`.btn-primary`, `.btn-secondary`, `.btn-outline` in `index.css`):
   `rounded-full`, bold, `px-6 py-3`, `shadow-md` → `shadow-lg` on hover.
   `button-outline` is a white/`card` surface with a gray border that fills with
