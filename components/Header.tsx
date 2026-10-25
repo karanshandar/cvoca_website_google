@@ -106,15 +106,42 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
+  // Close the mobile menu on any navigation (including back/forward)
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  // Close the mobile menu on Escape, or when the viewport grows past the lg breakpoint
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const handleDesktop = (e: MediaQueryListEvent) => {
+      if (e.matches) setIsOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    desktop.addEventListener('change', handleDesktop);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      desktop.removeEventListener('change', handleDesktop);
+    };
+  }, [isOpen]);
+
   // Identify pages with dark hero sections where we need white text initially
   const darkHeroPaths = ['/', '/about', '/membership', '/events', '/digital-outreach', '/blog', '/contact'];
   const isDarkHero = darkHeroPaths.includes(location.pathname);
+
+  // White header content only while transparent over a dark hero.
+  // The open mobile menu has a light background, so treat it like scrolled.
+  const onDarkHero = !scrolled && !isOpen && isDarkHero;
 
   // Determine text color based on scroll state and page type
   // Default: Dark text in light mode, White text in dark mode
   // Transparent & Dark Hero: Always White text
   let textColorClass = "text-gray-900 dark:text-white";
-  if (!scrolled && isDarkHero) {
+  if (onDarkHero) {
     textColorClass = "text-white";
   }
 
@@ -145,8 +172,10 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
                 <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 <button 
                   onClick={() => setIsOpen(!isOpen)} 
-                  className={`p-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors ${!scrolled && isDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                  aria-label="Toggle menu"
+                  className={`p-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors ${onDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                  aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                  aria-expanded={isOpen}
+                  aria-controls="mobile-menu"
                 >
                   {isOpen ? (
                       <Icon name="close" className="block h-6 w-6" />
@@ -160,9 +189,11 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 
         {/* Mobile Menu Overlay */}
         {isOpen && (
-            <div className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-slate-950 pt-28 pb-8 px-6 overflow-y-auto animate-fade-in-up">
+            <div id="mobile-menu" className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-slate-950 pt-28 pb-8 px-6 overflow-y-auto animate-fade-in-up">
                  <div className="flex flex-col items-center space-y-4 min-h-full">
-                     <NavLinks mobile onLinkClick={() => setIsOpen(false)}/>
+                     <nav aria-label="Main" className="flex flex-col items-center space-y-4 w-full">
+                         <NavLinks mobile onLinkClick={() => setIsOpen(false)}/>
+                     </nav>
                      <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-800 w-full text-center">
                         <p className="text-xs text-gray-400 uppercase tracking-widest mb-4">Professional Excellence</p>
                      </div>
