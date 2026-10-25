@@ -95,7 +95,7 @@ All files are new and nothing imports them yet, so the site is unchanged after t
 Ordered from smallest to largest, so the primitives are proven on simple pages first. Each commit is `refactor(<page>): use shared UI components`.
 
 - [x] **3. NotFound** — `Button to="/"`. The h1 gets `font-extrabold` (DESIGN h1). Add `pt-24` so the fixed header can't cover it on short landscape phones. Also move `LoadError` and `ErrorBoundary` to `Button` in this commit: they are the other two `.btn-*`/hand-rolled users and are tiny.
-- [ ] **4. PrivacyPolicy** — `PageHero tone="light"`. This is the first test of the light tone with the context. The "Last Updated" date is out of scope and stays as it is.
+- [x] **4. PrivacyPolicy** — `PageHero tone="light"`. This is the first test of the light tone with the context. The "Last Updated" date is out of scope and stays as it is.
 - [ ] **5. Contact** — `PageHero` (eyebrow, gradient span in the title). Info and map cards → `Card` (`rounded-3xl` → `rounded-2xl`).
 - [ ] **6. Blog** — `PageHero`. Post cards → `Card interactive` (the whole card is a link). "Start Reading" and "Search the archives" → `Button`. Category pills → `Badge`.
 - [ ] **7. Membership** — `PageHero` (the hero seam overlay goes away with it, §4 Membership). Tier and benefit cards → `Card` (`rounded-[2.5rem]`, `rounded-[2rem]` and `rounded-3xl` → `rounded-2xl`). Register CTAs → `Button` (see open question 2). The eligibility note's `orange-*` → `warning-*` tokens.
