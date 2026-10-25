@@ -94,7 +94,7 @@ export const getLocalBusinessSchema = () => ({
  * Event Schema Generator - For individual events
  */
 export interface EventData {
-  id: string;
+  id: number;
   title: string;
   date: string;
   time: string;
