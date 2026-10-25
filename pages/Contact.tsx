@@ -10,6 +10,8 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import { fetchJson } from '../utils/fetchJson';
 import Icon from '../components/Icon';
+import PageHero from '../components/ui/PageHero';
+import Card from '../components/ui/Card';
 
 const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; delay: string }> = ({ icon, label, value, delay }) => (
     <div 
@@ -69,29 +71,13 @@ const Contact: React.FC = () => {
             <SchemaMarkup schema={[getLocalBusinessSchema(), breadcrumbSchema]} />
 
             {/* Dark Theme Hero Section */}
-            <section className="relative bg-slate-900 pt-32 pb-24 text-center overflow-hidden">
-                 <div className="absolute inset-0">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
-                </div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                     <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full mb-6">
-                        Get In Touch
-                    </span>
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
-                        {contactData.hero.title}
-                    </h1>
-                    <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        {contactData.hero.subtitle}
-                    </p>
-                </div>
-            </section>
+            <PageHero eyebrow="Get In Touch" title={contactData.hero.title} lede={contactData.hero.subtitle} />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 -mt-12 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
                     
                     {/* Left Column: Contact Info Card */}
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col justify-center animate-fade-in-up">
+                    <Card padding="xl" emphasis className="flex flex-col justify-center animate-fade-in-up">
                         <div className="mb-8 border-b border-gray-100 dark:border-gray-700/50 pb-6">
                              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{contactData.organization.name}</h2>
                              <p className="text-base font-medium text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
@@ -110,10 +96,10 @@ const Contact: React.FC = () => {
                                 />
                              ))}
                         </div>
-                    </div>
+                    </Card>
 
                      {/* Right Column: Map Card */}
-                     <div className="flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-2 shadow-xl border border-gray-100 dark:border-gray-700 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                     <Card padding="md" emphasis className="flex flex-col animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                          <div className="p-6 pb-4">
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{contactData.map.title}</h2>
                             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{contactData.map.description}</p>
@@ -130,7 +116,7 @@ const Contact: React.FC = () => {
                                 sandbox="allow-scripts allow-same-origin"
                             ></iframe>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
         </div>
