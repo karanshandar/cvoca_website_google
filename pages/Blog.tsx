@@ -2,6 +2,8 @@ import React from 'react';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
 import Icon from '../components/Icon';
+import PageHero from '../components/ui/PageHero';
+import Card from '../components/ui/Card';
 
 // Action Card Component
 const ActionCard: React.FC<{
@@ -19,12 +21,9 @@ const ActionCard: React.FC<{
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className={`group relative overflow-hidden rounded-3xl p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border flex flex-col h-full ${
-                isPrimary
-                    ? 'bg-white dark:bg-slate-800 border-gray-100 dark:border-gray-700'
-                    : 'bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 border-gray-200 dark:border-gray-700'
-            }`}
+            className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
+            <Card interactive padding="xl" className="relative overflow-hidden flex flex-col h-full">
             <div className={`absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500`}>
                 {/* Large Decorative Icon Background */}
                 <div className="scale-[3] origin-top-right">{icon}</div>
@@ -64,8 +63,10 @@ const ActionCard: React.FC<{
                 >
                     {isPrimary ? 'Start Reading' : 'Start Writing'}
                     <Icon name="arrow-long-right" className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
+                    <span className="sr-only"> (opens in new tab)</span>
                 </div>
             </div>
+            </Card>
         </a>
     );
 };
@@ -82,25 +83,15 @@ const Blog: React.FC = () => {
     return (
         <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
             {/* Hero Section */}
-            <section className="relative bg-slate-900 pt-32 pb-24 text-center overflow-hidden">
-                <div className="absolute inset-0">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
-                </div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase rounded-full mb-6">
-                        Learn & Grow
-                    </span>
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">CVOCA Knowledge Hub</h1>
-                    <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        Navigate the evolving landscape of finance, compliance, and governance with wisdom from across our professional community.
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                eyebrow="Learn & Grow"
+                title="CVOCA Knowledge Hub"
+                lede="Navigate the evolving landscape of finance, compliance, and governance with wisdom from across our professional community."
+            />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10 space-y-12 pb-20">
                 {/* Stats Bar */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center animate-fade-in-up">
+                <Card emphasis className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center animate-fade-in-up">
                     <div>
                         <p className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">500+</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider mt-1">Articles Published</p>
@@ -117,7 +108,7 @@ const Blog: React.FC = () => {
                         <p className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">10k+</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider mt-1">Monthly Readers</p>
                     </div>
-                </div>
+                </Card>
 
                 {/* Main Action Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
