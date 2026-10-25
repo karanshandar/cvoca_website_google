@@ -106,10 +106,10 @@ Ordered from smallest to largest, so the primitives are proven on simple pages f
 
 ## Step 12 — Header cleanup (one commit)
 
-- [ ] Delete `darkHeroPaths` and the fallback: `isDarkHero = heroTone === 'dark'`. Any screen without a `PageHero` (NotFound, loading and error states) now gets the dark-text header. That fixes the "white header text on the full-page spinner/error" limitation from the quick-wins review.
-- [ ] Mobile menu: `useFocusTrap` so Tab stays inside the open menu (deferred from quick-wins Phase 5). The trap must include the header's close button, so either the ref goes on a wrapper around both the header bar and the overlay, or the overlay gets its own close button. I'll pick whichever is the smaller diff while implementing.
-- [ ] Verify every route at 375 and 1440 px, light and dark: the header is readable at the top, after scrolling, with the menu open, during a slow load (throttled network), and in an error state (blocked `/data/*.json`).
-- [ ] Commit: `refactor(header): take hero tone only from PageHero; trap focus in mobile menu`.
+- [x] Delete `darkHeroPaths` and the fallback: `isDarkHero = heroTone === 'dark'`. Any screen without a `PageHero` (NotFound, loading and error states) now gets the dark-text header. That fixes the "white header text on the full-page spinner/error" limitation from the quick-wins review.
+- [x] Mobile menu: `useFocusTrap` so Tab stays inside the open menu (deferred from quick-wins Phase 5). The trap must include the header's close button, so either the ref goes on a wrapper around both the header bar and the overlay, or the overlay gets its own close button. I'll pick whichever is the smaller diff while implementing.
+- [x] Verify every route at 375 and 1440 px, light and dark: the header is readable at the top, after scrolling, with the menu open, during a slow load (throttled network), and in an error state (blocked `/data/*.json`).
+- [x] Commit: `refactor(header): take hero tone only from PageHero; trap focus in mobile menu`.
 
 ## Step 13 — Docs (one commit)
 

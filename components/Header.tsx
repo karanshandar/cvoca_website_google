@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Logo from './Logo';
 import Icon from './Icon';
 import { useHeroTone } from './ui/heroTone';
+import useFocusTrap from '../hooks/useFocusTrap';
 
 interface HeaderProps {
   theme: string;
@@ -90,6 +91,9 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  // Wraps the header bar and the mobile menu, so the close button is inside the focus trap
+  const menuRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(menuRef, isOpen);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -130,11 +134,9 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
     };
   }, [isOpen]);
 
-  // The PageHero on screen reports its tone. The path list is a temporary
-  // fallback for pages that don't use PageHero yet.
-  const heroTone = useHeroTone();
-  const darkHeroPaths = ['/', '/about', '/membership', '/events', '/digital-outreach', '/blog', '/contact'];
-  const isDarkHero = heroTone ? heroTone === 'dark' : darkHeroPaths.includes(location.pathname);
+  // The PageHero on screen reports its tone. Screens without one
+  // (404, loading, errors) get the dark-text header.
+  const isDarkHero = useHeroTone() === 'dark';
 
   // White header content only while transparent over a dark hero.
   // The open mobile menu has a light background, so treat it like scrolled.
@@ -149,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   }
 
   return (
-    <>
+    <div ref={menuRef}>
         <header className={`fixed z-50 transition-all duration-500 ease-in-out ${scrolled 
             ? 'top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl shadow-lg border border-white/20 dark:border-slate-700/50 py-3 px-6' 
             : 'top-0 left-0 w-full bg-transparent py-6 px-4 sm:px-6 lg:px-8'}`}>
@@ -203,7 +205,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
                  </div>
             </div>
         )}
-    </>
+    </div>
   );
 };
 
