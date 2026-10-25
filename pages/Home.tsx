@@ -12,16 +12,20 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import { fetchJson } from '../utils/fetchJson';
 import Icon from '../components/Icon';
+import PageHero from '../components/ui/PageHero';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Badge from '../components/ui/Badge';
 
 const StatCard: React.FC<{ value: string; label: string; delay: string }> = ({ value, label, delay }) => (
-    <div className={`bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 text-center transform transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl animate-fade-in-up`} style={{ animationDelay: delay }}>
+    <Card emphasis className="text-center animate-fade-in-up" style={{ animationDelay: delay }}>
         <p className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">{value}</p>
         <p className="mt-2 text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">{label}</p>
-    </div>
+    </Card>
 );
 
 const FeatureCard: React.FC<{ iconPath: string; title: string; description: string }> = ({ iconPath, title, description }) => (
-    <div className="group bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary/30 dark:hover:border-primary/30 h-full">
+    <Card padding="xl" className="group h-full">
         <div className="w-14 h-14 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={iconPath} />
@@ -29,7 +33,7 @@ const FeatureCard: React.FC<{ iconPath: string; title: string; description: stri
         </div>
         <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
-    </div>
+    </Card>
 );
 
 const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
@@ -38,8 +42,8 @@ const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
     const month = dateObj.toLocaleString('default', { month: 'short' });
 
     return (
-        <Link to="/events" className="block h-full">
-            <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:border-primary/30 transition-all duration-300 transform hover:-translate-y-1 h-full cursor-pointer group">
+        <Link to="/events" className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+            <Card interactive padding="none" className="flex flex-col overflow-hidden h-full">
                 {/* Card Header with Date Badge */}
                 <div className="bg-gradient-to-r from-gray-50 to-white dark:from-slate-700/50 dark:to-slate-800 p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                     <div className="bg-white dark:bg-slate-900 rounded-xl p-2.5 text-center min-w-[4rem] shadow-sm border border-gray-100 dark:border-gray-600 group-hover:border-primary/30 transition-colors">
@@ -52,15 +56,8 @@ const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
                 <div className="p-6 flex-grow flex flex-col pt-5">
                     {/* Tags Row - Updated to match Events page styling */}
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border border-primary-200 dark:border-primary-800 shadow-sm">
-                            {event.committee}
-                        </span>
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-sm border ${event.cost === 'Free'
-                            ? 'bg-success-50 text-success-700 border-success-100 dark:bg-success-700/30 dark:text-success-light dark:border-success-dark'
-                            : 'bg-primary-50 text-primary border-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800'
-                            }`}>
-                            {event.cost === 'Free' ? 'Free' : `${event.cost}`}
-                        </span>
+                        <Badge>{event.committee}</Badge>
+                        <Badge tone={event.cost === 'Free' ? 'success' : 'primary'}>{event.cost}</Badge>
                     </div>
 
                     <div className="mb-4">
@@ -80,13 +77,13 @@ const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </Card>
         </Link>
     );
 };
 
 const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ initiative }) => (
-    <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 h-full hover:-translate-y-1">
+    <Card padding="none" className="flex flex-col overflow-hidden h-full">
         <div className="relative h-48 overflow-hidden flex-shrink-0">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
             <img src={getOptimizedImageUrl(initiative.image, ImageSizePresets.EVENT_CARD)} alt={initiative.title} loading="lazy" decoding="async" className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700" />
@@ -106,7 +103,7 @@ const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ ini
                 Learn more <Icon name="arrow-right" className="w-4 h-4 ml-1" />
             </Link>
         </div>
-    </div>
+    </Card>
 );
 
 const Home: React.FC = () => {
@@ -174,35 +171,17 @@ const Home: React.FC = () => {
     return (
         <div className="overflow-hidden">
             {/* Modern Hero Section */}
-            <section className="relative bg-slate-900 pt-32 pb-48 lg:pt-40 lg:pb-64 overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                    <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/30 rounded-full blur-3xl filter mix-blend-screen animate-float"></div>
-                    <div className="absolute top-1/3 right-0 w-72 h-72 bg-secondary/20 rounded-full blur-3xl filter mix-blend-screen animate-float" style={{ animationDelay: '2s' }}></div>
-                    <div className="absolute -bottom-32 left-1/3 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl filter mix-blend-screen animate-float" style={{ animationDelay: '4s' }}></div>
+            <PageHero
+                size="large"
+                eyebrow="Since 1973 • Professional Excellence"
+                title={<>Empowering <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-secondary-light">Financial Visionaries</span></>}
+                lede="The official CVO Chartered & Cost Accountants Association. Knowledge, networking, and innovation for the modern finance professional."
+            >
+                <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                    <Button to="/membership">Become a Member</Button>
+                    <Button to="/about" variant="outline">About CVOCA</Button>
                 </div>
-
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="inline-block mb-6 animate-fade-in-up">
-                        <span className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-semibold tracking-wide">
-                            Since 1973 • Professional Excellence
-                        </span>
-                    </div>
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                        Empowering <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-secondary-light">Financial Visionaries</span>
-                    </h1>
-                    <p className="mt-6 max-w-2xl mx-auto text-xl text-slate-300 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                        The official CVO Chartered & Cost Accountants Association. Knowledge, networking, and innovation for the modern finance professional.
-                    </p>
-                    <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-                        <Link to="/membership" className="px-8 py-4 bg-primary hover:bg-primary-dark text-white text-lg font-bold rounded-full shadow-lg hover:shadow-primary/50 transition-all duration-300 transform hover:-translate-y-1">
-                            Become a Member
-                        </Link>
-                        <Link to="/about" className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-lg font-bold rounded-full border border-white/20 transition-all duration-300">
-                            About CVOCA
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            </PageHero>
 
             {/* Floating Stats Section */}
             <section className="relative -mt-24 z-20 px-4 sm:px-6 lg:px-8">
@@ -254,7 +233,7 @@ const Home: React.FC = () => {
 
                             <div className="flex flex-wrap items-center gap-3 mb-3">
                                 <h3 className="relative text-sm font-bold text-primary dark:text-primary-light uppercase tracking-widest">President's Communication</h3>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary-50 text-primary border border-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800 uppercase tracking-wide">
+                                <Badge>
                                     {(() => {
                                         const dateStr = presidentMessageData?.date ?? homeData.presidentDefault.date;
                                         try {
@@ -265,7 +244,7 @@ const Home: React.FC = () => {
                                             return dateStr;
                                         }
                                     })()}
-                                </span>
+                                </Badge>
                             </div>
                             <blockquote className="relative text-xl md:text-2xl font-serif italic text-gray-800 dark:text-gray-100 leading-relaxed">
                                 {presidentMessageData?.message ? `"${presidentMessageData.message}"` : `"${homeData.presidentDefault.message}"`}
@@ -277,15 +256,9 @@ const Home: React.FC = () => {
 
                         {/* CTA */}
                         <div className="flex-shrink-0">
-                            <a
-                                href="https://blog.cvoca.org/category/presidents-communication/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-700 text-primary dark:text-white font-semibold rounded-full shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-gray-100 dark:border-gray-600 whitespace-nowrap"
-                            >
-                                <span className="font-bold">Read Full Message</span>
-                                <Icon name="arrow-long-right" className="w-5 h-5 text-primary dark:text-primary-light transform group-hover:translate-x-1 transition-transform" />
-                            </a>
+                            <Button href="https://blog.cvoca.org/category/presidents-communication/" target="_blank" variant="outline" className="whitespace-nowrap">
+                                Read Full Message
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -347,10 +320,10 @@ const Home: React.FC = () => {
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mb-6 flex-grow leading-relaxed font-medium">
                                         Stay ahead of statutory due dates for Income Tax, GST, and ROC.
                                     </p>
-                                    <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white text-sm font-bold rounded-xl shadow-md shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group-hover:shadow-lg">
+                                    <span className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white text-sm font-bold rounded-xl shadow-md shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group-hover:shadow-lg">
                                         View Deadlines
                                         <Icon name="arrow-long-right" className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                                    </button>
+                                    </span>
                                 </div>
                             </div>
                         </a>
@@ -372,10 +345,10 @@ const Home: React.FC = () => {
                     </div>
 
                     <div className="mt-12 text-center">
-                        <Link to="/events" className="inline-flex items-center px-6 py-3 rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all shadow-md hover:shadow-lg group">
+                        <Button to="/events" variant="outline" className="group">
                             See All Upcoming Events
                             <Icon name="arrow-long-right" className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
-                        </Link>
+                        </Button>
                     </div>
                 </div>
             </section>
@@ -398,10 +371,10 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className="text-center mt-12">
-                    <Link to="/digital-outreach" className="inline-flex items-center px-6 py-3 rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-secondary hover:text-white dark:hover:bg-secondary dark:hover:text-white transition-all shadow-md hover:shadow-lg group">
+                    <Button to="/digital-outreach" variant="outline" className="group">
                         View All Initiatives
                         <Icon name="arrow-long-right" className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </Button>
                 </div>
             </section>
 
