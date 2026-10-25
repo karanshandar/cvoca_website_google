@@ -94,7 +94,7 @@ All files are new and nothing imports them yet, so the site is unchanged after t
 
 Ordered from smallest to largest, so the primitives are proven on simple pages first. Each commit is `refactor(<page>): use shared UI components`.
 
-- [ ] **3. NotFound** — `Button to="/"`. The h1 gets `font-extrabold` (DESIGN h1). Add `pt-24` so the fixed header can't cover it on short landscape phones. Also move `LoadError` and `ErrorBoundary` to `Button` in this commit: they are the other two `.btn-*`/hand-rolled users and are tiny.
+- [x] **3. NotFound** — `Button to="/"`. The h1 gets `font-extrabold` (DESIGN h1). Add `pt-24` so the fixed header can't cover it on short landscape phones. Also move `LoadError` and `ErrorBoundary` to `Button` in this commit: they are the other two `.btn-*`/hand-rolled users and are tiny.
 - [ ] **4. PrivacyPolicy** — `PageHero tone="light"`. This is the first test of the light tone with the context. The "Last Updated" date is out of scope and stays as it is.
 - [ ] **5. Contact** — `PageHero` (eyebrow, gradient span in the title). Info and map cards → `Card` (`rounded-3xl` → `rounded-2xl`).
 - [ ] **6. Blog** — `PageHero`. Post cards → `Card interactive` (the whole card is a link). "Start Reading" and "Search the archives" → `Button`. Category pills → `Badge`.
