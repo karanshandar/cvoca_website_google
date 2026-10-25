@@ -1,161 +1,145 @@
-# SEO Implementation - CVOCA Website
+# Quick Wins — Post-Review Fixes
 
-## Status: COMPLETED
+## Status: PLANNED (awaiting approval)
 
----
+Source: the four read-only reviews in `tasks/` (2026-10-25):
+`review-architecture.md`, `review-maintainability.md`, `review-design.md`, `review-security-performance.md`.
 
-## Summary
-
-Comprehensive SEO implementation for the CVOCA (CVO Chartered & Cost Accountants Association) website, including meta tags, Open Graph, Twitter Cards, structured data (JSON-LD), sitemap, robots.txt, and performance optimizations.
-
----
-
-## Changes Made
-
-### Phase 1: Critical Infrastructure
-
-- [x] **Router Migration**: Changed from `HashRouter` to `BrowserRouter` in `App.tsx`
-  - URLs now use clean paths (`/about`) instead of hash-based (`/#/about`)
-  - Critical for search engine crawling
-
-- [x] **Created `public/_redirects`**: Render SPA routing configuration
-  - Ensures all routes return `index.html` for client-side routing
-
-- [x] **Created `public/robots.txt`**: Search engine directives
-  - Allows all crawlers
-  - Points to sitemap location
-
-- [x] **Created `public/sitemap.xml`**: XML sitemap with all 8 pages
-  - Includes priority and changefreq for each page
-  - Home (1.0), Events/Membership (0.9), About/Contact/Blog (0.7-0.8), Privacy (0.3)
-
-### Phase 2: Meta Tags Infrastructure
-
-- [x] **Created `hooks/useSEO.ts`**: Custom React hook for dynamic SEO
-  - Manages page title, description, canonical URL
-  - Open Graph tags (og:title, og:description, og:image, og:url, og:type)
-  - Twitter Card tags (twitter:card, twitter:title, twitter:description, twitter:image)
-  - Supports noIndex option for privacy policy
-
-- [x] **Updated `index.html`**: Comprehensive default meta tags
-  - Primary meta tags (description, keywords, author, robots)
-  - Open Graph tags for social sharing
-  - Twitter Card tags
-  - Geo tags for local SEO (Mumbai, India)
-  - Theme color for mobile browsers
-  - Updated favicon to use CVOCA logo
-
-### Phase 3: Structured Data (JSON-LD)
-
-- [x] **Created `utils/schema.ts`**: JSON-LD schema generators
-  - `getOrganizationSchema()`: Organization details, address, social profiles
-  - `getWebsiteSchema()`: Site-level schema
-  - `getLocalBusinessSchema()`: For Contact page
-  - `getEventSchema()`: For individual events
-  - `getPersonSchema()`: For committee members
-  - `getBreadcrumbSchema()`: For navigation context
-  - `getArticleSchema()`: For blog posts
-  - `getFAQSchema()`: For FAQ sections
-
-- [x] **Created `components/SchemaMarkup.tsx`**: Reusable schema injection component
-
-- [x] **Added global schema to `App.tsx`**: Organization + Website schema on all pages
-
-- [x] **Added page-specific schema**:
-  - Events.tsx: Event schema for each listed event + Breadcrumb
-  - Contact.tsx: LocalBusiness schema + Breadcrumb
-
-### Phase 4: Page SEO Implementation
-
-Added `useSEO` hook to all 8 page components with page-specific:
-- Title
-- Description
-- Canonical URL
-- Keywords
-- OG type where applicable
-
-| Page | Title | Key Focus |
-|------|-------|-----------|
-| Home.tsx | Home | Organization overview, 2,400+ members |
-| About.tsx | About Us | History since 1973, leadership |
-| Membership.tsx | Membership | Rs 50/500 pricing, benefits |
-| Events.tsx | Events | Conferences, workshops, seminars |
-| Blog.tsx | Knowledge Hub | Articles, tax updates, insights |
-| DigitalOutreach.tsx | Digital Outreach | Community initiatives |
-| Contact.tsx | Contact Us | Dadar Mumbai location, hours |
-| PrivacyPolicy.tsx | Privacy Policy | noIndex flag set |
-
-### Phase 5: Image Optimization
-
-- [x] Added `loading="lazy"` and `decoding="async"` to images in:
-  - Home.tsx (outreach cards, president photo)
-  - About.tsx (committee member photos)
-  - Events.tsx (event images)
-  - DigitalOutreach.tsx (initiative images)
+> The previous contents of this file (the completed 2025 SEO implementation log) are preserved in git history at `f02b98c`.
 
 ---
 
-## Files Created (7)
+## Scope
 
-| File | Purpose |
-|------|---------|
-| `public/robots.txt` | Search engine crawl directives |
-| `public/sitemap.xml` | XML sitemap for indexing |
-| `public/_redirects` | Render SPA routing config |
-| `hooks/useSEO.ts` | Dynamic meta tag management hook |
-| `utils/schema.ts` | JSON-LD schema generators |
-| `components/SchemaMarkup.tsx` | Schema injection component |
-| `tasks/todo.md` | This documentation file |
+Small, low-risk fixes only. Each phase is one commit. Phases are ordered so the safety net (type checking) lands first.
 
-## Files Modified (10)
+**In scope:** CLS fix, mobile menu, About tab overflow, React types + typecheck, `minify-json`, fetch error states, small bugs, `npm audit`.
 
-| File | Changes |
-|------|---------|
-| `App.tsx` | HashRouter → BrowserRouter, global schema |
-| `index.html` | Comprehensive meta tags, OG, Twitter, geo |
-| `pages/Home.tsx` | useSEO hook, lazy loading |
-| `pages/About.tsx` | useSEO hook, lazy loading |
-| `pages/Membership.tsx` | useSEO hook |
-| `pages/Events.tsx` | useSEO hook, Event schema, lazy loading |
-| `pages/Blog.tsx` | useSEO hook |
-| `pages/DigitalOutreach.tsx` | useSEO hook, lazy loading |
-| `pages/Contact.tsx` | useSEO hook, LocalBusiness schema |
-| `pages/PrivacyPolicy.tsx` | useSEO hook with noIndex |
+**Out of scope (separate later plans):**
+- Build-time Google Sheets → JSON, plus the "Publish website" menu in the Sheet (`review-architecture.md` D1).
+- Shared UI components built from `DESIGN.md` tokens (`review-design.md` §6–8).
+- Also deferred: `strict: true`, ESLint/Vitest/CI, contrast and heading sweeps, prerendering, privacy policy rewrite, and the Render header/caching settings (those are dashboard changes for the site owner).
 
 ---
 
-## Post-Implementation Notes
+## Phase 1 — React types + typecheck (safety net)
 
-### Domain Placeholder
-- All URLs use `https://cvoca.org` as placeholder
-- BASE_URL is now centralized in `constants.ts` — update there only
-- Other files to update when domain changes:
-  - `public/sitemap.xml` (all URLs)
-  - `public/robots.txt` (Sitemap directive)
-  - `index.html` (canonical and OG URLs)
+Why: `@types/react` isn't installed, so React is `any` and nothing is type-checked. `vite build` never runs `tsc`.
 
-### Google Search Console
-- Verification meta tag placeholder added in `index.html`
-- Uncomment and add actual verification code after setup
-- Submit sitemap after deployment
+- [ ] `npm i -D @types/react@^19 @types/react-dom@^19`
+- [ ] `tsconfig.json`:
+  - Remove `experimentalDecorators` and `useDefineForClassFields: false`. They're unused, and they cause the 3 `ErrorBoundary` errors.
+  - Add `"include": ["**/*.ts", "**/*.tsx"]` and `"exclude": ["node_modules", "dist", "scripts"]`.
+  - Leave `strict` off; it's a later plan.
+- [ ] `package.json`: add `"typecheck": "tsc --noEmit"` and prefix `build` with `tsc --noEmit &&`.
+- [ ] Run `npm run typecheck` and fix the real errors that come up. Keep fixes to type annotations only, with no behaviour changes. List anything non-trivial in the Review section.
+- [ ] Verify: `npm run typecheck` passes and `npm run build` passes.
 
-### Testing Recommendations
-1. Validate structured data: https://search.google.com/test/rich-results
-2. Check OG tags: https://developers.facebook.com/tools/debug/
-3. Check Twitter Cards: https://cards-dev.twitter.com/validator
-4. Test mobile-friendliness: https://search.google.com/test/mobile-friendly
+## Phase 2 — Stop `minify-json` rewriting source files
+
+Why: `scripts/minify-json.js:26` writes back into `public/data/`, so every tracked JSON file is one unreadable line and every build dirties the working tree. The saving is negligible, because Render already serves brotli.
+
+- [ ] Remove `node scripts/minify-json.js &&` from `build` and remove the `minify-json` script (`package.json:8,10`).
+- [ ] Delete `scripts/minify-json.js`.
+- [ ] Pretty-print the 11 `public/data/*.json` files with 2-space indents. Formatting only, no content changes. Make this a separate commit so the diff is easy to skip.
+- [ ] Verify: each file parses (`node -e "JSON.parse(...)"`), `npm run build` leaves `git status` clean except `public/sitemap.xml`, and the site renders the same data.
+
+## Phase 3 — Dependency security (`npm audit`)
+
+Why: there are 13 advisories (9 high), all in dev/build tooling (vite, rollup, source-map-js). `react-router-dom` < 7.17.1 also has advisories. Render runs `npm install`, which ignores the lockfile.
+
+- [ ] Run `npm audit fix`, staying within the current ranges (no `--force`).
+- [ ] Run `npm update react-router-dom react react-dom` (still 7.x and 19.x).
+- [ ] `render.yaml:6`: change `npm install && npm run build` to `npm ci && npm run build`.
+- [ ] Verify: `npm audit` shows 0 high, `npm run build` passes, and dev-server navigation between all routes still works.
+
+## Phase 4 — CLS fix (mobile Lighthouse 46–61, CLS 0.65)
+
+Why: the Suspense fallback and the page-level spinners are only `min-h-[400px]`. On a phone the footer renders in the first viewport and then gets pushed down about 6,000 px.
+
+- [ ] `components/LoadingSpinner.tsx`: add an optional `fullPage` prop that uses `min-h-screen` instead of `min-h-[400px]`.
+- [ ] Use `<LoadingSpinner fullPage />` in the 4 places that replace a whole page:
+  - The `App.tsx:62` Suspense fallback
+  - `pages/Home.tsx:165`
+  - `pages/Contact.tsx:51`
+  - `pages/Membership.tsx:182`
+- [ ] Leave the in-section spinners as they are: About tab (`:235`), Events list (`:473`) and DigitalOutreach (`:353`).
+- [ ] Also add `role="status"` and sr-only "Loading…" text to the spinner (one line, `review-design.md` §5).
+- [ ] Verify: Lighthouse mobile on the local preview (`npm run build && npm run preview`) for `/`, `/about` and `/membership`. Target CLS ≤ 0.1. Record before and after numbers.
+
+## Phase 5 — Mobile menu (invisible close button)
+
+Why: on dark-hero pages at the top of the page, the open menu's white overlay makes the CVOCA wordmark, the logo and the close X white on white (`review-design.md` screenshot 01).
+
+All changes are in `components/Header.tsx`:
+- [ ] Treat `isOpen` like `scrolled` when choosing colours: `textColorClass` (`:117`) and the toggle button classes (`:148`) use the light-background variant when the menu is open.
+- [ ] Toggle button:
+  - Add `aria-expanded={isOpen}` and `aria-controls="mobile-menu"`.
+  - Use a state-aware `aria-label` ("Open menu" / "Close menu").
+  - Add `id="mobile-menu"` to the overlay.
+- [ ] Close the menu when `location.pathname` changes (`useEffect`), and on the Escape key.
+- [ ] Wrap the overlay links in `<nav aria-label="Main">`.
+- [ ] Not included: a focus trap. It belongs with the shared `Modal` primitive in the components plan.
+- [ ] Verify at 375 px in light and dark mode on `/` (dark hero) and `/privacy-policy` (light hero):
+  - The wordmark and the X are visible with the menu open.
+  - Escape closes the menu.
+  - Browser back closes the menu.
+  - The desktop header is unchanged at 1440 px.
+
+## Phase 6 — About tab bar overflow at 375 px
+
+Why: the 3 tabs need 403 px (`px-6` plus `scale-105` on the active tab), so the page scrolls sideways (`review-design.md` screenshot 02).
+
+- [ ] `pages/About.tsx:16` `TabButton`: `px-3 sm:px-6 text-xs sm:text-sm`, and drop `scale-105`. The active state already has `bg-primary` and a shadow.
+- [ ] `pages/About.tsx:590` `<nav>`: `space-x-1 sm:space-x-2`, and add `role="tablist"`. `TabButton` gets `role="tab"` and `aria-selected={active}`.
+- [ ] Verify there's no horizontal scroll at 320, 375 and 768 px (`document.documentElement.scrollWidth <= innerWidth`) and that the labels stay on one line.
+
+## Phase 7 — Fetch error states
+
+Why: no page reads `useFetch().error`.
+- Home, Contact and Membership spin forever when their data fails to load.
+- Events wrongly says "no upcoming events".
+- The Footer disappears entirely.
+- Plain `fetch().then(r => r.json())` skips `res.ok`, and the SPA rewrite returns `index.html` with a 200 status for a missing file.
+
+- [ ] New `utils/fetchJson.ts`: `fetchJson<T>(path)`. It checks `res.ok` and that the `content-type` includes `json`, and otherwise throws a clear `Error`.
+- [ ] Use it in the 5 plain fetches: `Home.tsx:121,124`, `Contact.tsx:47`, `Membership.tsx:178`, `DigitalOutreach.tsx:325`. Also use it in the `fetchWithFallback.ts:13-17` fallback path.
+- [ ] New `components/LoadError.tsx`: a short "Couldn't load this content" message with a "Try again" button that reloads the page. Keep it small, with existing classes only.
+- [ ] Read `error` and render `<LoadError />` in:
+  - Home (`homeData`)
+  - Contact
+  - Membership
+  - Events (instead of the empty "no events" state)
+  - DigitalOutreach
+  - About (tab area and reports)
+- [ ] `components/Footer.tsx`:
+  - Always render the static parts: logo, blurb, Quick Links and the copyright row.
+  - Gate only the social icons and the contact info on their data.
+  - Load the data with `fetchJson`. Keep the existing `useState`/`useEffect` shape so the change stays small.
+- [ ] Verify: block `/data/home.json`, `/data/contact.json` and `/data/events.json` one at a time in the browser (request blocking), or rename the file temporarily.
+  - The error message shows instead of a spinner.
+  - The Footer links stay visible.
+  - Normal loading is unchanged.
+
+## Phase 8 — Small bugs
+
+- [ ] **Past Presidents Sr. No. breaks on fallback.** `srNo` is only added in `fetchPastPresidents` (`utils/googleSheets.ts:135-138`), not in the JSON fallback. In `pages/About.tsx`, after loading, number the rows with `srNo: p.srNo ?? index + 1`. Then remove the numbering from `fetchPastPresidents` so it lives in one place.
+- [ ] **Outreach phone CTA uses the wrong contact.** `pages/DigitalOutreach.tsx:294-304` finds the matching phone contact but renders `contacts[0]`. Store the found contact and use its `contact` and `label`.
+- [ ] **NotFound title shows "CVOCA" twice.** `pages/NotFound.tsx:7`: change `'Page Not Found - CVOCA'` to `'Page Not Found'`. `useSEO` already appends the site name.
+- [ ] **Events filter defaults.** `pages/Events.tsx:431,434`: `clearFilters` resets `timeFilter` to `'upcoming'`, and `hasActiveFilters` compares against `'upcoming'`, so "Clear" no longer shows on first load.
+- [ ] **Events hero title.** `pages/Events.tsx:466`: show "Upcoming Events", "Past Events" or "All Events" to match `timeFilter`.
+- [ ] **Committee role typo drops a member without warning.** `utils/googleSheets.ts:168-187`: add `default: console.warn(...)` naming the unknown role and member.
+- [ ] Verify each fix on the dev server. For Sr. No., unset `VITE_GOOGLE_SHEETS_API_KEY` locally to force the JSON fallback and check the column shows 1..N and sorts.
+
+## Phase 9 — Final verification and review
+
+- [ ] `npm run typecheck`, `npm run build` and `npm audit` all pass.
+- [ ] Browser pass on every route at 375 px and 1440 px, in light and dark mode. No console errors.
+- [ ] Lighthouse mobile before/after table for `/`, `/about` and `/membership`.
+- [ ] Fill in the Review section below.
 
 ---
 
 ## Review
 
-All SEO implementation tasks completed successfully. The website now has:
-- Clean, crawlable URLs with BrowserRouter
-- Comprehensive meta tags for all pages
-- Open Graph and Twitter Card support for social sharing
-- Structured data (JSON-LD) for rich search results
-- XML sitemap and robots.txt for search engines
-- Lazy loading for improved performance
-- Local SEO optimization for Mumbai location
-
-The implementation follows React SPA best practices and provides a solid foundation for search engine visibility.
+_To be completed after implementation._
