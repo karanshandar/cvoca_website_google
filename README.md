@@ -136,7 +136,7 @@ cvoca_website_google/
 │   ├── robots.txt      # SEO robots file
 │   └── sitemap.xml     # SEO sitemap
 ├── scripts/            # Build scripts
-│   └── minify-json.js  # JSON minification utility
+│   └── generate-sitemap.js  # Writes public/sitemap.xml at build time
 ├── index.html          # HTML template
 ├── index.tsx           # Application entry point
 ├── App.tsx             # Main app component

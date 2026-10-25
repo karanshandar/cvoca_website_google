@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && node scripts/minify-json.js && node scripts/generate-sitemap.js && vite build",
+    "build": "tsc --noEmit && node scripts/generate-sitemap.js && vite build",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "minify-json": "node scripts/minify-json.js",
     "design:lint": "npx --yes -p @google/design.md@0.3.0 designmd lint DESIGN.md",
     "design:export": "npx --yes -p @google/design.md@0.3.0 designmd export --format json-tailwind DESIGN.md"
   },
