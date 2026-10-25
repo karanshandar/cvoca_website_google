@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { CvoEvent } from '../types';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
@@ -12,6 +12,11 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
+import PageHero from '../components/ui/PageHero';
+import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import SearchInput from '../components/ui/SearchInput';
+import ImageLightbox from '../components/ui/ImageLightbox';
 
 const getGoogleCalendarUrl = (event: CvoEvent): string => {
     // Safely parse YYYY-MM-DD to avoid timezone issues
@@ -82,62 +87,6 @@ const getFallbackGradient = (id: number) => {
     return gradients[id % gradients.length];
 };
 
-// New Component: ImageModal for Lightbox
-const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ imageUrl, onClose }) => {
-    useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose();
-        };
-        window.addEventListener('keydown', handleEsc);
-        document.body.style.overflow = 'hidden';
-        return () => {
-            window.removeEventListener('keydown', handleEsc);
-            document.body.style.overflow = 'unset';
-        };
-    }, [onClose]);
-
-    return (
-        <div
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm transition-opacity duration-300 animate-fade-in-up"
-            onClick={onClose}
-        >
-            <div className="absolute top-4 right-4 z-10 flex gap-4">
-                <a
-                    href={imageUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10 font-medium text-sm"
-                    title="Open Full Size (Zoom)"
-                >
-                    <Icon name="external-link" className="w-5 h-5" />
-                    <span className="hidden sm:inline">Open Full Size</span>
-                </a>
-                <button
-                    onClick={onClose}
-                    className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
-                    aria-label="Close"
-                >
-                    <Icon name="close" className="w-6 h-6" />
-                </button>
-            </div>
-
-            <img
-                src={getOptimizedImageUrl(imageUrl, ImageSizePresets.LARGE)}
-                alt="Event Flyer"
-                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-            />
-
-            <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none px-4">
-                <span className="inline-block px-4 py-2 bg-black/50 text-white text-xs rounded-full backdrop-blur-md border border-white/10">
-                    Pinch to zoom or tap "Open Full Size"
-                </span>
-            </div>
-        </div>
-    );
-};
-
 const IconWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
     <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl shadow-sm border border-black/5 ${className}`}>
         {children}
@@ -165,17 +114,21 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
     }, [isExpanded]);
 
     return (
-        <div className="group flex flex-col md:flex-row bg-white dark:bg-slate-800 rounded-3xl shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 h-full relative">
+        <Card padding="none" className="group flex flex-col md:flex-row overflow-hidden h-full relative">
 
             {/* Left Media Section: Image or Fallback */}
             <div
-                onClick={() => event.imageUrl && onImageClick(event.imageUrl)}
                 className={`${event.imageUrl
-                    ? 'aspect-[3/4] md:w-56 bg-gray-100 dark:bg-slate-900 cursor-pointer group/image'
+                    ? 'aspect-[3/4] md:w-56 bg-gray-100 dark:bg-slate-900 group/image'
                     : 'aspect-[1/1] md:w-40'
                     } md:aspect-auto md:h-full relative shrink-0 overflow-hidden`}>
                 {event.imageUrl ? (
-                    <>
+                    <button
+                        type="button"
+                        onClick={() => onImageClick(event.imageUrl!)}
+                        aria-label={`View flyer for ${event.title}`}
+                        className="block w-full h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                    >
                         <img
                             src={getOptimizedImageUrl(event.imageUrl, ImageSizePresets.EVENT_CARD)}
                             alt={event.title}
@@ -189,7 +142,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                                 <Icon name="zoom-in" className="w-5 h-5 text-primary" />
                             </div>
                         </div>
-                    </>
+                    </button>
                 ) : (
                     // Graceful Fallback
                     <div className={`w-full h-full bg-gradient-to-br ${getFallbackGradient(event.id)} relative flex items-center justify-center`}>
@@ -223,15 +176,8 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
 
                 {/* Header: Committee & Cost */}
                 <div className="flex flex-wrap justify-between items-start mb-4 gap-3">
-                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border border-primary-200 dark:border-primary-800 shadow-sm">
-                        {event.committee}
-                    </span>
-                    <span className={`shrink-0 inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm border ${event.cost === 'Free'
-                        ? 'bg-success-50 text-success-700 border-success-100 dark:bg-success-700/30 dark:text-success-light dark:border-success-dark'
-                        : 'bg-primary-50 text-primary border-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800'
-                        }`}>
-                        {event.cost === 'Free' ? 'Free' : `${event.cost}`}
-                    </span>
+                    <Badge>{event.committee}</Badge>
+                    <Badge tone={event.cost === 'Free' ? 'success' : 'primary'} className="shrink-0">{event.cost}</Badge>
                 </div>
 
                 {/* Title */}
@@ -351,7 +297,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                 </div>
 
             </div>
-        </div>
+        </Card>
     );
 }
 
@@ -374,6 +320,7 @@ const Events: React.FC = () => {
     );
     const allEvents = data ?? [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const closeLightbox = useCallback(() => setSelectedImage(null), []);
 
     const allOrganizers = useMemo(() => {
         const organizers = new Set<string>();
@@ -458,18 +405,10 @@ const Events: React.FC = () => {
             <SchemaMarkup schema={[...eventSchemas, breadcrumbSchema]} />
 
             {/* Hero Section */}
-            <section className="bg-gradient-to-br from-slate-900 via-primary-900 to-slate-900 pt-32 pb-24 text-center text-white relative overflow-hidden">
-                <div className="absolute inset-0 opacity-30">
-                    <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-3xl mix-blend-screen"></div>
-                    <div className="absolute bottom-0 right-0 w-80 h-80 bg-accent rounded-full blur-3xl mix-blend-screen"></div>
-                </div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
-                        {timeFilter === 'past' ? 'Past Events' : timeFilter === 'all' ? 'All Events' : 'Upcoming Events'}
-                    </h1>
-                    <p className="text-xl text-primary-100 max-w-2xl mx-auto font-light">Connect, learn, and grow with our curated professional gatherings.</p>
-                </div>
-            </section>
+            <PageHero
+                title={timeFilter === 'past' ? 'Past Events' : timeFilter === 'all' ? 'All Events' : 'Upcoming Events'}
+                lede="Connect, learn, and grow with our curated professional gatherings."
+            />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-12 relative z-10">
                 {loading ? (
@@ -498,19 +437,12 @@ const Events: React.FC = () => {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Icon name="search" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        placeholder="Search events..."
-                                        aria-label="Search events"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-all"
-                                    />
-                                </div>
+                                <SearchInput
+                                    label="Search events"
+                                    placeholder="Search events..."
+                                    value={searchTerm}
+                                    onChange={setSearchTerm}
+                                />
 
                                 {/* Time Filter */}
                                 <div className="relative">
@@ -518,7 +450,7 @@ const Events: React.FC = () => {
                                         aria-label="Filter events by time"
                                         value={timeFilter}
                                         onChange={(e) => setTimeFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer font-medium"
+                                        className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer font-medium"
                                     >
                                         <option value="upcoming">Upcoming Events</option>
                                         <option value="past">Past Events</option>
@@ -534,7 +466,7 @@ const Events: React.FC = () => {
                                         aria-label="Filter events by organizer"
                                         value={organizerFilter}
                                         onChange={(e) => setOrganizerFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
+                                        className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
                                     >
                                         <option value="all">All Organizers</option>
                                         {allOrganizers.filter(org => org !== 'all').map(org => <option key={org} value={org}>{org}</option>)}
@@ -548,7 +480,7 @@ const Events: React.FC = () => {
                                         aria-label="Filter events by tag"
                                         value={tagFilter}
                                         onChange={(e) => setTagFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3.5 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
+                                        className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
                                     >
                                         {allTags.map(tag => <option key={tag} value={tag} className="capitalize">{tag === 'all' ? 'All Tags' : tag}</option>)}
                                     </select>
@@ -587,7 +519,7 @@ const Events: React.FC = () => {
             </div>
 
             {/* Lightbox Modal */}
-            {selectedImage && <ImageModal imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />}
+            <ImageLightbox imageUrl={selectedImage} alt="Event flyer" onClose={closeLightbox} />
         </div>
     );
 };
