@@ -59,7 +59,7 @@ const App: React.FC = () => {
         {/* Removed pt-24 to allow Hero sections to sit behind the transparent header */}
         <main id="main-content" className="flex-grow">
           <ErrorBoundary>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<LoadingSpinner fullPage />}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />

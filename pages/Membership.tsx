@@ -179,7 +179,7 @@ const Membership: React.FC = () => {
     );
 
     if (loading || !data) {
-        return <LoadingSpinner />;
+        return <LoadingSpinner fullPage />;
     }
 
     return (

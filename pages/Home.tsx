@@ -162,7 +162,7 @@ const Home: React.FC = () => {
     }, [outreach]);
 
     if (!homeData) {
-        return <LoadingSpinner />;
+        return <LoadingSpinner fullPage />;
     }
 
     return (

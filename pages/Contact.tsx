@@ -48,7 +48,7 @@ const Contact: React.FC = () => {
     );
 
     if (loading || !contactData) {
-        return <LoadingSpinner />;
+        return <LoadingSpinner fullPage />;
     }
 
     // Breadcrumb schema for Contact page
