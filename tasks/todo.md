@@ -1,6 +1,6 @@
 # Shared UI Components from DESIGN.md Tokens
 
-## Status: PLAN — waiting for approval. No code written yet.
+## Status: APPROVED (2026-10-25). In progress.
 
 Source: `tasks/review-design.md` §6 (component inventory), §7 (a11y audit) and §8 items 4, 7 and 12.
 Branch: work directly on `main` (as requested). One commit per step below. Nothing is pushed.
@@ -119,11 +119,14 @@ Ordered from smallest to largest, so the primitives are proven on simple pages f
 
 ---
 
-## Open questions (please decide before I start)
+## Open questions — decided 2026-10-25: all three recommendations accepted
 
 1. **Hero heading size.** DESIGN.md says h1 → `text-4xl md:text-5xl`, but the pages use `md:text-6xl` (Home `md:text-7xl`). Recommendation: follow DESIGN.md (`text-4xl md:text-5xl`, and `md:text-6xl` for Home's `large` hero). Alternative: keep today's sizes and update DESIGN.md instead.
+   **Decision: follow DESIGN.md.**
 2. **The Membership student-tier CTA uses `secondary` cyan** (3.68:1, the documented caveat). Recommendation: switch both Register CTAs to `primary`, and keep the tiers distinct through each card's Badge and heading. Alternative: keep `secondary`, as the brand caveat allows.
+   **Decision: both Register CTAs use `primary`.**
 3. **Home's glass "About CVOCA" hero button** (white/10 on dark) has no DESIGN.md variant. Recommendation: use `variant="outline"` (a white card surface), which is a visible change. Alternative: add a fourth `onDark` variant to `Button` and document it in DESIGN.md.
+   **Decision: use `variant="outline"`.**
 
 ---
 
