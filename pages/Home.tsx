@@ -7,6 +7,7 @@ import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
 import { fetchPresidentMessage, fetchManagingCommittee, fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
+import { parseLocalDate } from '../utils/dates';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
@@ -37,7 +38,7 @@ const FeatureCard: React.FC<{ iconPath: string; title: string; description: stri
 );
 
 const HomeEventCard: React.FC<{ event: CvoEvent }> = ({ event }) => {
-    const dateObj = new Date(event.date);
+    const dateObj = parseLocalDate(event.date);
     const day = dateObj.getDate();
     const month = dateObj.toLocaleString('default', { month: 'short' });
 
@@ -150,8 +151,8 @@ const Home: React.FC = () => {
         today.setHours(0, 0, 0, 0); // Normalize today to start of day
 
         return events
-            .filter(e => new Date(e.date) >= today)
-            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .filter(e => parseLocalDate(e.date) >= today)
+            .sort((a, b) => parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime())
             .slice(0, 2);
     }, [events]);
 

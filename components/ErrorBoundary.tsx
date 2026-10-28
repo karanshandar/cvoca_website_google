@@ -31,7 +31,7 @@ class ErrorBoundary extends React.Component<Props, State> {
             Something went wrong
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            An unexpected error occurred. Please try refreshing the page.
+            An unexpected error occurred. Please refresh the page, or choose another page from the menu.
           </p>
           <Button onClick={() => window.location.reload()}>Refresh Page</Button>
         </div>

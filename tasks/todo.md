@@ -118,17 +118,21 @@ Execution: inline (superpowers:executing-plans) on `main`, as the user asked; pl
 - Privacy page read at 375 px in dark: lists indent correctly, and the link is readable.
 - **Not verified:** the 5 s timeout firing on a real hanging Sheets request (no key locally; checked by reading the code). The no-flash first paint was checked by the script order in `dist/index.html` and the dark spinner screenshot, not on a throttled production preview.
 
-### Deferred minors (from the final review)
-- `theme-color` follows only the OS, not the in-site toggle (a two-line update in App.tsx's theme effect).
-- Event dates (`YYYY-MM-DD`) are parsed as UTC in both the filter and the new schema memo. Harmless in IST; fix both together with a local-date parser.
-- The ErrorBoundary copy still says only "refresh the page", though navigating away now also recovers.
+### Minors from the final review
+Fixed in a follow-up commit (2026-10-28):
+- **`theme-color` follows the toggle:** App.tsx's theme effect sets both theme-color metas to `#0f172a`/`#2563eb`. Verified in the browser: the toggle flips both values.
+- **Event dates parsed as local dates:** new `utils/dates.ts` `parseLocalDate` (plain `YYYY-MM-DD` → local midnight; anything else → `new Date`). It is used for every event date in Events (card badge, filter, sort, schema memo) and Home (card badge, upcoming filter, sort). Checked in Node with `TZ=America/Los_Angeles`: an event on today's date was dropped from "upcoming" before and is kept now, and the badge day was off by one before and is correct now. In IST the badges are unchanged (Feb 28, Jan 2 match the data).
+- **ErrorBoundary copy:** "Please refresh the page, or choose another page from the menu."
+
+Still deferred:
 - `og:image:alt` is static in `index.html`; `useSEO` doesn't update it if a page ever passes its own `ogImage` (none does today).
 
-### For the client to confirm
-- Privacy contact `info@cvoca.org` (the old policy said `president@cvoca.org`).
-- The privacy statement that registration details are shared with CVOCA only to run the membership or event, and never sold.
-- The share image design (logo, full name, "Mumbai · Since 1973").
-- `render.yaml` still isn't live until the account owner links the Render Blueprint or copies the headers into the dashboard (`docs/account-owner-setup-guide.md`, Part C).
+### Decisions (2026-10-28)
+- Privacy contact `info@cvoca.org`: confirmed correct.
+- Privacy wording and the share image design: our call, so they stay as built.
+
+### Open items
+- **`render.yaml` headers are not live.** They apply only once the account owner links the Render Blueprint or copies the headers into the dashboard (`docs/account-owner-setup-guide.md`, Part C). This needs client account access.
 
 ### What's left
 - Batches C (dead code incl. `_redirects`, docs, tooling) and D (prerendering, self-hosted font, THEMES, leftover components).

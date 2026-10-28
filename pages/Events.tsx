@@ -7,6 +7,7 @@ import SchemaMarkup from '../components/SchemaMarkup';
 import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
 import { fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
+import { parseLocalDate } from '../utils/dates';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
@@ -98,7 +99,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
     const [contentHeight, setContentHeight] = useState<string>('4.5em'); // Default roughly 3 lines
     const textRef = useRef<HTMLParagraphElement>(null);
     const descriptionId = useId();
-    const dateObj = new Date(event.date);
+    const dateObj = parseLocalDate(event.date);
     const day = dateObj.getDate();
     const month = dateObj.toLocaleString('default', { month: 'short' });
     const year = dateObj.getFullYear();
@@ -344,7 +345,7 @@ const Events: React.FC = () => {
         today.setHours(0, 0, 0, 0); // Normalize today to start of day
 
         const filtered = allEvents.filter(event => {
-            const eventDate = new Date(event.date);
+            const eventDate = parseLocalDate(event.date);
 
             const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) || event.description.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesOrganizer = organizerFilter === 'all' || event.committee === organizerFilter;
@@ -362,8 +363,8 @@ const Events: React.FC = () => {
 
         // Sort events
         return filtered.sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
+            const dateA = parseLocalDate(a.date).getTime();
+            const dateB = parseLocalDate(b.date).getTime();
 
             // If viewing past events, show most recent first (Descending)
             // If viewing upcoming or all, show nearest first (Ascending)
@@ -392,8 +393,8 @@ const Events: React.FC = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         return allEvents
-            .filter(event => new Date(event.date) >= today)
-            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .filter(event => parseLocalDate(event.date) >= today)
+            .sort((a, b) => parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime())
             .slice(0, 10);
     }, [allEvents]);
 

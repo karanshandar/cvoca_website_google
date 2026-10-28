@@ -41,6 +41,10 @@ const App: React.FC = () => {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
+    // The browser bar follows the site's theme, not just the OS setting in index.html
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#2563eb');
+    });
   }, [theme]);
 
   // Only an explicit choice is saved, so untouched visitors keep following the OS setting
