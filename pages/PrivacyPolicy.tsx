@@ -38,7 +38,6 @@ const PrivacyPolicy: React.FC = () => {
                     <p>Like any website, cvoca.org relies on a few outside services. When your browser loads a page, these services receive standard technical information such as your IP address, browser type and the page you are viewing:</p>
                     <ul className="list-disc pl-5 space-y-2">
                         <li><strong>Render and Cloudflare</strong> host and deliver the website. They keep standard server logs to run the service and keep it secure.</li>
-                        <li><strong>Google Fonts</strong> supplies the website's font.</li>
                         <li><strong>Google Sheets</strong> holds our events, committee and president's message content. Your browser loads it directly from Google.</li>
                         <li><strong>Google Maps</strong> shows our office on the Contact page. Google may set its own cookies inside the map.</li>
                         <li><strong>Cloudinary and Unsplash</strong> host some of the images on the website.</li>

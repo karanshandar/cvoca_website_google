@@ -1,3 +1,5 @@
+// Inter, self-hosted (variable weight axis, font-display: swap)
+import '@fontsource-variable/inter';
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
