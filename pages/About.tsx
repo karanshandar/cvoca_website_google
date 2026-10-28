@@ -1,5 +1,5 @@
 
-import React, { useState, useId } from 'react';
+import React, { useState } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 import useSEO from '../hooks/useSEO';
 import { routeSEO } from '../seo/pages';
@@ -10,10 +10,13 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
+import useDisclosure from '../hooks/useDisclosure';
 import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import SearchInput from '../components/ui/SearchInput';
+import SectionHeader from '../components/ui/SectionHeader';
+import EmptyState from '../components/ui/EmptyState';
 
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -102,17 +105,13 @@ const CommitteeRoleSection: React.FC<{ title: string; members?: CoreMember[] | C
 };
 
 const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const bodyId = useId();
+    const { open: isOpen, panelId: bodyId, triggerProps } = useDisclosure();
 
     return (
         <Card padding="none" className="overflow-hidden">
             <h3>
             <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                aria-expanded={isOpen}
-                aria-controls={bodyId}
+                {...triggerProps}
                 className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
             >
                 <span className="flex-1 text-lg font-bold text-gray-900 dark:text-white">{committee.name}</span>
@@ -158,7 +157,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
 };
 
 const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }) => {
-    const [showAll, setShowAll] = useState(false);
+    const { open: showAll, panelId: archiveId, triggerProps: archiveToggleProps } = useDisclosure();
 
     if (!reports || reports.length === 0) return null;
 
@@ -169,12 +168,11 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
 
     return (
         <div className="animate-fade-in-up">
-            <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Annual Reports & Governance</h2>
-                <p className="mt-2 text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-                    Explore our journey of transparency and growth. Access detailed accounts of our activities, financial health, and community initiatives.
-                </p>
-            </div>
+            <SectionHeader
+                className="mb-12"
+                title="Annual Reports & Governance"
+                lede="Explore our journey of transparency and growth. Access detailed accounts of our activities, financial health, and community initiatives."
+            />
 
             {/* Featured Card */}
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-accent dark:from-slate-800 dark:to-slate-900 text-white shadow-2xl p-6 md:p-12 mb-10 border border-primary/30 dark:border-gray-700">
@@ -213,7 +211,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
             {previousReports.length > 0 && (
                 <div className="flex flex-col items-center">
                     <button
-                        onClick={() => setShowAll(!showAll)}
+                        {...archiveToggleProps}
                         className="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:shadow-md hover:text-primary dark:hover:text-primary-light transition-all mb-8 z-10 relative"
                     >
                         {showAll ? 'Hide Archive' : 'View Archive'}
@@ -223,7 +221,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
             )}
 
             {/* Grid Reveal */}
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-all duration-500 ease-in-out ${showAll ? 'opacity-100 translate-y-0' : 'hidden opacity-0 -translate-y-4'}`}>
+            <div id={archiveId} className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-all duration-500 ease-in-out ${showAll ? 'opacity-100 translate-y-0' : 'hidden opacity-0 -translate-y-4'}`}>
                 {previousReports.map((report, idx) => (
                     <Card key={idx} padding="md" className="flex flex-col justify-between group h-full">
                         <div className="mb-4">
@@ -332,9 +330,7 @@ const About: React.FC = () => {
                         </div>
 
                         {filteredCommittees.length === 0 && (
-                            <div className="text-center py-12">
-                                <p className="text-gray-500 dark:text-gray-400">No committees found matching "{coreSearch}"</p>
-                            </div>
+                            <EmptyState>No committees found matching "{coreSearch}"</EmptyState>
                         )}
                     </div>
                 );
@@ -412,9 +408,7 @@ const About: React.FC = () => {
                                 </Card>
                             ))}
                             {sortedAndFilteredPresidents.length === 0 && (
-                                <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-                                    No records found matching "{ppSearch}"
-                                </div>
+                                <EmptyState>No records found matching "{ppSearch}"</EmptyState>
                             )}
                         </div>
 
@@ -520,10 +514,7 @@ const About: React.FC = () => {
 
                 {/* Service Areas */}
                 <section>
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">What We Do</h2>
-                        <p className="mt-2 text-gray-500 dark:text-gray-400">Comprehensive support for every stage of your career</p>
-                    </div>
+                    <SectionHeader className="mb-12" title="What We Do" lede="Comprehensive support for every stage of your career" />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <ServiceCard title="Professional Development" items={["Technical seminars & workshops", "Annual tax conferences", "Leadership summits"]} />
                         <ServiceCard title="Knowledge & Research" items={["Monthly bulletins (CVO CA News)", "Research publications", "Digital resource library"]} />
@@ -536,10 +527,7 @@ const About: React.FC = () => {
 
                 {/* Organizational Structure */}
                 <section>
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Leadership & Structure</h2>
-                        <p className="mt-2 text-gray-500 dark:text-gray-400">The dedicated teams driving our mission forward</p>
-                    </div>
+                    <SectionHeader className="mb-12" title="Leadership & Structure" lede="The dedicated teams driving our mission forward" />
 
                     <div className="flex justify-center mb-10">
                         <nav role="tablist" aria-label="Leadership and structure" className="flex w-full sm:w-auto p-1 space-x-1 sm:space-x-2 bg-gray-100 dark:bg-slate-800 rounded-full">
