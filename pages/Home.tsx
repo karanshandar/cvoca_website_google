@@ -18,21 +18,24 @@ import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
+import SectionHeader from '../components/ui/SectionHeader';
+import IconTile from '../components/ui/IconTile';
+import EmptyState from '../components/ui/EmptyState';
+import Stat from '../components/ui/Stat';
 
 const StatCard: React.FC<{ value: string; label: string; delay: string }> = ({ value, label, delay }) => (
     <Card emphasis className="text-center animate-fade-in-up" style={{ animationDelay: delay }}>
-        <p className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">{value}</p>
-        <p className="mt-2 text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">{label}</p>
+        <Stat size="lg" value={value} label={label} />
     </Card>
 );
 
 const FeatureCard: React.FC<{ iconPath: string; title: string; description: string }> = ({ iconPath, title, description }) => (
     <Card padding="xl" className="group h-full">
-        <div className="w-14 h-14 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-6 text-primary dark:text-primary-light group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+        <IconTile className="mb-6">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={iconPath} />
             </svg>
-        </div>
+        </IconTile>
         <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
     </Card>
@@ -256,10 +259,11 @@ const Home: React.FC = () => {
             {/* Why Choose CVOCA */}
             <section className="py-24 bg-background-light dark:bg-background-dark border-b border-gray-100 dark:border-gray-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16 max-w-3xl mx-auto">
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">Elevate Your Professional Journey</h2>
-                        <p className="text-lg text-gray-600 dark:text-gray-300">Join a community that fosters growth through shared knowledge and exclusive opportunities.</p>
-                    </div>
+                    <SectionHeader
+                        className="mb-16"
+                        title="Elevate Your Professional Journey"
+                        lede="Join a community that fosters growth through shared knowledge and exclusive opportunities."
+                    />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {homeData.features.map((feature, idx) => (
                             <FeatureCard
@@ -276,13 +280,13 @@ const Home: React.FC = () => {
             {/* FEATURED UPCOMING EVENTS */}
             <section className="py-24 bg-gray-50 dark:bg-slate-900/50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="mb-12">
-                        <div className="max-w-2xl">
-                            <span className="text-primary dark:text-primary-light font-bold tracking-wider uppercase text-sm mb-2 block">Don't Miss Out</span>
-                            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">Upcoming Events</h2>
-                            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Curated professional gatherings to connect, learn, and grow.</p>
-                        </div>
-                    </div>
+                    <SectionHeader
+                        align="left"
+                        className="mb-12"
+                        eyebrow="Don't Miss Out"
+                        title="Upcoming Events"
+                        lede="Curated professional gatherings to connect, learn, and grow."
+                    />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {/* Static Compliance Calendar Card - First Position */}
@@ -324,12 +328,7 @@ const Home: React.FC = () => {
 
                         {/* Fallback if no events */}
                         {upcomingEvents.length === 0 && (
-                            <div className="col-span-1 md:col-span-2 text-center py-16 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 mb-4">
-                                    <Icon name="calendar" className="w-8 h-8 text-gray-400" />
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">More Events Coming Soon</h3>
-                            </div>
+                            <EmptyState icon="calendar" title="More Events Coming Soon" className="col-span-1 md:col-span-2" />
                         )}
                     </div>
 
@@ -345,10 +344,10 @@ const Home: React.FC = () => {
             {/* FEATURED OUTREACH SECTION (Grid Layout) */}
             <section className="py-24 bg-white dark:bg-slate-900 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-                    <div className="text-center max-w-3xl mx-auto">
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">Making a Difference</h2>
-                        <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Our commitment goes beyond numbers. Explore our digital outreach and community welfare initiatives.</p>
-                    </div>
+                    <SectionHeader
+                        title="Making a Difference"
+                        lede="Our commitment goes beyond numbers. Explore our digital outreach and community welfare initiatives."
+                    />
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -379,12 +378,8 @@ const Home: React.FC = () => {
                         Join thousands of professionals who trust CVOCA for their growth and networking needs.
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4">
-                        <Link to="/membership" className="px-8 py-4 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-gray-50 hover:scale-105 transition-all duration-300">
-                            Join CVOCA Today
-                        </Link>
-                        <Link to="/contact" className="px-8 py-4 bg-primary-dark/50 backdrop-blur-sm text-white border border-white/20 font-bold rounded-full hover:bg-primary-dark transition-all duration-300">
-                            Contact Support
-                        </Link>
+                        <Button to="/membership" variant="onPrimary">Join CVOCA Today</Button>
+                        <Button to="/contact" variant="onPrimaryOutline">Contact Support</Button>
                     </div>
                 </div>
             </section>
