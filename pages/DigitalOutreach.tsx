@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useId } from 'react';
 import { OutreachInitiative, OutreachContact } from '../types';
 import useSEO from '../hooks/useSEO';
-import { canonical } from '../constants';
+import { routeSEO } from '../seo/pages';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import { fetchJson } from '../utils/fetchJson';
@@ -293,12 +293,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
 
 const DigitalOutreach: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'Digital Outreach',
-        description: 'CVOCA Digital Outreach initiatives - Value Investing Club, Tech & AI Study Group, Student Mentorship (BUDDY/MITRAM), and Financial Aid programs for CA students and professionals.',
-        canonicalUrl: canonical('/digital-outreach'),
-        keywords: 'CVOCA outreach, value investing club, CA mentorship, student support, tech and AI accounting'
-    });
+    useSEO(routeSEO('/digital-outreach'));
 
     const { data, loading, error } = useFetch<OutreachInitiative[]>(
         () => fetchJson<OutreachInitiative[]>('/data/digitalOutreach.json'),

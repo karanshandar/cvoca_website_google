@@ -1,0 +1,42 @@
+{
+  "/": {
+    "title": "Home",
+    "description": "CVOCA - CVO Chartered & Cost Accountants Association. Premier professional body for CAs and CMAs in Mumbai since 1973. Join 2,400+ members for networking, events, and professional growth.",
+    "keywords": "CVOCA, Chartered Accountants Mumbai, Cost Accountants Association, CA networking India, professional accountants community"
+  },
+  "/about": {
+    "title": "About Us",
+    "description": "Learn about CVOCA - CVO Chartered & Cost Accountants Association. Established in 1973, we are a premier professional body serving 2,400+ members in Mumbai with networking and development opportunities.",
+    "keywords": "CVOCA history, about CVOCA, chartered accountants association Mumbai, managing committee, past presidents"
+  },
+  "/membership": {
+    "title": "Membership",
+    "description": "Join CVOCA - CVO Chartered & Cost Accountants Association. Affordable membership options: Student Member at Rs 50 and Life Member at Rs 500. Access networking, events, and professional development.",
+    "keywords": "CVOCA membership, join CVOCA, chartered accountants membership Mumbai, student membership, life membership"
+  },
+  "/events": {
+    "title": "Events",
+    "description": "Discover upcoming CVOCA events - conferences, workshops, seminars, and networking sessions for Chartered and Cost Accountants in Mumbai. Register for professional development events.",
+    "keywords": "CVOCA events, chartered accountants events Mumbai, CA conferences, accounting workshops, professional seminars"
+  },
+  "/blog": {
+    "title": "Knowledge Hub",
+    "description": "CVOCA Knowledge Hub - Articles, insights, and updates for Chartered and Cost Accountants. Tax updates, technology trends, and career guidance for finance professionals.",
+    "keywords": "CVOCA blog, chartered accountants articles, tax updates India, CA knowledge hub, accounting insights"
+  },
+  "/digital-outreach": {
+    "title": "Digital Outreach",
+    "description": "CVOCA Digital Outreach initiatives - Value Investing Club, Tech & AI Study Group, Student Mentorship (BUDDY/MITRAM), and Financial Aid programs for CA students and professionals.",
+    "keywords": "CVOCA outreach, value investing club, CA mentorship, student support, tech and AI accounting"
+  },
+  "/contact": {
+    "title": "Contact Us",
+    "description": "Contact CVOCA - CVO Chartered & Cost Accountants Association. Visit us at Dadar East, Mumbai. Office hours: Mon-Sat 10:30 AM - 6:00 PM. Phone: +91-9167928622.",
+    "keywords": "CVOCA contact, CVOCA address Mumbai, chartered accountants association Dadar, CVOCA phone number"
+  },
+  "/privacy-policy": {
+    "title": "Privacy Policy",
+    "description": "How the CVOCA website handles your information: no forms, accounts, cookies or analytics, and the third-party services the site uses.",
+    "noIndex": true
+  }
+}

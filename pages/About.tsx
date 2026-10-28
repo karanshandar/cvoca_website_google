@@ -2,7 +2,7 @@
 import React, { useState, useId } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 import useSEO from '../hooks/useSEO';
-import { canonical } from '../constants';
+import { routeSEO } from '../seo/pages';
 import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports, fetchPastPresidents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
@@ -245,12 +245,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
 
 const About: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'About Us',
-        description: 'Learn about CVOCA - CVO Chartered & Cost Accountants Association. Established in 1973, we are a premier professional body serving 2,400+ members in Mumbai with networking and development opportunities.',
-        canonicalUrl: canonical('/about'),
-        keywords: 'CVOCA history, about CVOCA, chartered accountants association Mumbai, managing committee, past presidents'
-    });
+    useSEO(routeSEO('/about'));
 
     const [activeTab, setActiveTab] = useState<'managing' | 'core' | 'past'>('managing');
 

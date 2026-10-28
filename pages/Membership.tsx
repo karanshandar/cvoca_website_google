@@ -2,7 +2,7 @@ import React from 'react';
 import { MembershipData } from '../types';
 import useFetch from '../hooks/useFetch';
 import useSEO from '../hooks/useSEO';
-import { canonical } from '../constants';
+import { routeSEO } from '../seo/pages';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import { fetchJson } from '../utils/fetchJson';
@@ -165,12 +165,7 @@ const EligibilitySection: React.FC = () => (
 
 const Membership: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'Membership',
-        description: 'Join CVOCA - CVO Chartered & Cost Accountants Association. Affordable membership options: Student Member at Rs 50 and Life Member at Rs 500. Access networking, events, and professional development.',
-        canonicalUrl: canonical('/membership'),
-        keywords: 'CVOCA membership, join CVOCA, chartered accountants membership Mumbai, student membership, life membership'
-    });
+    useSEO(routeSEO('/membership'));
 
     const { data, loading, error } = useFetch<MembershipData>(
         () => fetchJson<MembershipData>('/data/membership.json'),

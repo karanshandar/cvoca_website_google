@@ -4,7 +4,7 @@ import useFetch from '../hooks/useFetch';
 import { Link } from 'react-router-dom';
 import { HomeData, CvoEvent, OutreachInitiative, PresidentMessage, CommitteeMember } from '../types';
 import useSEO from '../hooks/useSEO';
-import { canonical } from '../constants';
+import { routeSEO } from '../seo/pages';
 import { fetchPresidentMessage, fetchManagingCommittee, fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { parseLocalDate } from '../utils/dates';
@@ -110,12 +110,7 @@ const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ ini
 
 const Home: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'Home',
-        description: 'CVOCA - CVO Chartered & Cost Accountants Association. Premier professional body for CAs and CMAs in Mumbai since 1973. Join 2,400+ members for networking, events, and professional growth.',
-        canonicalUrl: canonical('/'),
-        keywords: 'CVOCA, Chartered Accountants Mumbai, Cost Accountants Association, CA networking India, professional accountants community'
-    });
+    useSEO(routeSEO('/'));
 
     // Local JSON (always available) — the page renders as soon as homeData resolves.
     const { data: homeData, error: homeError } = useFetch<HomeData>(

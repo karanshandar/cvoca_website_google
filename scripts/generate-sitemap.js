@@ -8,18 +8,11 @@ const __dirname = path.dirname(__filename);
 // Keep in sync with BASE_URL in constants.ts
 const BASE_URL = 'https://cvoca.org';
 
-// Routes mirror App.tsx. No lastmod/changefreq/priority: Google ignores the last two,
+// Static routes come from seo/pages.json (shared with the pages and the per-route HTML).
+// No lastmod/changefreq/priority: Google ignores the last two,
 // and a build-date lastmod would claim every page changed on every deploy.
-const routes = [
-  '/',
-  '/about',
-  '/membership',
-  '/events',
-  '/blog',
-  '/digital-outreach',
-  '/contact',
-  '/privacy-policy',
-];
+const pagesPath = path.join(__dirname, '..', 'seo', 'pages.json');
+const routes = Object.keys(JSON.parse(fs.readFileSync(pagesPath, 'utf8')));
 
 const urls = routes
   .map(routePath => `  <url>\n    <loc>${BASE_URL}${routePath}</loc>\n  </url>`)

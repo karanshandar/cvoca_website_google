@@ -1,6 +1,6 @@
 import React from 'react';
 import useSEO from '../hooks/useSEO';
-import { canonical } from '../constants';
+import { routeSEO } from '../seo/pages';
 import Icon from '../components/Icon';
 import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
@@ -73,12 +73,7 @@ const ActionCard: React.FC<{
 
 const Blog: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'Knowledge Hub',
-        description: 'CVOCA Knowledge Hub - Articles, insights, and updates for Chartered and Cost Accountants. Tax updates, technology trends, and career guidance for finance professionals.',
-        canonicalUrl: canonical('/blog'),
-        keywords: 'CVOCA blog, chartered accountants articles, tax updates India, CA knowledge hub, accounting insights'
-    });
+    useSEO(routeSEO('/blog'));
 
     return (
         <div className="bg-background-light dark:bg-background-dark min-h-screen">

@@ -1,6 +1,6 @@
 import React from 'react';
 import useSEO from '../hooks/useSEO';
-import { canonical } from '../constants';
+import { routeSEO } from '../seo/pages';
 import PageHero from '../components/ui/PageHero';
 
 // Change this date whenever the policy text changes
@@ -17,12 +17,7 @@ const Section: React.FC<{ title: string; id: string; children: React.ReactNode }
 
 const PrivacyPolicy: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'Privacy Policy',
-        description: 'How the CVOCA website handles your information: no forms, accounts, cookies or analytics, and the third-party services the site uses.',
-        canonicalUrl: canonical('/privacy-policy'),
-        noIndex: true
-    });
+    useSEO(routeSEO('/privacy-policy'));
 
     return (
         <div>

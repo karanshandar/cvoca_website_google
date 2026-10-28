@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback, useId } from 'react';
 import { CvoEvent } from '../types';
 import useSEO from '../hooks/useSEO';
+import { routeSEO } from '../seo/pages';
 import { canonical } from '../constants';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
@@ -254,13 +255,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
 
 const Events: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'Events',
-        description: 'Discover upcoming CVOCA events - conferences, workshops, seminars, and networking sessions for Chartered and Cost Accountants in Mumbai. Register for professional development events.',
-        canonicalUrl: canonical('/events'),
-        keywords: 'CVOCA events, chartered accountants events Mumbai, CA conferences, accounting workshops, professional seminars',
-        ogType: 'event'
-    });
+    useSEO(routeSEO('/events'));
 
     const [searchTerm, setSearchTerm] = useState('');
     const [organizerFilter, setOrganizerFilter] = useState('all');

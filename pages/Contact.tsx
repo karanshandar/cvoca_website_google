@@ -3,6 +3,7 @@ import React from 'react';
 import { ContactData } from '../types';
 import useFetch from '../hooks/useFetch';
 import useSEO from '../hooks/useSEO';
+import { routeSEO } from '../seo/pages';
 import { canonical } from '../constants';
 import SchemaMarkup from '../components/SchemaMarkup';
 import { getBreadcrumbSchema } from '../utils/schema';
@@ -45,12 +46,7 @@ const getIconByType = (iconType: string) => {
 
 const Contact: React.FC = () => {
     // SEO Meta Tags
-    useSEO({
-        title: 'Contact Us',
-        description: 'Contact CVOCA - CVO Chartered & Cost Accountants Association. Visit us at Dadar East, Mumbai. Office hours: Mon-Sat 10:30 AM - 6:00 PM. Phone: +91-9167928622.',
-        canonicalUrl: canonical('/contact'),
-        keywords: 'CVOCA contact, CVOCA address Mumbai, chartered accountants association Dadar, CVOCA phone number'
-    });
+    useSEO(routeSEO('/contact'));
 
     const { data: contactData, loading, error } = useFetch<ContactData>(
         () => fetchJson<ContactData>('/data/contact.json'),

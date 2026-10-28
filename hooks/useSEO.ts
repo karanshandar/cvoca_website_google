@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { BASE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from '../constants';
+import { pageTitle } from '../seo/pages';
 
 interface SEOProps {
   title: string;
   description: string;
   canonicalUrl?: string;
   ogImage?: string;
-  ogType?: 'website' | 'article' | 'event';
+  ogType?: 'website' | 'article';
   keywords?: string;
   noIndex?: boolean;
 }
@@ -28,7 +29,8 @@ export const useSEO = ({
 }: SEOProps) => {
   useEffect(() => {
     // Update page title
-    document.title = title === 'Home' ? SITE_NAME : `${title} | CVOCA`;
+    const fullTitle = pageTitle(title);
+    document.title = fullTitle;
 
     // Helper function to set or create a meta tag
     const setMeta = (name: string, content: string, isProperty = false) => {
@@ -54,7 +56,6 @@ export const useSEO = ({
     }
 
     // Open Graph Tags
-    const fullTitle = title === 'Home' ? SITE_NAME : `${title} | CVOCA`;
     setMeta('og:title', fullTitle, true);
     setMeta('og:description', description, true);
     setMeta('og:type', ogType, true);
