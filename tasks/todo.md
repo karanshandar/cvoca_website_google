@@ -138,12 +138,10 @@ Execution: inline on `main`, no worktree/branch/push; plan approval waived by th
 - Carried over from before this batch, not changed: client-side keywords go stale when navigating to a page without keywords; `/privacy-policy` is in the sitemap but noindex; unknown URLs carry a static `index, follow` until NotFound's JS sets noindex.
 
 ### Left to do
-Everything that needs the client's Render or Google access is collected in `docs/account-owner-setup-guide.md`, so it can all be done in one session:
-- **Part C:** response headers (CSP Report-Only, then enforced after a week; HSTS; `Cache-Control`; etc.) and the build command.
-- **Part D (new):** post-deploy checks of the per-route files and link previews (D1); removing the `/* → /index.html` rewrite so unknown URLs return a real 404 (D2–D3).
-
-Developer prerequisites before Part D (not done in this batch):
-- The build must ship a `dist/404.html` page. Render staff on the community forum say a static site serves `/404.html` for paths that match no file and no rule. Don't remove the rewrite until it exists.
-- Remove the `routes:` catch-all rewrite from `render.yaml` at the same time, so linking the Blueprint later doesn't bring it back.
+Everything that needs the client's Render or Google access, plus the developer steps and checks that go with it, is collected in `docs/pending-tasks.md` (renamed from `docs/account-owner-setup-guide.md`), with Google, Render, Developer and Testing sections and a suggested order:
+- **Render R1–R2:** response headers (CSP Report-Only, then enforced after a week as X3; HSTS; `Cache-Control`; etc.) and the build command.
+- **Developer X1–X2:** ship a `dist/404.html` page and remove the `render.yaml` catch-all rewrite. Neither is done yet. Render staff on the community forum say a static site serves `/404.html` for paths that match no file and no rule.
+- **Testing T3:** after the next deploy, check the per-route files are served without a redirect and link previews show each page's title.
+- **Render R3 + Testing T4:** remove the `/* → /index.html` rewrite so unknown URLs return a real 404, then check every page still loads.
 
 Not account work: **D2** (DigitalOutreach THEMES and the remaining UI components) is a separate session.

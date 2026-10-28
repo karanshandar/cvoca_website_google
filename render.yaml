@@ -10,7 +10,7 @@ services:
       - key: VITE_GOOGLE_SHEET_ID
         sync: false
     # Render only applies these if the service is linked as a Blueprint.
-    # The live service is set up in the dashboard; see docs/account-owner-setup-guide.md (Part C).
+    # The live service is set up in the dashboard; see docs/pending-tasks.md (Render section).
     headers:
       - path: /*
         name: X-Frame-Options

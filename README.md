@@ -87,7 +87,7 @@ This command:
 
 Pushes to `main` deploy automatically on Render. Render runs `npm ci && npm run build` and publishes `dist/`.
 
-The live service is configured in the Render dashboard (environment variables, the `/* → /index.html` rewrite for client-side routing, and the security headers). `render.yaml` mirrors those settings as a record; Render applies it only if the service is linked as a Blueprint. See [docs/account-owner-setup-guide.md](docs/account-owner-setup-guide.md).
+The live service is configured in the Render dashboard (environment variables, the `/* → /index.html` rewrite for client-side routing, and the security headers). `render.yaml` mirrors those settings as a record; Render applies it only if the service is linked as a Blueprint. What still needs the client's Google or Render access is listed in [docs/pending-tasks.md](docs/pending-tasks.md).
 
 ### Environment Variables
 
