@@ -9,11 +9,12 @@ import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/schema';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import { fetchJson } from '../utils/fetchJson';
+import { getContactHref } from '../utils/contactLinks';
 import Icon from '../components/Icon';
 import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
 
-const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; delay: string }> = ({ icon, label, value, delay }) => (
+const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; href?: string; delay: string }> = ({ icon, label, value, href, delay }) => (
     <div 
         className="flex items-start p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-2xl transition-colors duration-300 animate-fade-in-up group"
         style={{ animationDelay: delay }}
@@ -22,8 +23,12 @@ const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; 
             {icon}
         </div>
         <div className="flex-1 min-w-0">
-            <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{label}</h3>
-            <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-white leading-snug break-words">{value}</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+            <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-white leading-snug break-words">
+                {href ? (
+                    <a href={href} className="hover:text-primary dark:hover:text-primary-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded">{value}</a>
+                ) : value}
+            </p>
         </div>
     </div>
 );
@@ -66,7 +71,7 @@ const Contact: React.FC = () => {
     ]);
 
     return (
-        <div className="animate-fadeIn bg-gray-50 dark:bg-background-dark min-h-screen">
+        <div className="bg-gray-50 dark:bg-background-dark min-h-screen">
             {/* LocalBusiness Schema for Contact Page */}
             <SchemaMarkup schema={[getLocalBusinessSchema(), breadcrumbSchema]} />
 
@@ -85,17 +90,18 @@ const Contact: React.FC = () => {
                              </p>
                         </div>
 
-                        <div className="space-y-2">
+                        <address className="not-italic space-y-2">
                              {contactData.contactInfo.map((info, idx) => (
                                 <InfoCard
                                     key={info.id}
                                     icon={getIconByType(info.iconType)}
                                     label={info.label}
                                     value={info.value}
+                                    href={getContactHref(info.id, info.value)}
                                     delay={`${idx * 0.1}s`}
                                 />
                              ))}
-                        </div>
+                        </address>
                     </Card>
 
                      {/* Right Column: Map Card */}

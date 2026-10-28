@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useId } from 'react';
 import { OutreachInitiative, OutreachContact } from '../types';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
@@ -116,15 +116,15 @@ const getTheme = (category: string) => THEMES[category] || THEMES["default"];
 const CoordinatorPill: React.FC<{ contact: OutreachContact; theme: CardTheme }> = ({ contact, theme }) => {
     return (
         <a href={contact.contact} target="_blank" rel="noopener noreferrer" className={`group flex items-center gap-3 p-2 pr-4 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme.isDarkCard ? 'bg-white/10 text-white' : 'bg-gray-100 text-gray-600'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme.isDarkCard ? 'bg-white/10 text-white' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'}`}>
                 {contact.type === 'whatsapp' ? (
-                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.017-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.017-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                 ) : (
                      <Icon name="phone" className="w-4 h-4" />
                 )}
             </div>
             <div className="flex flex-col">
-                 <span className={`text-[10px] font-bold uppercase tracking-wider ${theme.isDarkCard ? 'text-gray-400' : 'text-gray-400'}`}>{contact.label}</span>
+                 <span className={`text-xs font-bold uppercase tracking-wider ${theme.isDarkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>{contact.label}</span>
                  <span className={`text-sm font-semibold ${theme.isDarkCard ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{contact.name}</span>
             </div>
         </a>
@@ -139,13 +139,14 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
     const phoneCta = initiative.contacts?.find(c => c.type === 'phone' && c.name === initiative.ctaText);
     
     const [isExpanded, setIsExpanded] = useState(false);
+    const descriptionId = useId();
     const shouldTruncate = initiative.description.length > 250;
     const displayDescription = isExpanded ? initiative.description : (shouldTruncate ? initiative.description.substring(0, 250) + "..." : initiative.description);
 
     const isReverse = index % 2 !== 0;
 
     return (
-        <div className={`flex flex-col ${isReverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} ${theme.bg} rounded-[2.5rem] shadow-xl overflow-hidden border ${theme.border} hover:shadow-2xl transition-all duration-300`}>
+        <div className={`flex flex-col ${isReverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} ${theme.bg} rounded-2xl shadow-xl overflow-hidden border ${theme.border} hover:shadow-2xl transition-all duration-300`}>
             
             {/* IMAGE SIDE (40%) */}
             <button
@@ -161,7 +162,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                 <div className={`absolute top-6 ${isReverse ? 'right-6' : 'left-6'} z-10`}>
                      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-white/95 shadow-lg border border-white/20`}>
                         <div className={`p-1.5 rounded-full ${theme.pillBg} bg-opacity-20`}>
-                            <svg className={`w-4 h-4 ${theme.featureIcon.replace('text-', 'text-opacity-100 text-')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={initiative.iconPath} /></svg>
+                            <svg className={`w-4 h-4 ${theme.featureIcon.replace('text-', 'text-opacity-100 text-')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={initiative.iconPath} /></svg>
                         </div>
                         <span className={`text-xs font-bold uppercase tracking-wider text-gray-800`}>
                             {initiative.category}
@@ -180,18 +181,21 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                 
                 {/* Header */}
                 <div className="mb-8">
-                    <h2 className={`text-sm font-bold uppercase tracking-widest mb-3 ${theme.accent}`}>{initiative.subtitle}</h2>
-                    <h3 className={`text-3xl md:text-4xl font-extrabold leading-tight ${theme.text}`}>{initiative.title}</h3>
+                    <p className={`text-sm font-bold uppercase tracking-widest mb-3 ${theme.accent}`}>{initiative.subtitle}</p>
+                    <h2 className={`text-3xl md:text-4xl font-extrabold leading-tight ${theme.text}`}>{initiative.title}</h2>
                 </div>
 
                 {/* Description */}
                 <div className="mb-10">
-                    <p className={`leading-relaxed text-base md:text-lg ${theme.isDarkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300'}`}>
+                    <p id={descriptionId} className={`leading-relaxed text-base md:text-lg ${theme.isDarkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300'}`}>
                         {displayDescription}
                     </p>
                     {shouldTruncate && (
-                        <button 
+                        <button
+                            type="button"
                             onClick={() => setIsExpanded(!isExpanded)}
+                            aria-expanded={isExpanded}
+                            aria-controls={descriptionId}
                             className={`mt-2 text-sm font-bold ${theme.accent} hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded`}
                         >
                             {isExpanded ? "Read Less" : "Read More"}
@@ -203,9 +207,9 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                     {/* Key Highlights */}
                     <div className={`${theme.isDarkCard ? 'bg-white/5 border-white/5' : 'bg-gray-50 dark:bg-slate-700/30 border-gray-100 dark:border-gray-700'} rounded-2xl p-6 border`}>
-                        <h4 className={`text-xs font-extrabold uppercase tracking-widest mb-4 ${theme.isDarkCard ? 'text-gray-400' : 'text-gray-400'}`}>
+                        <h3 className={`text-xs font-extrabold uppercase tracking-widest mb-4 ${theme.isDarkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
                              Key Highlights
-                        </h4>
+                        </h3>
                         <ul className="space-y-3">
                             {initiative.features.map((feature, idx) => (
                                 <li key={idx} className={`flex items-start gap-3 text-sm font-medium ${theme.isDarkCard ? 'text-gray-200' : 'text-gray-700 dark:text-gray-200'}`}>
@@ -220,12 +224,12 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                     {hasStats && (
                          <div className="flex flex-col justify-between">
                              <div>
-                                <h4 className={`text-xs font-extrabold uppercase tracking-widest mb-4 ${theme.isDarkCard ? 'text-gray-400' : 'text-gray-400'}`}>Impact</h4>
+                                <h3 className={`text-xs font-extrabold uppercase tracking-widest mb-4 ${theme.isDarkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>Impact</h3>
                                 <div className="grid grid-cols-1 gap-3">
                                     {initiative.stats!.map((stat, idx) => (
                                         <div key={idx} className={`rounded-xl p-4 border shadow-sm flex items-center justify-between ${theme.statBg} ${theme.isDarkCard ? 'border-white/10' : ''}`}>
                                             <div className={`text-sm font-bold uppercase tracking-wide ${theme.statLabel}`}>{stat.label}</div>
-                                            <div className={`text-xl font-black ${theme.featureIcon}`}>{stat.value}</div>
+                                            <div className={`text-xl font-extrabold ${theme.featureIcon}`}>{stat.value}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -274,7 +278,7 @@ const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: 
                             <Button href={phoneCta.contact} className="w-full md:w-auto gap-3 whitespace-nowrap">
                                 <Icon name="phone" className="w-5 h-5" />
                                 <div className="flex flex-col items-start leading-none">
-                                    <span className="text-[10px] uppercase font-bold opacity-80 mb-0.5">{initiative.ctaText}</span>
+                                    <span className="text-xs uppercase font-bold opacity-80 mb-0.5">{initiative.ctaText}</span>
                                     <span className="text-lg">{phoneCta.label}</span>
                                 </div>
                             </Button>
@@ -304,7 +308,7 @@ const DigitalOutreach: React.FC = () => {
     const closeLightbox = useCallback(() => setSelectedImage(null), []);
 
     return (
-        <div className="animate-fadeIn bg-gray-50 dark:bg-slate-950 min-h-screen font-sans selection:bg-primary/20">
+        <div className="bg-gray-50 dark:bg-slate-950 min-h-screen font-sans selection:bg-primary/20">
             {/* Hero Section */}
             <PageHero
                 eyebrow="CVOCA Initiatives"

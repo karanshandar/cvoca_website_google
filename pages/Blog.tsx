@@ -33,8 +33,8 @@ const ActionCard: React.FC<{
                 <div
                     className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm ${
                         isPrimary
-                            ? 'bg-primary/10 text-primary'
-                            : 'bg-secondary/10 text-secondary'
+                            ? 'bg-primary/10 text-primary dark:text-primary-light'
+                            : 'bg-secondary/10 text-secondary dark:text-secondary-light'
                     }`}
                 >
                     {icon}
@@ -42,15 +42,15 @@ const ActionCard: React.FC<{
 
                 <span
                     className={`text-xs font-bold uppercase tracking-wider mb-2 ${
-                        isPrimary ? 'text-primary' : 'text-secondary'
+                        isPrimary ? 'text-primary dark:text-primary-light' : 'text-secondary-700 dark:text-secondary-light'
                     }`}
                 >
                     {subtitle}
                 </span>
 
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
                     {title}
-                </h3>
+                </h2>
 
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-8 flex-grow">
                     {description}
@@ -58,7 +58,7 @@ const ActionCard: React.FC<{
 
                 <div
                     className={`flex items-center font-bold mt-auto ${
-                        isPrimary ? 'text-primary' : 'text-gray-900 dark:text-white'
+                        isPrimary ? 'text-primary dark:text-primary-light' : 'text-gray-900 dark:text-white'
                     }`}
                 >
                     {isPrimary ? 'Start Reading' : 'Start Writing'}
@@ -81,7 +81,7 @@ const Blog: React.FC = () => {
     });
 
     return (
-        <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
+        <div className="bg-background-light dark:bg-background-dark min-h-screen">
             {/* Hero Section */}
             <PageHero
                 eyebrow="Learn & Grow"
@@ -140,7 +140,7 @@ const Blog: React.FC = () => {
                 {/* Footer Note */}
                 <div className="text-center pt-8 pb-8">
                     <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        Looking for something specific? <a href="https://blog.cvoca.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Search the archives</a> on our main blog site.
+                        Looking for something specific? <a href="https://blog.cvoca.org/" target="_blank" rel="noopener noreferrer" className="text-primary dark:text-primary-light hover:underline">Search the archives</a> on our main blog site.
                     </p>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback, useId } from 'react';
 import { CvoEvent } from '../types';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
@@ -97,6 +97,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
     const [isExpanded, setIsExpanded] = useState(false);
     const [contentHeight, setContentHeight] = useState<string>('4.5em'); // Default roughly 3 lines
     const textRef = useRef<HTMLParagraphElement>(null);
+    const descriptionId = useId();
     const dateObj = new Date(event.date);
     const day = dateObj.getDate();
     const month = dateObj.toLocaleString('default', { month: 'short' });
@@ -139,7 +140,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                         {/* Zoom overlay hint */}
                         <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all duration-300 flex items-center justify-center">
                             <div className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-full shadow-lg opacity-0 group-hover/image:opacity-100 transform translate-y-4 group-hover/image:translate-y-0 transition-all duration-300 scale-90 group-hover/image:scale-100">
-                                <Icon name="zoom-in" className="w-5 h-5 text-primary" />
+                                <Icon name="zoom-in" className="w-5 h-5 text-primary dark:text-primary-light" />
                             </div>
                         </div>
                     </button>
@@ -165,9 +166,9 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
 
                 {/* Floating Date Badge */}
                 <div className="absolute top-4 left-4 bg-white dark:bg-slate-900 rounded-2xl p-3 shadow-lg flex flex-col items-center justify-center min-w-[3.5rem] border border-gray-100 dark:border-gray-700 z-20 pointer-events-none">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">{month}</span>
-                    <span className="text-2xl font-black text-gray-900 dark:text-white leading-none mt-0.5">{day}</span>
-                    <span className="text-[10px] font-medium text-gray-400 mt-0.5">{year}</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-danger dark:text-danger-light">{month}</span>
+                    <span className="text-2xl font-extrabold text-gray-900 dark:text-white leading-none mt-0.5">{day}</span>
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{year}</span>
                 </div>
             </div>
 
@@ -181,7 +182,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 leading-tight group-hover:text-primary transition-colors duration-200">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 leading-tight group-hover:text-primary dark:group-hover:text-primary-light transition-colors duration-200">
                     {event.title}
                 </h3>
 
@@ -192,7 +193,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                             <Icon name="clock" className="w-5 h-5" />
                         </IconWrapper>
                         <div className="flex-1 py-0.5 min-w-0">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Time</p>
+                            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">Time</p>
                             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{event.time}</p>
                         </div>
                     </div>
@@ -202,7 +203,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                             <Icon name="location" className="w-5 h-5" />
                         </IconWrapper>
                         <div className="flex-1 py-0.5 min-w-0">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Location</p>
+                            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">Location</p>
                             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-snug">{event.location}</p>
                         </div>
                     </div>
@@ -215,7 +216,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                                 <Icon name="ticket" className="w-5 h-5" />
                             </IconWrapper>
                             <div className="flex-1 py-0.5 min-w-0">
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Entry Fee</p>
+                                <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">Entry Fee</p>
                                 <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-snug">{event.fullPricing}</p>
                             </div>
                         </div>
@@ -225,6 +226,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                 {/* Description with Smooth Animation */}
                 <div className="mb-6 relative">
                     <div
+                        id={descriptionId}
                         className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed overflow-hidden transition-all duration-300 ease-in-out"
                         style={{ height: contentHeight }}
                     >
@@ -235,8 +237,11 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                         <div className="mt-1">
                             {!isExpanded && <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white dark:from-slate-800 to-transparent pointer-events-none"></div>}
                             <button
+                                type="button"
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="text-primary text-xs font-bold hover:text-primary-dark flex items-center gap-1 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded transition-colors duration-200"
+                                aria-expanded={isExpanded}
+                                aria-controls={descriptionId}
+                                className="text-primary dark:text-primary-light text-xs font-bold hover:text-primary-dark dark:hover:text-primary-300 flex items-center gap-1 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded transition-colors duration-200"
                             >
                                 {isExpanded ? 'Collapse' : 'Expand'}
                                 <Icon name="chevron-down" className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'group-hover/btn:translate-y-0.5'}`} />
@@ -400,7 +405,7 @@ const Events: React.FC = () => {
     ]);
 
     return (
-        <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
+        <div className="bg-background-light dark:bg-background-dark min-h-screen">
             {/* Event Schema Markup */}
             <SchemaMarkup schema={[...eventSchemas, breadcrumbSchema]} />
 
@@ -418,16 +423,16 @@ const Events: React.FC = () => {
                 ) : (
                     <>
                         {/* Filters */}
-                        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-3xl shadow-xl mb-12 border border-white/20 dark:border-gray-700">
+                        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-2xl shadow-xl mb-12 border border-white/20 dark:border-gray-700">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                    <Icon name="filter" className="w-5 h-5 text-primary" />
+                                    <Icon name="filter" className="w-5 h-5 text-primary dark:text-primary-light" />
                                     Filter Events
                                 </h2>
                                 {hasActiveFilters && (
                                     <button
                                         onClick={clearFilters}
-                                        className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full transition-all"
+                                        className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-danger-700 dark:text-danger-light bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full transition-all"
                                         title="Remove all filters"
                                     >
                                         <span>Clear</span>
@@ -499,7 +504,7 @@ const Events: React.FC = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-gray-600">
+                            <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600">
                                 <div className="mx-auto h-16 w-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
                                     <Icon name="calendar" className="h-8 w-8 text-gray-400" />
                                 </div>

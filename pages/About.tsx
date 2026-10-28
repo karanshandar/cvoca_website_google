@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import { Committee, CommitteeMember, PastPresident, CoreMember, AnnualReport } from '../types';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
@@ -27,19 +27,54 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
     </button>
 );
 
-const ServiceCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+const ServiceCard: React.FC<{ title: string; items: string[] }> = ({ title, items }) => (
     <Card padding="xl">
         <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">{title}</h3>
         <ul className="space-y-2">
-            {React.Children.map(children, child => (
-                <div className="flex items-start text-gray-600 dark:text-gray-300">
-                    <span className="mr-2 mt-1.5 h-1.5 w-1.5 bg-primary rounded-full flex-shrink-0"></span>
-                    {child}
-                </div>
+            {items.map(item => (
+                <li key={item} className="flex items-start text-gray-600 dark:text-gray-300">
+                    <span aria-hidden="true" className="mr-2 mt-1.5 h-1.5 w-1.5 bg-primary rounded-full flex-shrink-0"></span>
+                    {item}
+                </li>
             ))}
         </ul>
     </Card>
 );
+
+type SortState = { key: keyof PastPresident; direction: 'asc' | 'desc' };
+
+const SortableHeader: React.FC<{
+    label: string;
+    column: keyof PastPresident;
+    sort: SortState;
+    onSort: (column: keyof PastPresident) => void;
+    align: 'left' | 'center';
+    className?: string;
+}> = ({ label, column, sort, onSort, align, className = '' }) => {
+    const isActive = sort.key === column;
+    return (
+        <th
+            scope="col"
+            aria-sort={isActive ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}
+            className={`p-0 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ${className}`}
+        >
+            <button
+                type="button"
+                onClick={() => onSort(column)}
+                className={`group w-full px-6 py-4 flex items-center gap-2 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary ${align === 'center' ? 'justify-center' : 'justify-start'}`}
+            >
+                {label}
+                {!isActive ? (
+                    <Icon name="sort" className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-50 group-focus-visible:opacity-50 transition-opacity" />
+                ) : sort.direction === 'asc' ? (
+                    <Icon name="chevron-up" className="w-4 h-4 text-primary dark:text-primary-light" />
+                ) : (
+                    <Icon name="chevron-down" className="w-4 h-4 text-primary dark:text-primary-light" />
+                )}
+            </button>
+        </th>
+    );
+};
 
 const CommitteeRoleSection: React.FC<{ title: string; members?: CoreMember[] | CoreMember }> = ({ title, members }) => {
     if (!members) return null;
@@ -48,15 +83,15 @@ const CommitteeRoleSection: React.FC<{ title: string; members?: CoreMember[] | C
 
     return (
         <div className="mb-4 last:mb-0 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700/50">
-            <h5 className="text-xs font-bold text-secondary dark:text-secondary-light uppercase tracking-wider mb-3 flex items-center gap-2">
+            <h4 className="text-xs font-bold text-secondary dark:text-secondary-light uppercase tracking-wider mb-3 flex items-center gap-2">
                 <span className="w-1 h-4 bg-secondary rounded-full"></span>
                 {title}
-            </h5>
+            </h4>
             <ul className="space-y-2">
                 {list.map((member, idx) => (
                     <li key={idx} className="flex justify-between items-baseline text-sm">
                         <span className="font-semibold text-gray-800 dark:text-gray-200">{member.name}</span>
-                        <span className="text-xs text-gray-500 font-medium bg-white dark:bg-slate-800 px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-700">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-slate-800 px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-700">
                             {member.nativePlace}
                         </span>
                     </li>
@@ -68,40 +103,44 @@ const CommitteeRoleSection: React.FC<{ title: string; members?: CoreMember[] | C
 
 const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const bodyId = useId();
 
     return (
         <Card padding="none" className="overflow-hidden">
+            <h3>
             <button
+                type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                aria-expanded={isOpen}
+                aria-controls={bodyId}
+                className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
             >
-                <div className="flex-1">
-                    <h4 className="text-lg font-bold text-gray-900 dark:text-white">{committee.name}</h4>
-                </div>
+                <span className="flex-1 text-lg font-bold text-gray-900 dark:text-white">{committee.name}</span>
 
                 {/* Chairperson Preview in Header */}
                 {committee.chairperson && (
-                    <div className="flex items-center gap-3 md:border-l md:pl-4 border-gray-100 dark:border-gray-700">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                    <span className="flex items-center gap-3 md:border-l md:pl-4 border-gray-100 dark:border-gray-700">
+                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary dark:text-primary-light flex items-center justify-center">
                             {/* Crown/User Icon for Chairperson */}
                             <Icon name="shield-check" className="w-5 h-5" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Chairperson</span>
+                        </span>
+                        <span className="flex flex-col">
+                            <span className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Chairperson</span>
                             <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-tight">
                                 {(committee.chairperson as CoreMember).name}
                             </span>
-                        </div>
-                    </div>
+                        </span>
+                    </span>
                 )}
 
-                <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''} text-gray-400`}>
+                <span className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''} text-gray-400`}>
                     <Icon name="chevron-down" className="w-5 h-5" />
-                </div>
+                </span>
             </button>
+            </h3>
 
-            {/* Accordion Body */}
-            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+            {/* Accordion Body (inert while collapsed, so hidden content is skipped by keyboard and screen readers) */}
+            <div id={bodyId} inert={!isOpen} className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="p-6 pt-0 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-slate-800">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                         <CommitteeRoleSection title="Advisors" members={committee.advisors} />
@@ -138,7 +177,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
             </div>
 
             {/* Featured Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent dark:from-slate-800 dark:to-slate-900 text-white shadow-2xl p-6 md:p-12 mb-10 border border-primary/30 dark:border-gray-700">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-accent dark:from-slate-800 dark:to-slate-900 text-white shadow-2xl p-6 md:p-12 mb-10 border border-primary/30 dark:border-gray-700">
                 {/* Background decoration */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/30 dark:bg-primary/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
@@ -175,7 +214,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                 <div className="flex flex-col items-center">
                     <button
                         onClick={() => setShowAll(!showAll)}
-                        className="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:shadow-md hover:text-primary dark:hover:text-primary transition-all mb-8 z-10 relative"
+                        className="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:shadow-md hover:text-primary dark:hover:text-primary-light transition-all mb-8 z-10 relative"
                     >
                         {showAll ? 'Hide Archive' : 'View Archive'}
                         <Icon name="chevron-down" className={`w-4 h-4 transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`} />
@@ -191,7 +230,7 @@ const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }
                             <div className="flex justify-between items-start mb-2">
                                 <Badge tone="neutral">FY {report.year}</Badge>
                             </div>
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">{report.title}</h4>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary-light transition-colors line-clamp-2">{report.title}</h3>
                         </div>
                         <a href={report.link} target="_blank" rel="noopener noreferrer" className="mt-auto w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 dark:bg-slate-700/50 hover:bg-primary hover:text-white dark:hover:bg-primary text-gray-600 dark:text-gray-300 text-sm font-semibold rounded-lg transition-all">
                             Download
@@ -220,7 +259,7 @@ const About: React.FC = () => {
 
     // Past Presidents Filter & Sort State
     const [ppSearch, setPpSearch] = useState('');
-    const [ppSort, setPpSort] = useState<{ key: keyof PastPresident; direction: 'asc' | 'desc' }>({ key: 'srNo', direction: 'asc' });
+    const [ppSort, setPpSort] = useState<SortState>({ key: 'srNo', direction: 'asc' });
 
     const { data, loading, error } = useFetch<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>(
         () =>
@@ -253,7 +292,7 @@ const About: React.FC = () => {
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-full opacity-20 group-hover:opacity-40 transition-opacity blur-md"></div>
                                     <img src={getOptimizedImageUrl(member.photoUrl, ImageSizePresets.TEAM_PHOTO)} alt={member.name} loading="lazy" decoding="async" className="relative w-full h-full rounded-full object-cover shadow-md border-2 border-white dark:border-slate-700" />
                                 </div>
-                                <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight">{member.name}</h4>
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight">{member.name}</h3>
                                 <p className="text-sm font-medium text-primary dark:text-primary-light">{member.role}</p>
                             </Card>
                         ))}
@@ -338,13 +377,6 @@ const About: React.FC = () => {
                     }));
                 };
 
-                const SortIcon = ({ column }: { column: keyof PastPresident }) => {
-                    if (ppSort.key !== column) return <Icon name="sort" className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-50 transition-opacity" />;
-                    return ppSort.direction === 'asc'
-                        ? <Icon name="chevron-up" className="w-4 h-4 text-primary" />
-                        : <Icon name="chevron-down" className="w-4 h-4 text-primary" />;
-                };
-
                 return (
                     <div className="space-y-6">
                         {/* Filter Bar */}
@@ -367,16 +399,16 @@ const About: React.FC = () => {
                                             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 text-xs font-bold text-gray-500 dark:text-gray-400">
                                                 {president.srNo ? String(president.srNo).padStart(2, '0') : '-'}
                                             </span>
-                                            <h4 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{president.name}</h4>
+                                            <h3 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{president.name}</h3>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700/50 mt-1">
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Term</span>
+                                            <span className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Term</span>
                                             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 font-mono">{president.term}</span>
                                         </div>
                                         <div className="flex flex-col items-end">
-                                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Native Place</span>
+                                            <span className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Native Place</span>
                                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border border-primary-100 dark:border-primary-800 mt-1">
                                                 {president.village}
                                             </span>
@@ -397,46 +429,10 @@ const About: React.FC = () => {
                                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead className="bg-gray-50 dark:bg-slate-900/50">
                                         <tr>
-                                            <th
-                                                scope="col"
-                                                onClick={() => handleSort('srNo')}
-                                                className="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-20"
-                                            >
-                                                <div className="flex items-center justify-center gap-2">
-                                                    Sr. No.
-                                                    <SortIcon column="srNo" />
-                                                </div>
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                onClick={() => handleSort('name')}
-                                                className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none"
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    President Name
-                                                    <SortIcon column="name" />
-                                                </div>
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                onClick={() => handleSort('term')}
-                                                className="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-40"
-                                            >
-                                                <div className="flex items-center justify-center gap-2">
-                                                    Term Year
-                                                    <SortIcon column="term" />
-                                                </div>
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                onClick={() => handleSort('village')}
-                                                className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group select-none w-48"
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    Native Place
-                                                    <SortIcon column="village" />
-                                                </div>
-                                            </th>
+                                            <SortableHeader label="Sr. No." column="srNo" sort={ppSort} onSort={handleSort} align="center" className="w-20" />
+                                            <SortableHeader label="President Name" column="name" sort={ppSort} onSort={handleSort} align="left" />
+                                            <SortableHeader label="Term Year" column="term" sort={ppSort} onSort={handleSort} align="center" className="w-40" />
+                                            <SortableHeader label="Native Place" column="village" sort={ppSort} onSort={handleSort} align="left" className="w-48" />
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -469,7 +465,7 @@ const About: React.FC = () => {
                                 </table>
                             </div>
                         </Card>
-                        <div className="text-right text-xs text-gray-400 italic">
+                        <div className="text-right text-xs text-gray-500 dark:text-gray-400 italic">
                             Showing {sortedAndFilteredPresidents.length} records
                         </div>
                     </div>
@@ -481,7 +477,7 @@ const About: React.FC = () => {
 
 
     return (
-        <div className="animate-fadeIn bg-gray-50 dark:bg-background-dark min-h-screen">
+        <div className="bg-gray-50 dark:bg-background-dark min-h-screen">
             {/* Hero Section */}
             <PageHero
                 eyebrow="Legacy of Excellence"
@@ -496,7 +492,7 @@ const About: React.FC = () => {
                     <div className="max-w-3xl mx-auto text-center">
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Heritage</h2>
                         <div className="space-y-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-                            <p>The Cutchi Visa Oswal Chartered and Cost Accountants Association (CVOCA) is a distinguished voluntary organization established in <span className="font-bold text-primary">1973</span> with 'Professional Excellence' as our guiding motto.</p>
+                            <p>The Cutchi Visa Oswal Chartered and Cost Accountants Association (CVOCA) is a distinguished voluntary organization established in <span className="font-bold text-primary dark:text-primary-light">1973</span> with 'Professional Excellence' as our guiding motto.</p>
                             <p>We proudly serve Chartered Accountants, Cost Accountants, and Company Secretaries from the Cutchi Visa Oswal (CVO) community, building an impeccable reputation for upholding ethical values and promoting excellence across multiple disciplines.</p>
                         </div>
                     </div>
@@ -504,13 +500,13 @@ const About: React.FC = () => {
 
                 {/* Vision and Mission */}
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-gradient-to-br from-primary-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-3xl border border-primary-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-primary-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-2xl border border-primary-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
                         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Our Vision</h2>
                         <ul className="space-y-4">
                             {["Most reputed knowledge organization", "Nucleus of activity & unity", "Proactive economic development"].map((item, i) => (
                                 <li key={i} className="flex items-center p-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
-                                    <span className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary mr-4">
+                                    <span className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary dark:text-primary-light mr-4">
                                         <Icon name="check" className="w-5 h-5" strokeWidth={3} />
                                     </span>
                                     <span className="text-gray-700 dark:text-gray-200 font-medium">{item}</span>
@@ -518,7 +514,7 @@ const About: React.FC = () => {
                             ))}
                         </ul>
                     </div>
-                    <div className="bg-gradient-to-br from-secondary-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-3xl border border-secondary-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-secondary-50 to-white dark:from-slate-800 dark:to-slate-900 p-10 rounded-2xl border border-secondary-100 dark:border-slate-700 shadow-lg relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
                         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Our Mission</h2>
                         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -534,36 +530,12 @@ const About: React.FC = () => {
                         <p className="mt-2 text-gray-500 dark:text-gray-400">Comprehensive support for every stage of your career</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <ServiceCard title="Professional Development">
-                            <li>Technical seminars & workshops</li>
-                            <li>Annual tax conferences</li>
-                            <li>Leadership summits</li>
-                        </ServiceCard>
-                        <ServiceCard title="Knowledge & Research">
-                            <li>Monthly bulletins (CVO CA News)</li>
-                            <li>Research publications</li>
-                            <li>Digital resource library</li>
-                        </ServiceCard>
-                        <ServiceCard title="Member Support">
-                            <li>Networking forums</li>
-                            <li>Career guidance & mentorship</li>
-                            <li>Practice management tools</li>
-                        </ServiceCard>
-                        <ServiceCard title="Student Initiatives">
-                            <li>Educational assistance</li>
-                            <li>Study circles & libraries</li>
-                            <li>Soft skills training</li>
-                        </ServiceCard>
-                        <ServiceCard title="Advocacy">
-                            <li>Policy representations to Govt.</li>
-                            <li>Regulatory updates</li>
-                            <li>Industry feedback forums</li>
-                        </ServiceCard>
-                        <ServiceCard title="Community & Social">
-                            <li>Cultural festivals & gatherings</li>
-                            <li>Sports tournaments</li>
-                            <li>Digital outreach programs</li>
-                        </ServiceCard>
+                        <ServiceCard title="Professional Development" items={["Technical seminars & workshops", "Annual tax conferences", "Leadership summits"]} />
+                        <ServiceCard title="Knowledge & Research" items={["Monthly bulletins (CVO CA News)", "Research publications", "Digital resource library"]} />
+                        <ServiceCard title="Member Support" items={["Networking forums", "Career guidance & mentorship", "Practice management tools"]} />
+                        <ServiceCard title="Student Initiatives" items={["Educational assistance", "Study circles & libraries", "Soft skills training"]} />
+                        <ServiceCard title="Advocacy" items={["Policy representations to Govt.", "Regulatory updates", "Industry feedback forums"]} />
+                        <ServiceCard title="Community & Social" items={["Cultural festivals & gatherings", "Sports tournaments", "Digital outreach programs"]} />
                     </div>
                 </section>
 

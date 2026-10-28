@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { ContactData, SocialMediaData } from '../types';
 import { fetchJson } from '../utils/fetchJson';
+import { getContactHref } from '../utils/contactLinks';
 
 const SocialIcon: React.FC<{ href: string, path: string, name: string }> = ({ href, path, name }) => (
     <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors"
+        className="inline-flex p-2.5 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         aria-label={name}
     >
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -36,11 +37,12 @@ const Footer: React.FC = () => {
     return (
         <footer className="bg-card-light dark:bg-card-dark border-t border-gray-200 dark:border-gray-700">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                <h2 className="sr-only">Footer</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div className="md:col-span-2">
                         <div className="flex items-center space-x-3">
                              <div className="w-10 h-10">
-                                <Logo />
+                                <Logo alt="" />
                              </div>
                             <span className="text-2xl font-bold text-gray-900 dark:text-white">CVOCA</span>
                         </div>
@@ -48,7 +50,7 @@ const Footer: React.FC = () => {
                             Empowering professionals through knowledge, networking, and innovation in the dynamic world of accounting and finance.
                         </p>
                         {socialData && (
-                            <div className="mt-6 flex space-x-6">
+                            <div className="mt-3.5 -ml-2.5 flex flex-wrap gap-1">
                                 {socialData.platforms.map((platform) => (
                                     <SocialIcon
                                         key={platform.id}
@@ -62,33 +64,41 @@ const Footer: React.FC = () => {
                     </div>
                     <div>
                         <h3 className="text-sm font-semibold tracking-wider uppercase">Quick Links</h3>
-                        <ul className="mt-4 space-y-2">
-                            <li><Link to="/about" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">About</Link></li>
-                            <li><Link to="/membership" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Membership</Link></li>
-                            <li><Link to="/events" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Events</Link></li>
-                            <li><Link to="/blog" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Blog</Link></li>
-                            <li><Link to="/digital-outreach" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Digital Outreach</Link></li>
-                            <li><Link to="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Contact</Link></li>
+                        <ul className="mt-4 space-y-1">
+                            <li><Link to="/about" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">About</Link></li>
+                            <li><Link to="/membership" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Membership</Link></li>
+                            <li><Link to="/events" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Events</Link></li>
+                            <li><Link to="/blog" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Blog</Link></li>
+                            <li><Link to="/digital-outreach" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Digital Outreach</Link></li>
+                            <li><Link to="/contact" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Contact</Link></li>
                         </ul>
                     </div>
                     {contactData && (
                         <div>
                             <h3 className="text-sm font-semibold tracking-wider uppercase">Contact Info</h3>
-                            <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                                <li>{contactData.contactInfo.find(info => info.id === 'address')?.value}</li>
-                                <li>{contactData.contactInfo.find(info => info.id === 'mobile')?.value}</li>
-                                <li>{contactData.contactInfo.find(info => info.id === 'email')?.value}</li>
-                                <li>{contactData.contactInfo.find(info => info.id === 'hours')?.value}</li>
-                            </ul>
+                            <address className="not-italic">
+                                <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                                    {['address', 'mobile', 'email', 'hours'].map((id) => {
+                                        const value = contactData.contactInfo.find(info => info.id === id)?.value;
+                                        if (!value) return null;
+                                        const href = getContactHref(id, value);
+                                        return (
+                                            <li key={id}>
+                                                {href ? <a href={href} className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">{value}</a> : value}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </address>
                         </div>
                     )}
                 </div>
                 <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                     <p>&copy; {new Date().getFullYear()} CVOCA. All rights reserved.</p>
                     <div className="flex space-x-4 mt-4 md:mt-0">
-                        <Link to="/privacy-policy" className="hover:text-primary dark:hover:text-primary-light">Privacy Policy</Link>
-                        <Link to="/contact" className="hover:text-primary dark:hover:text-primary-light">Contact</Link>
-                         <Link to="/membership" className="hover:text-primary dark:hover:text-primary-light">Membership</Link>
+                        <Link to="/privacy-policy" className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">Privacy Policy</Link>
+                        <Link to="/contact" className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">Contact</Link>
+                         <Link to="/membership" className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">Membership</Link>
                     </div>
                 </div>
             </div>

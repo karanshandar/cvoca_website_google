@@ -11,25 +11,25 @@ interface HeaderProps {
   toggleTheme: () => void;
 }
 
-const HeaderLogo: React.FC<{ textColorClass: string }> = ({ textColorClass }) => {
-  // If the text is white (implies dark background), we need the Dark Theme Logo (which has white text)
-  // If the text is dark (implies light background), we need the Light Theme Logo (which has dark text)
-  const logoVariant = textColorClass.includes('text-white') ? 'dark' : 'light';
+const HeaderLogo: React.FC<{ textColorClass: string; onDark: boolean }> = ({ textColorClass, onDark }) => {
+  // Over a dark hero, force the Dark Theme Logo (white text). Otherwise let the
+  // Logo follow the site theme (light logo in light mode, dark logo in dark mode).
+  const logoVariant = onDark ? 'dark' : undefined;
 
   return (
     <div className="flex items-center gap-3 group">
       <div className={`relative w-10 h-10 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-110`}>
-        <Logo variant={logoVariant} />
+        <Logo variant={logoVariant} alt="" />
       </div>
       <div className="flex flex-col">
         <span className={`text-xl md:text-2xl font-extrabold tracking-tight leading-none ${textColorClass}`}>CVOCA</span>
-        <span className="text-[0.6rem] md:text-[0.65rem] font-bold tracking-widest uppercase text-primary dark:text-primary-light">Association</span>
+        <span className={`text-xs font-bold tracking-widest uppercase ${onDark ? 'text-primary-light' : 'text-primary dark:text-primary-light'}`}>Association</span>
       </div>
     </div>
   );
 };
 
-const NavLinks: React.FC<{onLinkClick?: () => void, mobile?: boolean, textColorClass?: string, scrolled?: boolean}> = ({ onLinkClick, mobile, textColorClass, scrolled }) => {
+const NavLinks: React.FC<{onLinkClick?: () => void, mobile?: boolean, onDark?: boolean}> = ({ onLinkClick, mobile, onDark }) => {
     const links = [
         { name: 'Home', path: '/' },
         { name: 'About', path: '/about' },
@@ -40,15 +40,14 @@ const NavLinks: React.FC<{onLinkClick?: () => void, mobile?: boolean, textColorC
         { name: 'Contact', path: '/contact' }
     ];
 
-    const baseClass = "transition-all duration-200 block rounded-full";
+    const baseClass = "transition-all duration-200 block rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
     const activeClass = "text-white bg-primary font-semibold shadow-md";
     
     // Determine inactive class based on context
     let inactiveClass = "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10";
     
-    // If we are not scrolled and on a dark hero page (indicated by textColorClass being text-white), 
-    // we want specific hover styles for visibility
-    if (!scrolled && textColorClass?.includes('text-white') && !mobile) {
+    // While the header is transparent over a dark hero, use white links for visibility
+    if (onDark && !mobile) {
          inactiveClass = "text-white/80 hover:text-white hover:bg-white/20";
     }
 
@@ -76,8 +75,9 @@ const NavLinks: React.FC<{onLinkClick?: () => void, mobile?: boolean, textColorC
 const ThemeToggle: React.FC<{ theme: string; toggleTheme: () => void; }> = ({ theme, toggleTheme }) => (
     <button 
       onClick={toggleTheme} 
-      className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors shadow-sm" 
-      aria-label="Toggle theme"
+      type="button"
+      className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
         {theme === 'dark' ? (
             <Icon name="sun" className="h-5 w-5" />
@@ -152,19 +152,19 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 
   return (
     <div ref={menuRef}>
-        <header className={`fixed z-50 transition-all duration-500 ease-in-out ${scrolled 
+        <header className={`fixed z-50 transition-[background-color,border-color,box-shadow,padding] duration-500 ease-in-out ${scrolled 
             ? 'top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl shadow-lg border border-white/20 dark:border-slate-700/50 py-3 px-6' 
             : 'top-0 left-0 w-full bg-transparent py-6 px-4 sm:px-6 lg:px-8'}`}>
         
         <div className="flex items-center justify-between w-full">
-            <NavLink to="/" onClick={() => setIsOpen(false)}>
-                <HeaderLogo textColorClass={textColorClass} />
+            <NavLink to="/" onClick={() => setIsOpen(false)} aria-label="CVOCA home" className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+                <HeaderLogo textColorClass={textColorClass} onDark={onDarkHero} />
             </NavLink>
             
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center">
                 <nav className={`flex items-center space-x-1 rounded-full p-1 transition-all duration-300 ${scrolled ? 'bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-gray-100 dark:border-gray-700/50 shadow-sm' : ''}`}>
-                    <NavLinks textColorClass={textColorClass} scrolled={scrolled} />
+                    <NavLinks onDark={onDarkHero} />
                 </nav>
             </div>
             
@@ -176,8 +176,9 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
             <div className="lg:hidden flex items-center gap-3">
                 <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 <button 
-                  onClick={() => setIsOpen(!isOpen)} 
-                  className={`p-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors ${onDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={`p-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors ${onDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
                   aria-label={isOpen ? 'Close menu' : 'Open menu'}
                   aria-expanded={isOpen}
                   aria-controls="mobile-menu"
@@ -200,7 +201,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
                          <NavLinks mobile onLinkClick={() => setIsOpen(false)}/>
                      </nav>
                      <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-800 w-full text-center">
-                        <p className="text-xs text-gray-400 uppercase tracking-widest mb-4">Professional Excellence</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">Professional Excellence</p>
                      </div>
                  </div>
             </div>

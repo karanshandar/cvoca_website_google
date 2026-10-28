@@ -22,7 +22,7 @@ const PrivacyPolicy: React.FC = () => {
     });
 
     return (
-        <div className="animate-fadeIn">
+        <div>
             <PageHero tone="light" title="Privacy Policy">
                 <p className="mt-2 text-gray-600 dark:text-gray-300">Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </PageHero>

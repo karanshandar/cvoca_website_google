@@ -13,8 +13,8 @@ import Button from '../components/ui/Button';
 
 const BenefitCard: React.FC<{ title: string; iconPath: string; children: React.ReactNode }> = ({ title, iconPath, children }) => (
     <Card className="group flex items-start h-full">
-        <div className="flex-shrink-0 h-12 w-12 rounded-2xl bg-primary-50 dark:bg-primary-900/20 text-primary group-hover:bg-primary group-hover:text-white flex items-center justify-center mr-5 transition-colors duration-300">
-             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex-shrink-0 h-12 w-12 rounded-2xl bg-primary-50 dark:bg-primary-900/20 text-primary dark:text-primary-light group-hover:bg-primary group-hover:text-white flex items-center justify-center mr-5 transition-colors duration-300">
+             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={iconPath} />
             </svg>
         </div>
@@ -53,7 +53,7 @@ const TierCard: React.FC<{ tier: string; price: string; period: string; benefits
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{tier}</h3>
                         <div className="flex items-baseline flex-wrap">
                             <span className={`text-5xl font-extrabold tracking-tight ${theme.primaryColor}`}>{price}</span>
-                            <span className="ml-2 text-sm text-gray-400 font-medium uppercase tracking-wide">{period}</span>
+                            <span className="ml-2 text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">{period}</span>
                         </div>
                     </div>
                     <div className={`w-14 h-14 rounded-2xl ${theme.iconBg} flex items-center justify-center text-white shadow-lg transform rotate-3 group-hover:rotate-12 transition-all duration-300`}>
@@ -185,7 +185,7 @@ const Membership: React.FC = () => {
     }
 
     return (
-        <div className="animate-fadeIn bg-background-light dark:bg-background-dark min-h-screen">
+        <div className="bg-background-light dark:bg-background-dark min-h-screen">
             {/* Hero Section */}
             <PageHero
                 title={<>Invest in Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-secondary-light">Professional Future</span></>}
@@ -196,6 +196,7 @@ const Membership: React.FC = () => {
                 
                 {/* Membership Tiers */}
                 <section>
+                    <h2 className="sr-only">Membership plans</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                         {data.tiers.map((tier, index) => (
                              <TierCard
