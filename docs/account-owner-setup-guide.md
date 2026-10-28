@@ -4,11 +4,11 @@
 
 **Why it matters:** The website reads its events, committee and president data straight from a Google Sheet, using a Google "API key". That key is visible to anyone who opens the website, which is normal for this setup. But it **must be locked down**, so that nobody can misuse it or run up costs on the CVOCA Google account. Separately, the website's security settings in Render are written down in the code but **are not switched on** for the live site.
 
-**Time needed:** about 45 minutes in total. You don't need any coding.
+**Time needed:** about 55 minutes in total. You don't need any coding.
 
 **What you need:**
 - A login to the Google account that owns the CVOCA spreadsheet and Google Cloud project
-- A login to the Render account (https://dashboard.render.com) for **Part C**
+- A login to the Render account (https://dashboard.render.com) for **Parts C and D**
 
 Tick each box as you go. When you finish, send the completed checklist at the end to the developer.
 
@@ -174,6 +174,43 @@ default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-sr
 
 ---
 
+## Part D — Real "page not found" and link previews (Render, ~10 min, with the developer)
+
+Each page of the site now has its own file, so a shared link (WhatsApp, LinkedIn, etc.) shows that page's own title and description. Because of that, the old catch-all rule that sends every address to the home page is no longer needed. Removing it lets mistyped addresses return a proper "page not found", which search engines need.
+
+**Do this part together with the developer, on a call or screen-share.** Before you start, the developer confirms that the latest code is deployed and that it includes a `404.html` page.
+
+### D1. Developer: check the per-page files after the deploy
+Run these with the latest code deployed:
+```
+curl -sI https://cvoca.org/about
+curl -s https://cvoca.org/about | grep canonical
+```
+- The first should show `200` and **no** `Location:` line. That means Render serves `about/index.html` directly, with no redirect, and Cloudflare doesn't add a trailing slash.
+- The second should show `https://cvoca.org/about`.
+- Paste `https://cvoca.org/events` into a WhatsApp or LinkedIn message (without sending it). The preview should say **Events | CVOCA**, not the home page title.
+
+- [ ] Per-page files served without redirect; link preview shows the page's own title
+
+### D2. Remove the catch-all rewrite
+1. In Render, open the **cvoca-website** service → **Redirects/Rewrites**.
+2. Find the rule with **Source** `/*`, **Destination** `/index.html` and **Action** `Rewrite`.
+3. Write it down (for undo), then delete it and **Save**.
+
+- [ ] Catch-all rewrite removed
+
+### D3. Check it worked
+1. In a private/incognito window, open each page directly: https://cvoca.org/, `/about`, `/membership`, `/events`, `/blog`, `/digital-outreach`, `/contact`, `/privacy-policy`. Each should load normally, including after pressing refresh.
+2. Open https://cvoca.org/this-page-does-not-exist. It should show the site's "page not found" page.
+3. Developer: `curl -sI https://cvoca.org/this-page-does-not-exist` should now show `404`, not `200`.
+
+**Undo:** if any real page shows "Not Found", add the rule back exactly as before (`/*` → `/index.html`, Rewrite) and tell the developer.
+
+- [ ] All 8 pages load directly
+- [ ] Unknown address shows "page not found" (developer: status 404)
+
+---
+
 ## Troubleshooting
 
 | What you see | Likely cause | Fix |
@@ -181,12 +218,14 @@ default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-sr
 | Events/committee show old data or "Couldn't load this content" after Part A | Key restriction doesn't match the site address | In the key settings, check the website restriction is exactly `https://cvoca.org/*`, with no typo and no `www`. Wait 5 minutes, then reload in a private window. |
 | Same, after replacing the key in A6 | The site was not redeployed, or the new key wasn't saved in Render | Check the `VITE_GOOGLE_SHEETS_API_KEY` value in Render, then **Manual Deploy → Deploy latest commit**. |
 | The Contact page map is blank after Part C | The CSP header was entered as enforced instead of Report-Only, or with a typo | Make sure the header **name** ends in `-Report-Only`, and the value is pasted as one line. |
+| A real page (e.g. /about) shows "Not Found" after Part D | That page's file is missing from the deploy | Add the `/*` → `/index.html` rewrite back (D2 undo) and tell the developer. |
 | Site shows "Something went wrong" right after a deploy | Old browser tab with outdated files | Reload the page. If it persists, tell the developer. |
 
 If something breaks and you're unsure, you can safely undo any step:
 - Remove the restriction in Google Cloud.
 - Delete the header in Render.
 - Paste the old key back in Render and redeploy.
+- Add the `/*` → `/index.html` rewrite back (Part D).
 
 ---
 
@@ -223,6 +262,11 @@ C. Render
 [ ] C1 Seven headers added
 [ ] C2 Build command = npm ci && npm run build
 [ ] C3 securityheaders.com grade:
+
+D. Page not found + link previews (with developer)
+[ ] D1 /about served without redirect; WhatsApp/LinkedIn preview shows page title
+[ ] D2 Catch-all rewrite removed
+[ ] D3 All 8 pages load directly; unknown address shows "page not found" (404)
 
 Notes / problems:
 ```

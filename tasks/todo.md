@@ -138,7 +138,12 @@ Execution: inline on `main`, no worktree/branch/push; plan approval waived by th
 - Carried over from before this batch, not changed: client-side keywords go stale when navigating to a page without keywords; `/privacy-policy` is in the sitemap but noindex; unknown URLs carry a static `index, follow` until NotFound's JS sets noindex.
 
 ### Left to do
-- **After the next deploy**, run `curl -sI https://cvoca.org/about`. Expect 200 with no `Location` header. Then run `curl -s https://cvoca.org/about | grep canonical` and expect `https://cvoca.org/about`. This also checks that Cloudflare doesn't normalise the trailing slash. Then try a WhatsApp or LinkedIn preview of `/events`.
-- **True 404s** need a Render dashboard change: limit the rewrite to the known routes, or serve a `404.html`. That needs the client's Render access.
-- **Response headers** (CSP, HSTS, `Cache-Control`, etc.) still need setting in the Render dashboard (setup guide, Part C) or by linking the Blueprint. Only the CSP value was updated here.
-- **D2** (DigitalOutreach THEMES and the remaining UI components) is a separate session.
+Everything that needs the client's Render or Google access is collected in `docs/account-owner-setup-guide.md`, so it can all be done in one session:
+- **Part C:** response headers (CSP Report-Only, then enforced after a week; HSTS; `Cache-Control`; etc.) and the build command.
+- **Part D (new):** post-deploy checks of the per-route files and link previews (D1); removing the `/* → /index.html` rewrite so unknown URLs return a real 404 (D2–D3).
+
+Developer prerequisites before Part D (not done in this batch):
+- The build must ship a `dist/404.html` page. Render staff on the community forum say a static site serves `/404.html` for paths that match no file and no rule. Don't remove the rewrite until it exists.
+- Remove the `routes:` catch-all rewrite from `render.yaml` at the same time, so linking the Blueprint later doesn't bring it back.
+
+Not account work: **D2** (DigitalOutreach THEMES and the remaining UI components) is a separate session.
