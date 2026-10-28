@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect, useRef, useCallback, useId } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { CvoEvent } from '../types';
 import useSEO from '../hooks/useSEO';
 import { routeSEO } from '../seo/pages';
@@ -15,11 +15,14 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import Icon from '../components/Icon';
 import useFetch from '../hooks/useFetch';
+import useDisclosure from '../hooks/useDisclosure';
 import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import SearchInput from '../components/ui/SearchInput';
 import ImageLightbox from '../components/ui/ImageLightbox';
+import Button from '../components/ui/Button';
+import EmptyState from '../components/ui/EmptyState';
 
 // Gradient mapping based on committee/id for fallback visuals
 const getFallbackGradient = (id: number) => {
@@ -41,10 +44,9 @@ const IconWrapper: React.FC<{ children: React.ReactNode; className?: string }> =
 );
 
 const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void }> = ({ event, onImageClick }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const { open: isExpanded, panelId: descriptionId, triggerProps } = useDisclosure();
     const [contentHeight, setContentHeight] = useState<string>('4.5em'); // Default roughly 3 lines
     const textRef = useRef<HTMLParagraphElement>(null);
-    const descriptionId = useId();
     const dateObj = parseLocalDate(event.date);
     const day = dateObj.getDate();
     const month = dateObj.toLocaleString('default', { month: 'short' });
@@ -184,10 +186,7 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                         <div className="mt-1">
                             {!isExpanded && <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white dark:from-slate-800 to-transparent pointer-events-none"></div>}
                             <button
-                                type="button"
-                                onClick={() => setIsExpanded(!isExpanded)}
-                                aria-expanded={isExpanded}
-                                aria-controls={descriptionId}
+                                {...triggerProps}
                                 className="text-primary dark:text-primary-light text-xs font-bold hover:text-primary-dark dark:hover:text-primary-300 flex items-center gap-1 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded transition-colors duration-200"
                             >
                                 {isExpanded ? 'Collapse' : 'Expand'}
@@ -207,43 +206,27 @@ const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <a
-                            href={calendarUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold text-sm hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-white transition-colors duration-200 flex items-center justify-center gap-2 group/cal"
-                        >
-                            <Icon name="calendar" className="w-4 h-4 text-gray-400 group-hover/cal:text-primary dark:group-hover/cal:text-white transition-colors duration-200" />
+                    {/* Wraps instead of a fixed 2-column grid, so each pill stays on one line in narrow cards */}
+                    <div className="flex flex-wrap gap-3">
+                        <Button href={calendarUrl} target="_blank" variant="outline" size="sm" className="flex-1 whitespace-nowrap">
+                            <Icon name="calendar" className="w-4 h-4 mr-2" />
                             Add to Calendar
-                        </a>
+                        </Button>
 
                         {event.registrationLink ? (
-                            <a
-                                href={event.registrationLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
-                            >
+                            <Button href={event.registrationLink} target="_blank" size="sm" className="flex-1 whitespace-nowrap">
                                 Register Now
-                                <Icon name="arrow-long-right" className="w-4 h-4" />
-                            </a>
+                            </Button>
                         ) : (
-                            <button disabled className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 text-sm font-bold rounded-xl cursor-not-allowed flex items-center justify-center border border-transparent">
+                            <Button disabled size="sm" className="flex-1 whitespace-nowrap">
                                 Registration Closed
-                            </button>
+                            </Button>
                         )}
 
                         {event.readMoreLink && (
-                            <a
-                                href={event.readMoreLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="col-span-1 sm:col-span-2 px-4 py-2.5 rounded-xl border border-primary-200 dark:border-primary-800 text-primary-700 dark:text-primary-300 font-bold text-sm hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors duration-200 flex items-center justify-center gap-2"
-                            >
+                            <Button href={event.readMoreLink} target="_blank" variant="outline" size="sm" className="basis-full whitespace-nowrap">
                                 Read More
-                                <Icon name="external-link" className="w-4 h-4" />
-                            </a>
+                            </Button>
                         )}
                     </div>
                 </div>
@@ -448,20 +431,16 @@ const Events: React.FC = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600">
-                                <div className="mx-auto h-16 w-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
-                                    <Icon name="calendar" className="h-8 w-8 text-gray-400" />
-                                </div>
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white">No events found</h3>
-                                <p className="mt-2 text-gray-500 dark:text-gray-400">
+                            <EmptyState icon="calendar" title="No events found">
+                                <p>
                                     {timeFilter === 'upcoming'
                                         ? "There are no upcoming events scheduled at the moment."
                                         : "We couldn't find any events matching your filters."}
                                 </p>
                                 {hasActiveFilters && (
-                                    <button onClick={clearFilters} className="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg">Clear all filters</button>
+                                    <Button size="sm" onClick={clearFilters} className="mt-6">Clear all filters</Button>
                                 )}
-                            </div>
+                            </EmptyState>
                         )}
                     </>
                 )}
