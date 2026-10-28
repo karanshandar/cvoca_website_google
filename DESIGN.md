@@ -117,6 +117,83 @@ components:
     backgroundColor: "{colors.card-light}"
     textColor: "{colors.text-light}"
     rounded: "{rounded.full}"
+  button-primary-hover:
+    backgroundColor: "{colors.primary-dark}"
+    textColor: "#ffffff"
+    rounded: "{rounded.full}"
+  button-secondary-hover:
+    backgroundColor: "{colors.secondary-dark}"
+    textColor: "#ffffff"
+    rounded: "{rounded.full}"
+  # On-colour buttons: only on a bg-primary band (Home CTA)
+  button-on-primary:
+    backgroundColor: "#ffffff"
+    textColor: "{colors.primary-700}"
+    rounded: "{rounded.full}"
+  button-on-primary-hover:
+    backgroundColor: "{colors.primary-50}"
+    textColor: "{colors.primary-700}"
+    rounded: "{rounded.full}"
+  button-on-primary-outline:
+    backgroundColor: "{colors.primary-dark}"
+    textColor: "#ffffff"
+    rounded: "{rounded.full}"
+  button-on-primary-outline-hover:
+    backgroundColor: "{colors.primary-900}"
+    textColor: "#ffffff"
+    rounded: "{rounded.full}"
+  button-disabled:
+    backgroundColor: "#f3f4f6"
+    textColor: "#4b5563"
+    rounded: "{rounded.full}"
+  card:
+    backgroundColor: "{colors.card-light}"
+    textColor: "{colors.text-light}"
+    rounded: "{rounded.2xl}"
+    padding: "{spacing.lg}"
+  card-dark:
+    backgroundColor: "{colors.card-dark}"
+    textColor: "{colors.text-dark}"
+    rounded: "{rounded.2xl}"
+    padding: "{spacing.lg}"
+  page:
+    backgroundColor: "{colors.background-light}"
+    textColor: "{colors.text-light}"
+  page-dark:
+    backgroundColor: "{colors.background-dark}"
+    textColor: "{colors.text-dark}"
+  badge-primary:
+    backgroundColor: "{colors.primary-50}"
+    textColor: "{colors.primary-700}"
+    rounded: "{rounded.full}"
+  badge-success:
+    backgroundColor: "{colors.success-50}"
+    textColor: "{colors.success-700}"
+    rounded: "{rounded.full}"
+  badge-warning:
+    backgroundColor: "{colors.warning-50}"
+    textColor: "{colors.warning-700}"
+    rounded: "{rounded.full}"
+  badge-danger:
+    backgroundColor: "{colors.danger-50}"
+    textColor: "{colors.danger-700}"
+    rounded: "{rounded.full}"
+  # Rest fill is primary at 10% opacity (20% in dark), which a colour token can't express
+  icon-tile:
+    textColor: "{colors.primary}"
+    rounded: "{rounded.xl}"
+    size: 3.5rem
+  icon-tile-hover:
+    backgroundColor: "{colors.primary}"
+    textColor: "#ffffff"
+    rounded: "{rounded.xl}"
+    size: 3.5rem
+  hero:
+    backgroundColor: "{colors.background-dark}"
+    textColor: "#ffffff"
+  hero-light:
+    backgroundColor: "{colors.primary-50}"
+    textColor: "#111827"
 ---
 
 ## Overview
@@ -183,6 +260,22 @@ A three-step shadow scale conveys depth and interactivity:
 - **Subtle:** `shadow-sm`/`shadow-md` for inset chips and small badges.
 Do not invent shadow values outside this scale.
 
+## Motion
+
+Two named animations are defined in `tailwind.config.js`; use them instead of
+new keyframes.
+- **`animate-fade-in-up`** (0.5s ease-out, once): content entering on load,
+  such as stat cards, info rows and dialogs. It moves 20px up from transparent.
+  Stagger siblings with an inline `animationDelay` (e.g. `0.1s` steps).
+- **`animate-float`** (6s ease-in-out, infinite): a gentle 10px bob, reserved
+  for purely decorative elements, never text or controls. No page uses it today.
+- **Transitions:** colour/shadow changes use `transition-colors` or
+  `transition-all` at `duration-300`. Hover lift is `-translate-y-1`, for
+  clickable cards only.
+- **Reduced motion:** `index.css` shortens every animation and transition under
+  `prefers-reduced-motion: reduce`, so content must already be in its final,
+  visible state when the animation is skipped.
+
 ## Shapes
 
 - **`rounded-2xl` (1rem):** cards and primary surfaces.
@@ -193,14 +286,31 @@ Do not invent shadow values outside this scale.
 ## Components
 
 These patterns are implemented as shared React components in `components/ui/`:
-`Button`, `Card`, `Badge`, `PageHero`, `SearchInput`, `Modal` and
-`ImageLightbox`. New UI should use them instead of re-creating the classes by
-hand. `PageHero` also tells the header whether it sits over a dark or light hero.
+`Button`, `Card`, `Badge`, `PageHero`, `SectionHeader`, `IconTile`, `Stat`,
+`EmptyState`, `SearchInput`, `Modal` and `ImageLightbox`, plus the
+`useDisclosure` hook (`hooks/`) for show/hide controls. New UI should use them
+instead of re-creating the classes by hand. `PageHero` also tells the header
+whether it sits over a dark or light hero.
 
 - **Buttons** (`.btn-primary`, `.btn-secondary`, `.btn-outline` in `index.css`):
   `rounded-full`, bold, `px-6 py-3`, `shadow-md` → `shadow-lg` on hover.
   `button-outline` is a white/`card` surface with a gray border that fills with
-  `primary` on hover.
+  `primary` on hover. `size="sm"` keeps a 44px tap target. `disabled` renders a
+  native disabled button in muted gray (`button-disabled`).
+- **On-colour buttons** (`variant="onPrimary"` / `"onPrimaryOutline"`,
+  `.btn-on-primary*`): only for a `bg-primary` band, where the normal variants
+  disappear. `onPrimary` is white with `primary-700` text (6.7:1) for the main
+  action; `onPrimaryOutline` is `primary-dark` with white text and a white/30
+  border (8.7:1) for the second action. Both use a white focus ring offset in
+  `primary`.
+- **Section header** (`SectionHeader`): optional eyebrow (`primary`, caption
+  style), an `h2` at the `h2` token (`text-3xl md:text-4xl font-extrabold`) and
+  a `text-lg` lede. Centred by default, `align="left"` for list sections.
+- **Stat** (`Stat`): a gradient number over a caption label; `lg` for hero
+  stats, `md` for a row inside one card. Uses the light gradient ramp in dark
+  mode.
+- **Empty state** (`EmptyState`): dashed `card` surface, optional icon circle,
+  optional `h3` title, message and action.
 - **Cards:** `bg-card` + `rounded-2xl` + `shadow-lg`/`xl` +
   `border border-gray-100 dark:border-gray-700`; on hover lift
   (`-translate-y-1`), deepen shadow (`shadow-2xl`), and tint border
