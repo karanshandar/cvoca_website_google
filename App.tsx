@@ -27,21 +27,31 @@ const ScrollToTop = () => {
   return null;
 };
 
+// Resets the error boundary on navigation, so one broken route doesn't stick
+const RouteErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { pathname } = useLocation();
+  return <ErrorBoundary key={pathname}>{children}</ErrorBoundary>;
+};
+
 const App: React.FC = () => {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  // public/theme-init.js has already applied the saved or OS theme before first paint
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+  );
 
   useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
+  // Only an explicit choice is saved, so untouched visitors keep following the OS setting
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      // Storage blocked: the choice lasts for this visit only
+    }
   };
 
   return (
@@ -59,8 +69,8 @@ const App: React.FC = () => {
         <HeroToneProvider>
         <Header theme={theme} toggleTheme={toggleTheme} />
         {/* Removed pt-24 to allow Hero sections to sit behind the transparent header */}
-        <main id="main-content" className="flex-grow">
-          <ErrorBoundary>
+        <main id="main-content" tabIndex={-1} className="flex-grow focus:outline-none">
+          <RouteErrorBoundary>
           <Suspense fallback={<LoadingSpinner fullPage />}>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -74,7 +84,7 @@ const App: React.FC = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-          </ErrorBoundary>
+          </RouteErrorBoundary>
         </main>
         </HeroToneProvider>
         <Footer />

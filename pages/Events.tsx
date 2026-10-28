@@ -386,8 +386,18 @@ const Events: React.FC = () => {
 
     const hasActiveFilters = searchTerm !== '' || organizerFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'upcoming';
 
-    // Generate Event schema for upcoming events
-    const eventSchemas = filteredEvents.slice(0, 10).map(event => getEventSchema({
+    // Event schema covers the next 10 upcoming events, whatever the visitor's filters,
+    // so past events are never marked as scheduled
+    const upcomingEvents = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return allEvents
+            .filter(event => new Date(event.date) >= today)
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .slice(0, 10);
+    }, [allEvents]);
+
+    const eventSchemas = upcomingEvents.map(event => getEventSchema({
         id: event.id,
         title: event.title,
         date: event.date,

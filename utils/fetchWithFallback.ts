@@ -1,8 +1,10 @@
 import { fetchJson } from './fetchJson';
+import { SheetsNotConfiguredError } from './googleSheets';
 
 /**
  * Fetches data from a primary source (e.g., Google Sheets) with a fallback to local JSON.
  * Logs errors to console and returns the fallback data on failure.
+ * A missing Sheets configuration (local dev, previews) falls back without logging.
  */
 export async function fetchWithFallback<T>(
   primaryFetch: () => Promise<T>,
@@ -11,7 +13,9 @@ export async function fetchWithFallback<T>(
   try {
     return await primaryFetch();
   } catch (error) {
-    console.error(`Primary fetch failed, falling back to ${fallbackJsonPath}:`, error);
+    if (!(error instanceof SheetsNotConfiguredError)) {
+      console.error(`Primary fetch failed, falling back to ${fallbackJsonPath}:`, error);
+    }
     return fetchJson<T>(fallbackJsonPath);
   }
 }

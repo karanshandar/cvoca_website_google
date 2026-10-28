@@ -3,6 +3,9 @@ import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
 import PageHero from '../components/ui/PageHero';
 
+// Change this date whenever the policy text changes
+const LAST_UPDATED = '28 October 2026';
+
 const Section: React.FC<{ title: string; id: string; children: React.ReactNode }> = ({ title, id, children }) => (
     <section id={id} className="mb-8">
         <h2 className="text-2xl font-bold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">{title}</h2>
@@ -16,7 +19,7 @@ const PrivacyPolicy: React.FC = () => {
     // SEO Meta Tags
     useSEO({
         title: 'Privacy Policy',
-        description: 'CVOCA Privacy Policy - Learn how we collect, use, and protect your personal information. Our commitment to data privacy and security for members and visitors.',
+        description: 'How the CVOCA website handles your information: no forms, accounts, cookies or analytics, and the third-party services the site uses.',
         canonicalUrl: canonical('/privacy-policy'),
         noIndex: true
     });
@@ -24,88 +27,57 @@ const PrivacyPolicy: React.FC = () => {
     return (
         <div>
             <PageHero tone="light" title="Privacy Policy">
-                <p className="mt-2 text-gray-600 dark:text-gray-300">Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">Last updated: {LAST_UPDATED}</p>
             </PageHero>
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <Section title="Introduction" id="intro">
-                    <p>CVOCA ('we,' 'us,' 'our,' or 'Company') is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and otherwise handle your information when you visit our website and use our services.</p>
+                <Section title="In short" id="intro">
+                    <p>This page explains what happens to your information when you visit cvoca.org. The website has no forms, no accounts, no cookies of its own and no analytics or tracking. CVOCA does not collect personal information through this website.</p>
                 </Section>
-                
-                <Section title="1. Information We Collect" id="collection">
-                    <h3 className="font-semibold text-lg">Personal Information You Provide:</h3>
-                    <ul className="list-disc list-inside ml-4">
-                        <li><strong>Contact Forms:</strong> Name, email, phone number, message.</li>
-                        <li><strong>Membership Registration:</strong> Name, email, qualifications, registration number, contact details.</li>
-                        <li><strong>Event Registration:</strong> Name, email, organization, event preferences.</li>
-                        <li><strong>Communications:</strong> Email for newsletters and announcements.</li>
-                    </ul>
-                    <h3 className="font-semibold text-lg mt-4">Automatically Collected Information:</h3>
-                    <ul className="list-disc list-inside ml-4">
-                        <li><strong>Log Data:</strong> IP address, browser type, pages visited, timestamps, referring URLs.</li>
-                        <li><strong>Device Information:</strong> Device type, operating system, device identifiers.</li>
-                        <li><strong>Usage Data:</strong> Interaction patterns, pages viewed, time spent on pages.</li>
-                        <li><strong>Cookies & Similar Technologies:</strong> Session identifiers, preferences, analytics tracking.</li>
-                    </ul>
+
+                <Section title="1. What this website stores" id="storage">
+                    <p>The only thing the website stores is your light or dark theme choice, saved in your browser's local storage on your own device. It is never sent to CVOCA. You can remove it at any time by clearing your browser's site data.</p>
                 </Section>
-                
-                <Section title="2. How We Use Your Information" id="usage">
-                     <ul className="list-disc list-inside ml-4">
-                        <li><strong>Service Provision:</strong> To provide, maintain, and improve our website and services.</li>
-                        <li><strong>Communication:</strong> To respond to inquiries, send confirmations, and provide customer support.</li>
-                        <li><strong>Marketing:</strong> To send newsletters, event announcements, and updates (with your consent).</li>
-                        <li><strong>Analytics:</strong> To analyze usage patterns, troubleshoot issues, and improve user experience.</li>
-                        <li><strong>Legal Compliance:</strong> To comply with legal obligations and enforce our terms of service.</li>
-                        <li><strong>Membership Management:</strong> To administer membership benefits and programs.</li>
+
+                <Section title="2. Services this website uses" id="services">
+                    <p>Like any website, cvoca.org relies on a few outside services. When your browser loads a page, these services receive standard technical information such as your IP address, browser type and the page you are viewing:</p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Render and Cloudflare</strong> host and deliver the website. They keep standard server logs to run the service and keep it secure.</li>
+                        <li><strong>Google Fonts</strong> supplies the website's font.</li>
+                        <li><strong>Google Sheets</strong> holds our events, committee and president's message content. Your browser loads it directly from Google.</li>
+                        <li><strong>Google Maps</strong> shows our office on the Contact page. Google may set its own cookies inside the map.</li>
+                        <li><strong>Cloudinary and Unsplash</strong> host some of the images on the website.</li>
                     </ul>
+                    <p>Each of these services handles that information under its own privacy policy.</p>
                 </Section>
-                
-                <Section title="3. Data Sharing & Disclosure" id="sharing">
-                    <p><strong>General Policy:</strong> We do not sell, trade, or rent your personal information to third parties.</p>
-                    <p><strong>Exceptions:</strong></p>
-                    <ul className="list-disc list-inside ml-4">
-                        <li><strong>Service Providers:</strong> Vendors for website operation, email delivery, analytics.</li>
-                        <li><strong>Legal Requirements:</strong> When required by law, court order, or government requests.</li>
-                        <li><strong>Business Transfers:</strong> In case of a merger, acquisition, or asset sale.</li>
-                        <li><strong>Consent:</strong> With other parties when explicitly consented by you.</li>
+
+                <Section title="3. Registration, payments and messages" id="registration">
+                    <p>Membership and event registrations, payments and messages happen on other services that our buttons link to:</p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Razorpay</strong> for payments and registration pages.</li>
+                        <li><strong>Google Forms</strong> for some registrations.</li>
+                        <li><strong>WhatsApp</strong> if you choose to message a coordinator.</li>
+                    </ul>
+                    <p>What you enter there is handled by that service under its own terms, and is shared with CVOCA so we can run your membership or the event you signed up for. We do not sell, trade or rent your personal information.</p>
+                    <p>The website also links to our annual reports on Google Drive, our blog and our social media pages. Those sites have their own privacy policies.</p>
+                </Section>
+
+                <Section title="4. Your choices" id="choices">
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li>You can block or clear cookies and site data in your browser settings.</li>
+                        <li>To see, correct or delete registration details that CVOCA holds about you, contact us using the details below.</li>
                     </ul>
                 </Section>
 
-                <Section title="4. Data Security" id="security">
-                     <p>We implement a variety of security measures to maintain the safety of your personal information, including:</p>
-                    <ul className="list-disc list-inside ml-4">
-                        <li>HTTPS encryption for all data transmissions.</li>
-                        <li>Secure password storage with encryption.</li>
-                        <li>Regular security audits and vulnerability assessments.</li>
-                        <li>Limited access to data based on job function.</li>
-                    </ul>
-                    <p className="mt-4 italic"><strong>Disclaimer:</strong> No method of transmission over the Internet is 100% secure. While we implement strong security measures, we cannot guarantee absolute security.</p>
-                </Section>
-
-                <Section title="5. Your Rights & Choices" id="rights">
-                    <p>You have the following rights regarding your personal information:</p>
-                     <ul className="list-disc list-inside ml-4">
-                        <li><strong>Access:</strong> Request a copy of your personal information.</li>
-                        <li><strong>Correction:</strong> Request correction of inaccurate information.</li>
-                        <li><strong>Deletion:</strong> Request deletion of your information (subject to legal obligations).</li>
-                        <li><strong>Opt-Out:</strong> Unsubscribe from marketing communications.</li>
-                        <li><strong>Withdraw Consent:</strong> Withdraw consent for data processing at any time.</li>
-                    </ul>
-                </Section>
-
-                <Section title="6. Cookies & Tracking Technologies" id="cookies">
-                    <p>We use cookies to enhance your experience. You can control cookie preferences through your browser settings.</p>
-                </Section>
-
-                <Section title="7. Contact Us" id="contact">
-                    <p>For any privacy-related questions, please contact us:</p>
-                    <p><strong>Email:</strong> president@cvoca.org</p>
+                <Section title="5. Contact us" id="contact">
+                    <p>For any privacy question, please contact us:</p>
+                    <p><strong>Email:</strong> <a href="mailto:info@cvoca.org" className="text-primary dark:text-primary-light underline hover:no-underline">info@cvoca.org</a></p>
                     <p><strong>Address:</strong> 304, Jasmine Apartment, Dadasaheb Phalke Road, Dadar (E), Mumbai 400014, Maharashtra</p>
                 </Section>
 
-                 <div className="mt-12 text-sm text-gray-500 dark:text-gray-400">
-                    <h3 className="font-bold mb-2">Policy Changes</h3>
-                    <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated 'Last Updated' date. Your continued use of our website after changes constitutes your acceptance of the updated Privacy Policy.</p>
+                <div className="mt-12 text-sm text-gray-500 dark:text-gray-400">
+                    <h2 className="font-bold mb-2">Changes to this page</h2>
+                    <p>If the way the website handles information changes, for example if we add a contact form or analytics, we will update this page and the date at the top.</p>
                 </div>
             </div>
         </div>

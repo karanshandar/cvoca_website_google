@@ -5,7 +5,7 @@ import useFetch from '../hooks/useFetch';
 import useSEO from '../hooks/useSEO';
 import { canonical } from '../constants';
 import SchemaMarkup from '../components/SchemaMarkup';
-import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/schema';
+import { getBreadcrumbSchema } from '../utils/schema';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
 import { fetchJson } from '../utils/fetchJson';
@@ -72,8 +72,8 @@ const Contact: React.FC = () => {
 
     return (
         <div className="bg-gray-50 dark:bg-background-dark min-h-screen">
-            {/* LocalBusiness Schema for Contact Page */}
-            <SchemaMarkup schema={[getLocalBusinessSchema(), breadcrumbSchema]} />
+            {/* The global Organization schema (App.tsx) already carries the address, phone and hours */}
+            <SchemaMarkup schema={[breadcrumbSchema]} />
 
             {/* Dark Theme Hero Section */}
             <PageHero eyebrow="Get In Touch" title={contactData.hero.title} lede={contactData.hero.subtitle} />

@@ -6,9 +6,22 @@
 const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
 
-if (!API_KEY || !SHEET_ID) {
-  console.error('Missing Google Sheets configuration. Please check your .env.local file.');
+const IS_CONFIGURED = Boolean(API_KEY && SHEET_ID);
+
+if (!IS_CONFIGURED && import.meta.env.DEV) {
+  console.warn('Google Sheets is not configured (VITE_GOOGLE_SHEETS_API_KEY / VITE_GOOGLE_SHEET_ID); using the local JSON data.');
 }
+
+/** Thrown instead of requesting `/spreadsheets/undefined/...` when the env vars are missing. */
+export class SheetsNotConfiguredError extends Error {
+  constructor() {
+    super('Google Sheets is not configured');
+    this.name = 'SheetsNotConfiguredError';
+  }
+}
+
+/** A hanging Sheets request gives up after this long, so the JSON fallback shows instead. */
+const REQUEST_TIMEOUT_MS = 5000;
 
 /**
  * Base URL for Google Sheets API v4
@@ -21,12 +34,16 @@ const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
  * @returns Array of objects with data from the sheet
  */
 export async function fetchSheetData<T = Record<string, unknown>>(tabName: string): Promise<T[]> {
+  if (!IS_CONFIGURED) {
+    throw new SheetsNotConfiguredError();
+  }
+
   try {
     const url = `${SHEETS_API_BASE}/${SHEET_ID}/values/${encodeURIComponent(tabName)}?key=${API_KEY}`;
 
     if (import.meta.env.DEV) console.log(`Fetching data from Google Sheets tab: ${tabName}`);
 
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));

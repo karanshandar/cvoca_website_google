@@ -47,12 +47,7 @@ export const getOrganizationSchema = () => ({
     "https://www.facebook.com/CVOCAAssociation/",
     "https://www.instagram.com/cvocain/",
     "https://www.youtube.com/@cvocharteredcostaccountant9981"
-  ],
-  "numberOfEmployees": {
-    "@type": "QuantitativeValue",
-    "value": 2400,
-    "unitText": "members"
-  }
+  ]
 });
 
 /**
@@ -65,29 +60,6 @@ export const getWebsiteSchema = () => ({
   "alternateName": "CVO Chartered & Cost Accountants Association",
   "url": BASE_URL,
   "description": "Official website of CVOCA - Premier professional association for Chartered and Cost Accountants in Mumbai since 1973."
-});
-
-/**
- * LocalBusiness Schema - For Contact page
- */
-export const getLocalBusinessSchema = () => ({
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "CVO Chartered & Cost Accountants Association",
-  "image": `${BASE_URL}/images/logo-light-theme.webp`,
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "304, Jasmine Apartment, Dadasaheb Phalke Road, Dadar (E)",
-    "addressLocality": "Mumbai",
-    "addressRegion": "Maharashtra",
-    "postalCode": "400014",
-    "addressCountry": "IN"
-  },
-  "telephone": "+91-9167928622",
-  "email": "info@cvoca.org",
-  "url": BASE_URL,
-  "openingHours": "Mo-Sa 10:30-18:00",
-  "priceRange": "$$"
 });
 
 /**
@@ -129,7 +101,9 @@ export const getEventSchema = (event: EventData) => {
         "addressCountry": "IN"
       }
     },
-    "image": event.imageUrl || `${BASE_URL}/images/logo-light-theme.webp`,
+    "image": event.imageUrl
+      ? (event.imageUrl.startsWith('/') ? `${BASE_URL}${event.imageUrl}` : event.imageUrl)
+      : `${BASE_URL}/images/logo-light-theme.webp`,
     "organizer": {
       "@type": "Organization",
       "name": "CVOCA",
