@@ -10,14 +10,16 @@ import Icon from '../components/Icon';
 import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import SectionHeader from '../components/ui/SectionHeader';
+import IconTile from '../components/ui/IconTile';
 
 const BenefitCard: React.FC<{ title: string; iconPath: string; children: React.ReactNode }> = ({ title, iconPath, children }) => (
     <Card className="group flex items-start h-full">
-        <div className="flex-shrink-0 h-12 w-12 rounded-2xl bg-primary-50 dark:bg-primary-900/20 text-primary dark:text-primary-light group-hover:bg-primary group-hover:text-white flex items-center justify-center mr-5 transition-colors duration-300">
+        <IconTile className="mr-5">
              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={iconPath} />
             </svg>
-        </div>
+        </IconTile>
         <div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{children}</p>
@@ -209,10 +211,7 @@ const Membership: React.FC = () => {
 
                 {/* Membership Benefits Grid */}
                 <section>
-                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Why Join CVOCA?</h2>
-                        <p className="mt-4 text-gray-600 dark:text-gray-400">Comprehensive benefits designed to accelerate your career.</p>
-                    </div>
+                    <SectionHeader className="mb-16" title="Why Join CVOCA?" lede="Comprehensive benefits designed to accelerate your career." />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {data.generalBenefits.map((benefit, index) => (
                             <BenefitCard 
