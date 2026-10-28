@@ -31,7 +31,7 @@ Each Sheet tab has a matching "fallback" JSON file in `public/data/`. The websit
 
 - **Tab names and column headers must match exactly**, including capital letters (`imageUrl`, not `Image URL` or `imageurl`). Row 1 holds the headers; every row below it is one item. Column order doesn't matter.
 - Extra columns are ignored, so you can keep notes in a column the site doesn't read.
-- **Dates:** type them as `DD/MM/YYYY` (for example `05/09/2026`) or `YYYY-MM-DD` (`2026-09-05`). Other formats such as `5 Sep 2026` or `05-09-2026` will not display correctly. If Google Sheets keeps reformatting your dates, set the column to **Format → Number → Plain text**.
+- **Dates:** first set every `date` column (in `events` and `presidentMessage`) to **Format → Number → Plain text**, so Google Sheets keeps exactly what you type. Then type dates as `DD/MM/YYYY` (for example `05/09/2026` for 5 September) or `YYYY-MM-DD` (`2026-09-05`). The site always reads `a/b/c` as day/month/year. If the column is left as a date format, Sheets may hand the site the date in another order (for example US month/day) and the event silently shows the wrong date. Other formats such as `5 Sep 2026` or `05-09-2026` will not display correctly.
 - Rows appear on the site in the order they appear in the Sheet, except where a section sorts them itself (events are sorted by date).
 - The Sheet must stay shared as **Anyone with the link → Viewer**, or the site falls back to the JSON files.
 
@@ -116,7 +116,7 @@ Only the first row below the headers is used.
 
 ## JSON files
 
-The JSON files must stay valid JSON: keep the quotation marks, commas and brackets exactly as they are and change only the text between quotes. Each file's structure matches the type of the same name in `types.ts`. On every push to GitHub, an automated check (`npm test`, run by GitHub Actions) loads every file in `public/data/` and fails if a field the pages need is missing. A red ✗ next to your commit on GitHub means the edit needs fixing. The check does not stop Render from deploying, so fix it straight away.
+The JSON files must stay valid JSON: keep the quotation marks, commas and brackets exactly as they are and change only the text between quotes. Each file's structure matches the type of the same name in `types.ts`. On every push to `main` (and on pull requests to it), an automated check (`npm test`, run by GitHub Actions) loads every file in `public/data/` and fails if a field the pages need is missing. A red ✗ next to your commit on GitHub means the edit needs fixing. The check does not stop Render from deploying, so fix it straight away.
 
 ## Images
 

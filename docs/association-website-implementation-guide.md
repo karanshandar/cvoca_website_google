@@ -205,9 +205,10 @@ To prevent accidental changes to structure:
    - Right-click row 1 → Protect range
    - Set permissions to only allow specific editors
 
-2. **Add data validation for dates:**
-   - Select the date column
-   - Data → Data validation → Date
+2. **Keep date columns as plain text:**
+   - Select the `date` column (in `events` and `presidentMessage`)
+   - Format → Number → Plain text
+   - Don't use Data validation → Date: real date cells reach the site in the Sheet's locale format, which can swap day and month (see [editing-content.md](editing-content.md))
 
 3. **Use a dropdown for committee roles:**
    - In the `committeeMembers` tab, select the `role` column
@@ -604,7 +605,7 @@ For improved performance, consider:
 ### 7.7 Preventive Measures
 
 - ✅ Lock the header row in Google Sheets
-- ✅ Use data validation for date columns
+- ✅ Keep date columns as plain text (Format → Number → Plain text)
 - ✅ Maintain consistent naming conventions
 - ✅ Keep a backup of important images in Google Drive
 - ✅ Document who has access to what systems
