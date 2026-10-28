@@ -3,6 +3,8 @@
  * Fetches data from Google Sheets and converts to JSON format
  */
 
+import type { Committee, CoreMember } from '../types';
+
 const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
 
@@ -87,7 +89,7 @@ export async function fetchSheetData<T = Record<string, unknown>>(tabName: strin
 /**
  * Convert string values to appropriate types based on field name
  */
-function convertValue(fieldName: string, value: string): string | number | boolean | string[] {
+export function convertValue(fieldName: string, value: string): string | number | boolean | string[] {
   // Empty values
   if (value === '' || value === null || value === undefined) {
     return fieldName === 'tags' ? [] : value;
@@ -156,27 +158,42 @@ export async function fetchPastPresidents() {
  */
 export async function fetchCommittees() {
   const members = await fetchSheetData('committeeMembers');
+  return groupCommitteeMembers(members);
+}
 
-  // Group members by committee name
-  const committeesMap = new Map();
+/** Sheet cells arrive as text; a missing column reads as an empty string. */
+const cellText = (value: unknown): string => (value == null ? '' : String(value));
 
-  members.forEach((member: Record<string, unknown>) => {
-    const committeeName = member.committeeName;
+/** A committee whose member lists always exist, so rows can be pushed straight in */
+type CommitteeDraft = Committee & Required<Omit<Committee, 'chairperson'>>;
 
-    if (!committeesMap.has(committeeName)) {
-      committeesMap.set(committeeName, {
-        name: committeeName,
-        chairperson: undefined,
-        advisors: [],
-        convenors: [],
-        jointConvenors: [],
-        specialInvitees: [],
-        subCommittee: []
-      });
+const emptyCommittee = (name: string): CommitteeDraft => ({
+  name,
+  chairperson: undefined,
+  advisors: [],
+  convenors: [],
+  jointConvenors: [],
+  specialInvitees: [],
+  subCommittee: [],
+});
+
+/**
+ * Groups flat committeeMembers rows (one per person) into committees,
+ * in the order each committee first appears
+ */
+export function groupCommitteeMembers(members: Record<string, unknown>[]): Committee[] {
+  const committeesMap = new Map<string, CommitteeDraft>();
+
+  members.forEach((member) => {
+    const committeeName = cellText(member.committeeName);
+
+    let committee = committeesMap.get(committeeName);
+    if (!committee) {
+      committee = emptyCommittee(committeeName);
+      committeesMap.set(committeeName, committee);
     }
 
-    const committee = committeesMap.get(committeeName);
-    const coreMember = { name: member.memberName, nativePlace: member.nativePlace };
+    const coreMember: CoreMember = { name: cellText(member.memberName), nativePlace: cellText(member.nativePlace) };
 
     switch (member.role) {
       case 'chairperson':

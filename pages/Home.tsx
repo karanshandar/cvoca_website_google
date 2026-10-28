@@ -8,6 +8,7 @@ import { canonical } from '../constants';
 import { fetchPresidentMessage, fetchManagingCommittee, fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
 import { parseLocalDate } from '../utils/dates';
+import { getUpcomingEvents } from '../utils/events';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
@@ -146,15 +147,7 @@ const Home: React.FC = () => {
     const presidentPhoto = president?.photoUrl ?? '';
 
     // Logic to filter upcoming events (Next 2, as we have 1 static card)
-    const upcomingEvents = React.useMemo(() => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Normalize today to start of day
-
-        return events
-            .filter(e => parseLocalDate(e.date) >= today)
-            .sort((a, b) => parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime())
-            .slice(0, 2);
-    }, [events]);
+    const upcomingEvents = React.useMemo(() => getUpcomingEvents(events, 2), [events]);
 
     // Logic to get featured outreach (First 3)
     const featuredOutreach = React.useMemo(() => {

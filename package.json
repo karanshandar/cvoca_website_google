@@ -10,6 +10,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && node scripts/generate-sitemap.js && vite build",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "preview": "vite preview",
     "design:lint": "npx --yes -p @google/design.md@0.3.0 designmd lint DESIGN.md",
     "design:export": "npx --yes -p @google/design.md@0.3.0 designmd export --format json-tailwind DESIGN.md"
@@ -28,6 +29,7 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.8.2",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vitest": "^4.1.12"
   }
 }
