@@ -178,7 +178,7 @@ default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-sr
 ### R3. Remove the catch-all rewrite (with the developer)
 Each page of the site now has its own file, so a shared link (WhatsApp, LinkedIn, etc.) shows that page's own title and description. Because of that, the old catch-all rule that sends every address to the home page is no longer needed. Removing it lets mistyped addresses return a proper "page not found", which search engines need.
 
-**Only do this after** the developer has finished X1–X2, deployed, and Testing T3 has passed.
+**Only do this after** the code with X1–X2 is deployed and Testing T3 has passed.
 
 1. In Render, open the **cvoca-website** service → **Redirects/Rewrites**.
 2. Find the rule with **Source** `/*`, **Destination** `/index.html` and **Action** `Rewrite`.
@@ -196,12 +196,17 @@ Each page of the site now has its own file, so a shared link (WhatsApp, LinkedIn
 ### X1. Add a "page not found" file to the build
 The build must ship a `dist/404.html` page before R3. Render staff on the community forum say a static site serves `/404.html` for paths that match no file and no rule. Without it, unknown addresses would show Render's plain "Not Found" page.
 
-- [ ] `dist/404.html` built and deployed
+Done in code (2026-10-28): the build writes `dist/404.html`, a noindex copy of the site that shows the "Page not found" page. Still needs a deploy.
+
+- [x] `dist/404.html` built
+- [ ] Deployed
 
 ### X2. Remove the catch-all rewrite from `render.yaml`
-Delete the `routes:` `/* → /index.html` rewrite in `render.yaml` at the same time as R3, so linking the Blueprint later doesn't bring it back.
+Delete the `routes:` `/* → /index.html` rewrite in `render.yaml`, so linking the Blueprint later doesn't bring it back.
 
-- [ ] `render.yaml` catch-all removed
+Done in code (2026-10-28). `render.yaml` isn't live until the Blueprint is linked, so this changes nothing on the site by itself.
+
+- [x] `render.yaml` catch-all removed
 
 ### X3. Switch the CSP to enforced (about one week after R1)
 If the browser console shows no "Content Security Policy" reports on any page, rename the header in Render from `Content-Security-Policy-Report-Only` to `Content-Security-Policy`, keeping the same value.
@@ -297,8 +302,8 @@ Render
 [ ] R3 Catch-all rewrite removed (with developer)
 
 Developer
-[ ] X1 dist/404.html deployed
-[ ] X2 render.yaml catch-all removed
+[ ] X1 dist/404.html deployed (built in code: done)
+[x] X2 render.yaml catch-all removed
 [ ] X3 CSP enforced (one week after R1)
 
 Testing

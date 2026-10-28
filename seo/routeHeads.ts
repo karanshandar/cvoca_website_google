@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
-import { PAGE_SEO, pageTitle, routeSEO, type PageSEO, type StaticRoute } from './pages';
+import { NOT_FOUND_SEO, PAGE_SEO, pageTitle, routeSEO, type PageSEO, type StaticRoute } from './pages';
 
 /**
  * Link-preview crawlers (WhatsApp, LinkedIn, X...) don't run JavaScript, so they only see the
@@ -64,23 +64,36 @@ export const renderRouteHead = (html: string, page: PageSEO, canonicalUrl?: stri
   return out;
 };
 
-/** Vite build plugin: rewrite dist/index.html for "/" and write dist/<route>/index.html for the rest. */
+/**
+ * Rewrite <outDir>/index.html for "/", write <outDir>/<route>/index.html for the other static
+ * routes, and write <outDir>/404.html, which Render serves for unknown URLs once the catch-all
+ * rewrite is removed (docs/pending-tasks.md R3). Returns the files written, relative to outDir.
+ */
+export const writeRouteHeads = (outDir: string): string[] => {
+  const indexPath = join(outDir, 'index.html');
+  const template = readFileSync(indexPath, 'utf8');
+  const write = (file: string, html: string) => {
+    writeFileSync(join(outDir, file), html);
+    return file;
+  };
+
+  const written = [write('index.html', renderRouteHead(template, PAGE_SEO['/']))];
+  const routes = (Object.keys(PAGE_SEO) as StaticRoute[]).filter((route) => route !== '/');
+  for (const route of routes) {
+    const { canonicalUrl, ...page } = routeSEO(route);
+    mkdirSync(join(outDir, route), { recursive: true });
+    written.push(write(`${route.slice(1)}/index.html`, renderRouteHead(template, page, canonicalUrl)));
+  }
+  written.push(write('404.html', renderRouteHead(template, NOT_FOUND_SEO)));
+  return written;
+};
+
+/** Vite build plugin: runs writeRouteHeads on the build output. */
 export const routeHeadsPlugin = (): Plugin => ({
   name: 'cvoca-route-heads',
   apply: 'build',
   writeBundle(options) {
-    const outDir = options.dir ?? 'dist';
-    const indexPath = join(outDir, 'index.html');
-    const template = readFileSync(indexPath, 'utf8');
-
-    writeFileSync(indexPath, renderRouteHead(template, PAGE_SEO['/']));
-    const routes = (Object.keys(PAGE_SEO) as StaticRoute[]).filter((route) => route !== '/');
-    for (const route of routes) {
-      const { canonicalUrl, ...page } = routeSEO(route);
-      const dir = join(outDir, route);
-      mkdirSync(dir, { recursive: true });
-      writeFileSync(join(dir, 'index.html'), renderRouteHead(template, page, canonicalUrl));
-    }
-    this.environment.logger.info(`✓ Wrote per-route head tags for ${routes.length + 1} routes`);
+    const written = writeRouteHeads(options.dir ?? 'dist');
+    this.environment.logger.info(`✓ Wrote head tags for ${written.length} pages (incl. 404.html)`);
   },
 });

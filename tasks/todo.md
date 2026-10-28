@@ -145,3 +145,41 @@ Everything that needs the client's Render or Google access, plus the developer s
 - **Render R3 + Testing T4:** remove the `/* → /index.html` rewrite so unknown URLs return a real 404, then check every page still loads.
 
 Not account work: **D2** (DigitalOutreach THEMES and the remaining UI components) is a separate session.
+
+---
+
+## Follow-up: pending tasks X1–X2 (2026-10-28)
+
+**Goal:** prepare the code so the Render catch-all rewrite can be removed (`docs/pending-tasks.md` R3) and unknown URLs get a real 404.
+
+**Approach:**
+- The build also writes `dist/404.html`. It's the built `index.html` with the NotFound page's title and description, `noindex, nofollow`, and no canonical. The body is the SPA, so React Router renders the NotFound page in the browser. Render serves `/404.html` for paths that match no file and no rule.
+- NotFound's SEO values move to `NOT_FOUND_SEO` in `seo/pages.ts`, shared by `pages/NotFound.tsx` and the build. They stay out of `pages.json`, whose keys are the sitemap's routes.
+- The plugin's file writing moves into `writeRouteHeads(outDir)`, which the plugin calls, so it can be unit-tested on a temp directory without faking Vite's plugin context. This also covers a deferred minor from the review.
+- `render.yaml`: remove the `routes:` catch-all rewrite. It isn't live (the Blueprint isn't linked), so this changes nothing until R3. Update the README and `docs/pending-tasks.md` X1/X2.
+
+**Steps:**
+- [x] Test (RED): `writeRouteHeads` on a temp dir writes the 7 route files and `404.html` (title "Page Not Found | CVOCA", `noindex, nofollow`, no canonical, body unchanged) and rewrites `index.html` without a canonical.
+- [x] Implement (GREEN); NotFound uses `NOT_FOUND_SEO`.
+- [x] `render.yaml`, README, `docs/pending-tasks.md`.
+- [x] Verify: typecheck, tests, build, clean `git status`. On the Render-like local server, with the rewrite switched off, `/does-not-exist` returns 404 with the NotFound page and all 8 routes still load. Console clean.
+- [x] Commit.
+
+**Review (done 2026-10-28):**
+- What changed:
+  - `seo/pages.ts` gains `NOT_FOUND_SEO`, which `pages/NotFound.tsx` now uses.
+  - `seo/routeHeads.ts` adds `writeRouteHeads(outDir)`, which writes `404.html` as well as the route files. The plugin just calls it.
+  - `render.yaml` loses its `routes:` catch-all.
+  - The README build and deploy notes are updated, and `docs/pending-tasks.md` marks X1 as built (not yet deployed) and X2 as done.
+- Verification:
+  - `npm run typecheck` exit 0. `npm test` 67/67 (4 new; watched the new ones fail on the missing `writeRouteHeads` first). `npm run build` exit 0, "Wrote head tags for 9 pages (incl. 404.html)". `git status` clean after the build.
+  - `render.yaml` still parses as YAML.
+  - Render-like local server with the rewrite switched off (what R3 produces):
+    - All 8 routes and `/about/` return 200 with their own titles.
+    - `/does-not-exist`, `/events/2026/foo` and `/data/missing.json` return 404 with the "Page Not Found" head.
+  - In the browser, at 1440 px and at 375 px in dark mode:
+    - The nested unknown path renders the NotFound page, with every asset 200, Inter loaded and no overflow.
+    - "Go Home" navigates in the app and robots goes back to `index, follow`.
+    - The only console errors are the 404 document loads themselves.
+- Not changed: on the 404 page, `useSEO` still sets a client-side canonical to the current URL. This existed before, and the page is noindex.
+- Still needs the live site: deploy, then `docs/pending-tasks.md` T3 → R3 → T4.

@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { describe, it, expect, afterAll } from 'vitest';
+import { readFileSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { escapeHtml, renderRouteHead } from '../seo/routeHeads';
-import { PAGE_SEO, pageTitle, routeSEO, type StaticRoute } from '../seo/pages';
+import { tmpdir } from 'node:os';
+import { escapeHtml, renderRouteHead, writeRouteHeads } from '../seo/routeHeads';
+import { NOT_FOUND_SEO, PAGE_SEO, pageTitle, routeSEO, type StaticRoute } from '../seo/pages';
 
 const template = readFileSync(join(__dirname, '..', 'index.html'), 'utf8');
 
@@ -96,5 +97,41 @@ describe('renderRouteHead', () => {
       const { canonicalUrl: url, ...page } = routeSEO(route);
       expect(renderRouteHead(template, page, url)).toContain(`<link rel="canonical" href="${url}" />`);
     }
+  });
+});
+
+describe('writeRouteHeads', () => {
+  const outDir = mkdtempSync(join(tmpdir(), 'route-heads-'));
+  writeFileSync(join(outDir, 'index.html'), template);
+  const written = writeRouteHeads(outDir);
+  const read = (file: string) => readFileSync(join(outDir, file), 'utf8');
+
+  afterAll(() => rmSync(outDir, { recursive: true, force: true }));
+
+  it('writes the home page, every other static route and 404.html', () => {
+    expect(written).toEqual(['index.html', 'about/index.html', 'membership/index.html', 'events/index.html',
+      'blog/index.html', 'digital-outreach/index.html', 'contact/index.html', 'privacy-policy/index.html', '404.html']);
+  });
+
+  it('gives each route its own head, with the template body', () => {
+    const about = read('about/index.html');
+    expect(about).toContain('<title>About Us | CVOCA</title>');
+    expect(about).toContain('<link rel="canonical" href="https://cvoca.org/about" />');
+    expect(body(about)).toBe(body(template));
+  });
+
+  it('rewrites index.html with the home values and no canonical', () => {
+    const home = read('index.html');
+    expect(home).toContain('<title>CVOCA - CVO Chartered &amp; Cost Accountants Association</title>');
+    expect(home).not.toContain('rel="canonical"');
+  });
+
+  it('writes a noindex 404 page with no canonical that boots the SPA', () => {
+    const notFound = read('404.html');
+    expect(notFound).toContain(`<title>${pageTitle(NOT_FOUND_SEO.title)}</title>`);
+    expect(notFound).toContain('<meta name="robots" content="noindex, nofollow" />');
+    expect(notFound).not.toContain('rel="canonical"');
+    expect(notFound).not.toContain('og:url');
+    expect(body(notFound)).toBe(body(template));
   });
 });

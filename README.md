@@ -77,7 +77,7 @@ npm run build
 This command:
 1. Type-checks the code (`tsc --noEmit`); type errors stop the build
 2. Writes `public/sitemap.xml` (`scripts/generate-sitemap.js`)
-3. Bundles the application with Vite into `dist/`
+3. Bundles the application with Vite into `dist/`, then writes `dist/<route>/index.html` for each page (with that page's title, description and link-preview tags, from `seo/pages.json`) and `dist/404.html`
 
 ## Continuous Integration
 
@@ -87,7 +87,7 @@ This command:
 
 Pushes to `main` deploy automatically on Render. Render runs `npm ci && npm run build` and publishes `dist/`.
 
-The live service is configured in the Render dashboard (environment variables, the `/* → /index.html` rewrite for client-side routing, and the security headers). `render.yaml` mirrors those settings as a record; Render applies it only if the service is linked as a Blueprint. What still needs the client's Google or Render access is listed in [docs/pending-tasks.md](docs/pending-tasks.md).
+The live service is configured in the Render dashboard (environment variables, a `/* → /index.html` rewrite and the security headers). `render.yaml` records the intended settings; Render applies it only if the service is linked as a Blueprint. It has no catch-all rewrite, because every page has its own HTML file and `dist/404.html` handles unknown URLs. The dashboard rewrite is removed in step R3 of the pending tasks. What still needs the client's Google or Render access is listed in [docs/pending-tasks.md](docs/pending-tasks.md).
 
 ### Environment Variables
 

@@ -33,7 +33,5 @@ services:
       - path: /*
         name: Permissions-Policy
         value: "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    # No catch-all rewrite: the build writes an HTML file for every route plus dist/404.html,
+    # which Render serves (with a 404 status) for any other path.

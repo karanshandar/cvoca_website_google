@@ -1,13 +1,10 @@
 import React from 'react';
 import Button from '../components/ui/Button';
 import useSEO from '../hooks/useSEO';
+import { NOT_FOUND_SEO } from '../seo/pages';
 
 const NotFound: React.FC = () => {
-    useSEO({
-        title: 'Page Not Found',
-        description: 'The page you are looking for does not exist.',
-        noIndex: true,
-    });
+    useSEO(NOT_FOUND_SEO);
 
     return (
         <div className="min-h-[60vh] pt-24 flex flex-col items-center justify-center px-4 text-center">
