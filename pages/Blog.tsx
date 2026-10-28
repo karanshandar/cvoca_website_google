@@ -4,6 +4,7 @@ import { routeSEO } from '../seo/pages';
 import Icon from '../components/Icon';
 import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
+import Stat from '../components/ui/Stat';
 
 // Action Card Component
 const ActionCard: React.FC<{
@@ -87,22 +88,10 @@ const Blog: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10 space-y-12 pb-20">
                 {/* Stats Bar */}
                 <Card emphasis className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center animate-fade-in-up">
-                    <div>
-                        <p className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">500+</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider mt-1">Articles Published</p>
-                    </div>
-                    <div>
-                        <p className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">50+</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider mt-1">Expert Authors</p>
-                    </div>
-                    <div>
-                        <p className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Weekly</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider mt-1">Curated Updates</p>
-                    </div>
-                    <div>
-                        <p className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">10k+</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider mt-1">Monthly Readers</p>
-                    </div>
+                    <Stat value="500+" label="Articles Published" />
+                    <Stat value="50+" label="Expert Authors" />
+                    <Stat value="Weekly" label="Curated Updates" />
+                    <Stat value="10k+" label="Monthly Readers" />
                 </Card>
 
                 {/* Main Action Cards */}
