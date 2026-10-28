@@ -85,7 +85,7 @@ cvoca-website/
 4. Upload the photo (drag and drop)
 5. Click on the uploaded photo
 6. Copy the URL
-7. Open your Google Sheet (managingCommittee or teams tab)
+7. Open your Google Sheet (managingCommittee tab)
 8. Paste the URL in the **photoUrl** column for that person
 
 ---

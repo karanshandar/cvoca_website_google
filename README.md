@@ -2,28 +2,33 @@
 
 Official website for CVO Chartered & Cost Accountants Association (CVOCA) - A premier professional association for Chartered and Cost Accountants in Mumbai, India since 1973.
 
+**Editing content?** See [docs/editing-content.md](docs/editing-content.md): which content lives in the Google Sheet, which in JSON files, and the exact Sheet tabs and columns.
+
 ## Tech Stack
 
-- **Framework**: React 19.2.0 with TypeScript
-- **Build Tool**: Vite 7.2.4
-- **Styling**: Tailwind CSS 3.4.17
-- **Routing**: React Router DOM 7.9.5
+Exact versions are in `package.json`.
+
+- **Framework**: React 19 with TypeScript (strict mode)
+- **Build Tool**: Vite 7
+- **Styling**: Tailwind CSS 3
+- **Routing**: React Router 7
+- **Tests**: Vitest
+- **Content**: Google Sheets API at runtime, with JSON fallbacks in `public/data/`
 - **Hosting**: Render (Static Site)
 
 ## Features
 
-- 📱 Fully responsive design (mobile-first approach)
-- 🎨 Dark mode support
-- ⚡ Optimized performance (WebP images, minified JSON, build-time CSS)
-- 🔒 Comprehensive security headers
-- 🔍 SEO optimized with structured data
-- ♿ Accessibility compliant
+- 📱 Responsive, mobile-first layout
+- 🎨 Dark mode (follows the OS, with a toggle)
+- ⚡ Lazy-loaded routes, WebP images, build-time Tailwind CSS
+- 🔒 Security headers (CSP, HSTS and others)
+- 🔍 Per-page meta tags, JSON-LD structured data, sitemap
 
 ## Local Development
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js 20.19+ or 22.12+ (Vite 7's minimum; `.nvmrc` pins 22)
 - npm
 
 ### Installation
@@ -36,18 +41,14 @@ cd cvoca_website_google
 
 2. Install dependencies:
 ```bash
-npm install
+npm ci
 ```
 
-3. Set up environment variables:
+3. Optional: set up the Google Sheet connection. Without it, the site uses the JSON files in `public/data/`.
 ```bash
-# Copy the environment template
 cp .env.example .env.local
-
-# Edit .env.local and add your actual API keys
-# - VITE_GOOGLE_SHEETS_API_KEY: Your Google Sheets API key
-# - VITE_GOOGLE_SHEET_ID: Your Google Sheet ID
 ```
+Then fill in `VITE_GOOGLE_SHEETS_API_KEY` and `VITE_GOOGLE_SHEET_ID` in `.env.local`.
 
 4. Run the development server:
 ```bash
@@ -56,6 +57,17 @@ npm run dev
 
 The site will be available at `http://localhost:3000`
 
+### Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Development server on port 3000 |
+| `npm run typecheck` | TypeScript check (`tsc --noEmit`) |
+| `npm test` | Unit tests and the `public/data/*.json` data-contract check (Vitest) |
+| `npm run build` | Production build into `dist/` (see below) |
+| `npm run preview` | Serve the production build locally |
+| `npm run design:lint` / `design:export` | Lint `DESIGN.md` / export its tokens |
+
 ### Build for Production
 
 ```bash
@@ -63,130 +75,57 @@ npm run build
 ```
 
 This command:
-1. Minifies all JSON data files
-2. Builds and bundles the application with Vite
-3. Generates optimized static assets in `dist/`
+1. Type-checks the code (`tsc --noEmit`); type errors stop the build
+2. Writes `public/sitemap.xml` (`scripts/generate-sitemap.js`)
+3. Bundles the application with Vite into `dist/`
 
-### Preview Production Build
+## Continuous Integration
 
-```bash
-npm run preview
-```
+`.github/workflows/ci.yml` runs `npm ci`, `npm run typecheck`, `npm test` and `npm run build` on every push and pull request to `main`.
 
 ## Deployment (Render)
 
-This site is configured for automatic deployment on Render.
+Pushes to `main` deploy automatically on Render. Render runs `npm ci && npm run build` and publishes `dist/`.
 
-### Deployment Configuration
-
-The deployment is managed by `render.yaml` which configures:
-- Static site hosting
-- Build command: `npm install && npm run build`
-- Publish directory: `./dist`
-- Security headers (CSP, HSTS, X-Frame-Options, etc.)
-- SPA routing via `public/_redirects`
-
-### Automatic Deployments
-
-Pushes to the `main` branch automatically trigger deployments on Render.
-
-### Manual Deployment
-
-1. Push changes to GitHub:
-```bash
-git add .
-git commit -m "Your commit message"
-git push origin main
-```
-
-2. Render will automatically:
-   - Pull the latest code
-   - Run `npm install`
-   - Run `npm run build` (includes JSON minification)
-   - Deploy static files from `dist/`
+The live service is configured in the Render dashboard (environment variables, the `/* → /index.html` rewrite for client-side routing, and the security headers). `render.yaml` mirrors those settings as a record; Render applies it only if the service is linked as a Blueprint. See [docs/account-owner-setup-guide.md](docs/account-owner-setup-guide.md).
 
 ### Environment Variables
-
-**Required for Development:**
-
-Create a `.env.local` file in the root directory (copy from `.env.example`):
 
 | Variable | Description | How to Get |
 |----------|-------------|------------|
 | `VITE_GOOGLE_SHEETS_API_KEY` | Google Sheets API key | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
 | `VITE_GOOGLE_SHEET_ID` | Your Google Sheet ID | From spreadsheet URL: `docs.google.com/spreadsheets/d/[SHEET_ID]/edit` |
-| `VITE_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (optional) | [Cloudinary Dashboard](https://cloudinary.com/console) |
 
-**For Production:**
-- Environment variables should be configured in your hosting platform (Render, Netlify, etc.)
-- Never commit `.env.local` to version control (already in `.gitignore`)
+Locally they go in `.env.local` (git-ignored); in production, in the Render dashboard. Both are built into the public JavaScript bundle, so the API key must be restricted in Google Cloud (see the account owner guide).
 
 ## Project Structure
 
 ```
 cvoca_website_google/
-├── components/          # Reusable React components
-├── pages/              # Page components (Home, About, Events, etc.)
-├── hooks/              # Custom React hooks (useSEO)
-├── utils/              # Utility functions (schema generators)
-├── public/             # Static assets
-│   ├── images/         # WebP images (logos, events, committee)
-│   ├── data/           # JSON data files
-│   ├── _redirects      # Render SPA routing rules
-│   ├── robots.txt      # SEO robots file
-│   └── sitemap.xml     # SEO sitemap
-├── scripts/            # Build scripts
-│   └── generate-sitemap.js  # Writes public/sitemap.xml at build time
-├── index.html          # HTML template
-├── index.tsx           # Application entry point
-├── App.tsx             # Main app component
-├── render.yaml         # Render deployment config
-└── CLAUDE.md           # Development guidelines
-
+├── components/          # Shared components (Header, Footer, Icon, ...)
+│   └── ui/              # UI building blocks (Button, Card, Badge, Modal, PageHero, ...)
+├── pages/               # One component per route
+├── hooks/               # useFetch, useSEO, useFocusTrap
+├── utils/               # Google Sheets client, JSON fallback, dates, events, schema, images
+├── tests/               # Vitest tests
+├── public/
+│   ├── data/            # JSON content and Sheet fallbacks
+│   ├── images/          # WebP images
+│   ├── theme-init.js    # Sets the theme before first paint
+│   ├── robots.txt
+│   └── sitemap.xml      # Generated at build time
+├── scripts/
+│   └── generate-sitemap.js
+├── docs/                # Editing, setup and image guides
+├── types.ts             # Shared data types
+├── constants.ts         # Site URL and name
+├── App.tsx              # Routes
+├── index.tsx            # Entry point
+├── index.html
+├── DESIGN.md            # Design tokens and component recipes
+├── render.yaml          # Mirror of the Render service settings
+└── CLAUDE.md            # Development guidelines
 ```
-
-## Performance Optimizations
-
-- ✅ Build-time Tailwind CSS generation (66KB → 10KB gzipped)
-- ✅ WebP image format (72% smaller than PNG)
-- ✅ Automatic Cloudinary image optimization (auto format, quality, and resizing)
-- ✅ Lazy-loaded routes for code splitting
-- ✅ Lazy-loaded images (below-the-fold)
-- ✅ Minified JSON data files (16% reduction)
-- ✅ Optimized fonts (Google Fonts with display=swap)
-
-### Performance Metrics
-
-- First Contentful Paint: ~150-250ms improvement
-- Largest Contentful Paint: ~200-400ms improvement
-- Total transfer size: ~200KB reduction per page load
-- Expected Lighthouse score: 90+
-
-## SEO Features
-
-- Comprehensive meta tags (Open Graph, Twitter Cards)
-- Structured data (JSON-LD schemas for Organization, Events, Articles)
-- Dynamic SEO with `useSEO` hook
-- Sitemap and robots.txt
-- Canonical URLs
-- Geo tags for local SEO (Mumbai, Dadar)
-
-## Security
-
-Comprehensive security headers configured in `render.yaml`:
-- Content Security Policy (CSP)
-- HTTP Strict Transport Security (HSTS)
-- X-Frame-Options
-- X-Content-Type-Options
-- Referrer-Policy
-- Permissions-Policy
-
-## Browser Support
-
-- Chrome/Edge: Latest 2 versions
-- Firefox: Latest 2 versions
-- Safari: Latest 2 versions
-- WebP support: 95%+ browsers (Chrome 23+, Firefox 65+, Safari 14+, Edge 18+)
 
 ## Contributing
 

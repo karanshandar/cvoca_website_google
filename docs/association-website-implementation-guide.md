@@ -188,25 +188,11 @@ https://docs.google.com/spreadsheets/d/e/[LONG_ID]/pub?gid=0&single=true&output=
 
 ### 2.5 Create the Spreadsheet ✅
 
-Create a Google Sheet with **two tabs**:
-
-#### Tab 1: `events`
-
-| title | date | description | image |
-|-------|------|-------------|-------|
-| Annual Meet 2025 | 2025-03-15 | Our yearly gathering | [Cloudinary URL] |
-| Workshop Series | 2025-04-10 | Monthly skill building | [Cloudinary URL] |
-
-#### Tab 2: `teams`
-
-| name | role | department | image |
-|------|------|------------|-------|
-| John Doe | President | Executive | [Cloudinary URL] |
-| Jane Smith | Secretary | Executive | [Cloudinary URL] |
+The site reads six tabs (`events`, `managingCommittee`, `committeeMembers`, `annualReports`, `pastPresidents`, `presidentMessage`). The exact tab names, column headers, allowed values and date format are in **[editing-content.md](editing-content.md)**, which is the single source for the Sheet layout.
 
 #### Important Configuration
 
-- **Column headers must be exactly as shown** (lowercase, no spaces)
+- **Tab names and column headers must match [editing-content.md](editing-content.md) exactly** (including capital letters)
 - **Lock the header row:** Select row 1 → View → Freeze → 1 row
 - **Set sharing:** Click Share → Anyone with the link → Viewer
 - **Copy the Sheet ID** from the URL: `https://docs.google.com/spreadsheets/d/[THIS_IS_YOUR_SHEET_ID]/edit`
@@ -223,10 +209,10 @@ To prevent accidental changes to structure:
    - Select the date column
    - Data → Data validation → Date
 
-3. **Use dropdown for departments:**
-   - Select department column
+3. **Use a dropdown for committee roles:**
+   - In the `committeeMembers` tab, select the `role` column
    - Data → Data validation → List of items
-   - Enter: Executive, Operations, Marketing, etc.
+   - Enter the allowed roles listed in [editing-content.md](editing-content.md)
 
 ---
 
@@ -249,7 +235,6 @@ The website code is already Cloudinary-ready! No code changes are required.
 1. Create a Cloudinary account (5 minutes)
 2. Set up folder structure (2 minutes)
 3. Upload images and paste URLs into Google Sheets
-4. (Optional) Add `VITE_CLOUDINARY_CLOUD_NAME` to `.env.local`
 
 **See the detailed guide:** [docs/cloudinary-guide.md](docs/cloudinary-guide.md)
 
@@ -505,8 +490,8 @@ For improved performance, consider:
 **Step 2: Update Google Sheet**
 1. Open Google Sheet
 2. Go to `events` tab
-3. Add a new row with event details
-4. Paste Cloudinary URL in the `image` column
+3. Add a new row with event details (columns: see [editing-content.md](editing-content.md#events))
+4. Paste Cloudinary URL in the `imageUrl` column
 
 **Step 3: Done!**
 - Changes appear on the website within minutes
@@ -522,9 +507,9 @@ For improved performance, consider:
 
 **Step 2: Update Google Sheet**
 1. Open Google Sheet
-2. Go to `teams` tab
+2. Go to the `managingCommittee` tab (or `committeeMembers` for a sub-committee member; columns: see [editing-content.md](editing-content.md))
 3. Add new row with member details
-4. Paste image URL
+4. Paste the image URL in the `photoUrl` column (`managingCommittee` only; sub-committee members have no photo)
 
 **Step 3: Done!**
 
