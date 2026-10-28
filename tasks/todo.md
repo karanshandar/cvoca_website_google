@@ -1,185 +1,100 @@
-# Batch D1: per-route link previews + self-hosted Inter
+# Batch D2: DigitalOutreach themes + remaining shared UI components
 
-## Status: DONE (2026-10-28). Committed on `main` in three commits, not pushed. See Review below.
+## Status: IN PROGRESS (2026-10-28)
 
 > **For agentic workers:** executed inline with superpowers:executing-plans; steps use `- [ ]` checkboxes.
 
-**Goal:** Link previews (WhatsApp, LinkedIn, etc.) show each page's own title and description, and the site loads Inter from its own origin so the CSP can drop `'unsafe-inline'` scripts and Google Fonts.
+**Goal:** One brand card style on DigitalOutreach (primary colour + category `Badge`), and the remaining repeated page patterns moved onto small shared components built only from DESIGN.md tokens.
 
-**Architecture:** One data file, `seo/pages.json`, holds each static route's title, description, keywords and noindex flag. The pages (through `useSEO`), the sitemap script and the build all read it. A small Vite build plugin (`seo/routeHeads.ts`, wired in `vite.config.ts`) rewrites the built `dist/index.html` head with the `/` values, then writes `dist/<route>/index.html` for every other route with that route's title, description, canonical, `og:*` and `twitter:*`. Bodies are unchanged, so the SPA still boots. Inter comes from `@fontsource-variable/inter` (one variable woff2 per unicode subset, `font-display: swap`).
+**Architecture:** New primitives in `components/ui/` (`SectionHeader`, `IconTile`, `EmptyState`, `Stat`) and one hook (`hooks/useDisclosure.ts`). `Button` gains two on-colour variants (`onPrimary`, `onPrimaryOutline`, CSS in `index.css` like the other `.btn-*`) and a `disabled` state. Pages are migrated one per commit, with no layout or copy changes. DESIGN.md gets `components:` entries and a motion note.
 
-**Tech stack:** React 19, Vite 7, Tailwind 3, Vitest 4, Node `^20.19.0 || >=22.12.0`.
+**Tech stack:** React 19, Vite 7, Tailwind 3, Vitest 4 (node environment; component tests use `react-dom/server` `renderToStaticMarkup`, no new dependencies).
 
-**Source:** session brief (Batch D1) and `tasks/review-architecture.md` SEO1, `tasks/review-security-performance.md` SEO1, P4, S3, PR1.
-The previous contents of this file (the Batch C plan and its review) are preserved in git history at `7cd1942`.
+**Source:** session brief (Batch D2); `tasks/review-design.md` §4 DigitalOutreach, §6, §8 items 8/10/13/14; `tasks/review-maintainability.md` §C DigitalOutreach, §E; shared-UI deviations 5, 7, 8, 9 (`80bab57:tasks/todo.md`).
+The previous contents of this file (the Batch D1 plan and its review) are preserved in git history at `0f37c22`.
 Execution: inline on `main`, no worktree/branch/push; plan approval waived by the session that started this one.
 
 ---
 
 ## Global constraints
-- Minimal, targeted changes. No page UI changes (D2 owns THEMES and UI components).
-- No `any`, no `@ts-ignore`, no casts to silence errors.
-- Every value inserted into HTML is escaped (`& < > " '`).
-- `dist/index.html` gets **no** canonical or `og:url`: Render's SPA rewrite also serves it for unknown URLs (Batch B decision).
-- A build must leave `git status` clean.
-- CSP after this batch: `script-src 'self'`; `style-src 'self' 'unsafe-inline'`; `font-src 'self'`; everything else unchanged.
+- Minimal, targeted changes. No copy changes, no layout restructuring, no Tailwind config changes.
+- Only DESIGN.md tokens in new components (no raw hex, no off-scale radius/shadow).
+- Heading outline unchanged: one h1 per page, no skipped levels.
+- Keep Batch A a11y: About accordion stays APG (heading > button, `aria-expanded`, `aria-controls`, `inert` on the collapsed body).
+- No `any`, no `@ts-ignore`. A build leaves `git status` clean. Don't commit `.claude/`.
+- Each commit message ends with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 
-## Decisions (and why they differ from the brief's example)
-- **Vite plugin instead of a separate Node script.** The brief suggested "a small Node script after `vite build`". A `writeBundle` plugin runs at the same point (after `dist/index.html` is written), but it's TypeScript, so it shares `pageTitle()` with `useSEO` instead of copying the title rule into JS. It is also typechecked and runs on every `vite build`.
-- **Data in JSON.** `scripts/generate-sitemap.js` is plain Node and can't import TS on Node 20.19, so the route list and SEO text live in `seo/pages.json`. TS reads it through `seo/pages.ts`, which adds the types.
-- **Render serving.** Render docs: "Render does not apply redirect or rewrite rules to a path if a resource exists at that path." A Render feature request (feedback.render.com, "Configurable trailing slashes") says `page1/index.html` is served at both `/page1` and `/page1/` with no redirect. Checked live on two Render static sites (`rndr-id` header): `jekyll.onrender.com/about` and `gatsby.onrender.com/page-2` both return 200 with the subpage's own `<title>`, no redirect, with or without the trailing slash. So `/about` serves `dist/about/index.html` before the `/* → /index.html` rewrite applies. `/about/` is also served, and its canonical points to `/about`. The CVOCA service itself can only be checked after a deploy (see Review).
-- **`og:type`.** `'event'` isn't a valid Open Graph type (review SEO1). Since these tags now reach crawlers, Events uses the default `website` and `'event'` is removed from the union.
-- **`<meta name="title">`** is non-standard and `useSEO` never updated it, so it went stale on navigation. Removed from `index.html`.
-- **No font preload.** Vite hashes the woff2 file name, and the CSS that references it is already a render-blocking `<link>` in `<head>`, so a preload would need extra plugin code for little gain.
+## Decisions
+- **`useDisclosure` hook instead of a `<Disclosure>` component.** The three disclosures share state, id and ARIA wiring but not markup: an accordion (heading + button, hidden body), and two "expand text" clamps whose panel stays partly visible. A hook removes the duplication without forcing one markup on all three. The accordion adds `inert` itself, since only a fully hidden panel should be inert.
+- **`Stat` covers Home and Blog only.** Outreach "Impact" rows are a different pattern (label left, value right, inside a tinted tile), used once. Folding it in would add a layout mode for one caller. It gets the brand colour as part of the THEMES collapse instead.
+- **`Stat` uses the light gradient ramp in dark mode** (`dark:from-primary-light dark:to-secondary-light`), as DESIGN.md asks. Labels use the `caption` style (bold, uppercase, `tracking-wide`).
+- **`IconTile` follows the DESIGN.md spec** (`w-14 h-14 rounded-xl bg-primary/10`, fills `primary` on group hover). Used where the spec is already copied: Home features, Membership benefits, Contact info rows. Blog's two-tone tiles and the Events 40px meta-row icons are different patterns and stay.
+- **`SectionHeader`** renders eyebrow + `h2` + lede with the h2 token (`text-3xl md:text-4xl font-extrabold`) and `text-lg` lede. About and Membership headers were `font-bold` with a `gray-500`/`text-base` lede; they now match Home.
+- **`EmptyState`**: dashed card, optional icon circle, optional `h3` title, body text. About's committee empty state gains the dashed card that its past-presidents one already had.
+- **On-colour buttons**: `onPrimary` (white, `primary` text) and `onPrimaryOutline` (`primary-dark` fill, white text, white/30 border), with a white focus ring offset against `primary`. They replace the two hand-rolled links in Home's CTA band. They are standard `.btn` size, so the band buttons lose their larger `px-8 py-4` and `hover:scale-105`.
+- **Disabled `Button`**: `disabled` prop renders `<button disabled>` with a muted grey style. Used for "Registration Closed" (Events) and "Registrations Closed" (Outreach).
+- **Events actions on `Button size="sm"`**: they become pills. External links get Button's external-link icon and "(opens in new tab)" text, so Read More's own icon and Register Now's arrow are dropped to avoid a double icon.
+- **Outreach category**: `category` stays in the JSON as the Badge text. No style depends on the exact string any more. The badge sits on an opaque `card` backing, because Badge's dark fill is translucent and the image underneath varies.
 
 ## Review focus
-1. **Value with `&`, `"` or `<`** (e.g. "Chartered & Cost"): escaped in the generated head, raw in `useSEO` (`setAttribute` escapes itself). Test: `renderRouteHead` escapes.
-2. **`index.html` template changes and a tag disappears**: the build must fail loudly, not ship a homepage head on `/events`. Test: missing tag throws.
-3. **Client-side navigation after landing on `/events`**: `useSEO` must reuse the static canonical/`og:url` tags, not add second ones. Checked in the browser (count of `link[rel=canonical]` = 1).
-4. **Unknown URL (`/does-not-exist`)**: still gets `dist/index.html` with no canonical, then NotFound sets noindex. Checked with curl.
-5. **Privacy policy noindex**: its generated head must say `noindex, nofollow`. Test.
+1. **Dark mode over photos**: the Outreach category Badge must stay legible on any image. Checked with an in-page contrast measurement against its opaque backing.
+2. **Keyboard on disclosures**: Enter and Space toggle, `aria-expanded` flips, a collapsed About body is skipped by Tab. Checked in the browser.
+3. **Disabled actions**: "Registration Closed" is not focusable as a link and has no hover fill. Test: Button renders `<button disabled>`.
+4. **Empty states**: an empty filter result on Events and About shows the shared component, and the heading outline stays valid. Checked in the browser with a no-match search.
+5. **Narrow widths**: two-up Events buttons at `sm` and the Outreach badge at 375px must not overflow. Checked at 375/768/1440.
 
 ---
 
-## Task 1: Shared SEO data + head generator (TDD)
-**Files:** create `seo/pages.json`, `seo/pages.ts`, `seo/routeHeads.ts`, `tests/routeHeads.test.ts`; modify `vite.config.ts`, `scripts/generate-sitemap.js`.
+## Task 1: Shared primitives (TDD)
+**Files:** create `components/ui/SectionHeader.tsx`, `IconTile.tsx`, `EmptyState.tsx`, `Stat.tsx`, `hooks/useDisclosure.ts`, `tests/ui.test.tsx`; modify `components/ui/Button.tsx`, `index.css`, `vite.config.ts`/test include if needed.
 
 **Interfaces (produces):**
-- `seo/pages.json`: `{ "<route>": { "title": string, "description": string, "keywords"?: string, "noIndex"?: boolean } }`, keys in sitemap order: `/`, `/about`, `/membership`, `/events`, `/blog`, `/digital-outreach`, `/contact`, `/privacy-policy`. Text copied verbatim from each page's current `useSEO` call.
-- `seo/pages.ts`: `type StaticRoute`, `interface PageSEO`, `PAGE_SEO: Record<StaticRoute, PageSEO>`, `pageTitle(title: string): string` (`'Home'` → `SITE_NAME`, else `` `${title} | CVOCA` ``), `routeSEO(route: StaticRoute)` → `PageSEO & { canonicalUrl }`.
-- `seo/routeHeads.ts`: `escapeHtml(s: string): string`; `renderRouteHead(html: string, page: PageSEO, canonicalUrl?: string): string`; `routeHeadsPlugin(): Plugin`.
+- `SectionHeader({ title: ReactNode; eyebrow?: string; lede?: ReactNode; align?: 'center' | 'left'; className?: string })`, always an `h2`.
+- `IconTile({ children: ReactNode; className?: string })`, needs a `group` ancestor for the hover fill.
+- `EmptyState({ icon?: IconName; title?: string; children?: ReactNode; className?: string })`. The title is an `h3`.
+- `Stat({ value: string; label: string; size?: 'md' | 'lg' })`.
+- `useDisclosure(initialOpen = false) → { open: boolean; toggle: () => void; panelId: string; triggerProps: { type: 'button'; onClick; 'aria-expanded': boolean; 'aria-controls': string } }`.
+- `Button`: `variant` adds `'onPrimary' | 'onPrimaryOutline'`; new `disabled?: boolean` (only for the `<button>` branch).
 
-- [x] Write `tests/routeHeads.test.ts`: for `/events`, rendered from the real `index.html`, the output has exactly one each of `<title>Events | CVOCA</title>`, description, keywords, `robots index, follow`, `og:title`, `og:description`, `og:type website`, `og:url https://cvoca.org/events`, `canonical https://cvoca.org/events`, `twitter:title`, `twitter:description`; `escapeHtml('a & "b" <c>')` = `a &amp; &quot;b&quot; &lt;c&gt;`; a description with `"><script>` comes out escaped; `/privacy-policy` → `noindex, nofollow`; no canonical arg → no canonical/`og:url`; a template missing `og:title` throws; the body is untouched; every route in `PAGE_SEO` renders.
-- [x] Run `npm test`: fails (module missing).
-- [x] Implement. Each tag is replaced by one anchored regex; zero matches throws `Error("route heads: <tag> not found in index.html")`. Canonical and `og:url` are inserted before `</head>`. The plugin (`apply: 'build'`, `writeBundle`) reads `<outDir>/index.html`, rewrites it for `/` without a canonical, and writes `<outDir><route>/index.html` for the other routes.
-- [x] Sitemap reads routes from `Object.keys` of `seo/pages.json` (fs + `JSON.parse`).
-- [x] `npm test` and `npm run typecheck` pass.
+- [ ] Write `tests/ui.test.tsx` (static render): SectionHeader renders one `h2` and the eyebrow/lede only when given; EmptyState has no `h3` without a title; Stat shows value and label; Button `disabled` gives `<button … disabled` with `btn-disabled`; Button `onPrimary` uses `btn-on-primary`; a test component using `useDisclosure` renders `aria-expanded="false"` and `aria-controls` equal to the panel id.
+- [ ] Run `npm test`: fails (modules missing).
+- [ ] Implement; add `.btn-on-primary`, `.btn-on-primary-outline`, `.btn-disabled` to `index.css`.
+- [ ] `npm test` and `npm run typecheck` pass. Commit `feat(ui): add SectionHeader, IconTile, EmptyState, Stat, useDisclosure and on-colour/disabled Button`.
 
-## Task 2: Pages use the shared data
-**Files:** `hooks/useSEO.ts`, the 8 static pages, `index.html`.
-- [x] `useSEO` uses `pageTitle()` (one rule, no other change); drop `'event'` from `ogType`.
-- [x] Each static page calls `useSEO(routeSEO('/x'))` and drops its now-unused `canonical` import. NotFound unchanged.
-- [x] `index.html`: remove `<meta name="title">`; comment that the head values are replaced at build from `seo/pages.json`.
-- [x] Build; inspect every `dist/<route>/index.html` head; `git status` clean.
-- [x] Commit: `feat(seo): per-route head tags in built HTML for link previews`.
+## Task 2: DigitalOutreach (one commit)
+- [ ] Delete `CardTheme`, `THEMES`, `getTheme`, the `theme` prop, every `isDarkCard` branch and the `featureIcon.replace(...)`.
+- [ ] Card shell → `Card padding="none" emphasis` (layout classes only). Subtitle, checks, stat values, Read More → `text-primary dark:text-primary-light`.
+- [ ] Floating pill → `Badge` with the initiative icon, on an opaque `bg-card-light dark:bg-card-dark` rounded backing; same corner as before.
+- [ ] Read More/Less → `useDisclosure`. "Registrations Closed" → `<Button disabled>`.
+- [ ] Commit `refactor(digital-outreach): one brand card style with a category Badge`.
 
-## Task 3: Self-host Inter, tighten CSP, privacy policy
-**Files:** `package.json`/lock, `index.tsx`, `tailwind.config.js`, `index.html`, `render.yaml`, `docs/account-owner-setup-guide.md`, `pages/PrivacyPolicy.tsx`.
-- [x] `npm i @fontsource-variable/inter`; `import '@fontsource-variable/inter';` in `index.tsx` (wght axis only); Tailwind `sans: ['"Inter Variable"', 'sans-serif']`.
-- [x] Remove the Google Fonts preconnects, preload, `media="print" onload` link and `<noscript>` from `index.html`.
-- [x] Check `dist/index.html` has no inline `<script>` without `src` and no `on*=` handler. Then the CSP in `render.yaml` and the setup guide: `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `font-src 'self'`.
-- [x] Privacy policy: delete the Google Fonts `<li>`; `LAST_UPDATED` stays `'28 October 2026'` (already today's date).
-- [x] Commit: `perf: self-host Inter and drop 'unsafe-inline' scripts and Google Fonts from the CSP`.
+## Task 3: Page migrations (one commit each)
+- [ ] **Home**: StatCard → `Card` + `Stat size="lg"`; FeatureCard tile → `IconTile`; three section headers → `SectionHeader`; no-events fallback → `EmptyState`; CTA band → `Button variant="onPrimary"` / `"onPrimaryOutline"`.
+- [ ] **About**: "What We Do", "Leadership & Structure", "Annual Reports & Governance" → `SectionHeader`; accordion and archive toggle → `useDisclosure` (accordion keeps `h3`, `inert`); the two "no match" messages outside the table → `EmptyState`.
+- [ ] **Events**: expand text → `useDisclosure`; in-card actions → `Button size="sm"` (outline/primary/outline/disabled); empty result → `EmptyState` with "Clear all filters" as `Button size="sm"`.
+- [ ] **Membership**: "Why Join CVOCA?" → `SectionHeader`; benefit tile → `IconTile`.
+- [ ] **Blog**: stats bar → `Stat size="md"` ×4 inside the existing Card.
+- [ ] **Contact**: InfoCard tile → `IconTile`.
+- [ ] `npm run typecheck` before each commit.
 
-## Task 4: Verify
-- [x] `npm run typecheck`, `npm test`, `npm run build`; `git status` clean.
-- [x] `vite preview`: `curl /events` raw has the Events title and OG tags; `/does-not-exist` has the homepage head and no canonical.
-- [x] Browser at 375 and 1440 px, light and dark: computed `font-family` is Inter Variable, `document.fonts` loaded; network shows local woff2 and no Google Fonts hosts; no overflow; console clean; navigating between routes updates title and canonical with one tag each.
-- [x] Local server with the new CSP as a response header: no violations on any route, including the Maps embed on `/contact`.
+## Task 4: DESIGN.md
+- [ ] `npm run design:lint` before: **0 errors, 54 warnings** (53 orphaned tokens + the known `button-secondary` contrast).
+- [ ] Add `components:` entries: `card`, `card-dark`, `badge-primary`, `badge-success`, `badge-warning`, `badge-danger`, `icon-tile`, `icon-tile-hover`, `hero`, `hero-light`, `page`, `page-dark`, `button-primary-hover`, `button-on-primary`, `button-on-primary-outline`. Only values the code really uses.
+- [ ] Prose: list the new components; document `animate-fade-in-up` and `animate-float` (durations, use, reduced motion).
+- [ ] Lint after, record counts. Commit `docs(design): component tokens, on-colour buttons and motion`.
 
-## Task 5: Review and record
-- [x] Fresh reviewer subagent on the full diff (superpowers:requesting-code-review); fix Critical and Important findings.
-- [x] Fill in the Review section; commit `docs: record Batch D1 in tasks/todo.md`.
+## Task 5: Verify
+- [ ] `npm run typecheck`, `npm test`, `npm run build`; `git status` clean.
+- [ ] Browser on the dev server: Home, About, Events, Membership, Blog, Contact, DigitalOutreach at 375/768/1440, light and dark: no horizontal overflow, console clean (apart from known Sheets errors), one h1 and no skipped heading levels.
+- [ ] In-page contrast check on migrated elements, especially every Outreach card text/badge pair.
+- [ ] Keyboard: accordion, archive toggle, Events Expand, Outreach Read More (Enter/Space, `aria-expanded`); Events buttons reachable, disabled one skipped.
+- [ ] After screenshots of DigitalOutreach (scratchpad only).
+
+## Task 6: Review
+- [ ] Fresh reviewer subagent on the full diff (superpowers:requesting-code-review); fix Critical and Important findings.
+- [ ] Fill in the Review below; commit `docs: record Batch D2 in tasks/todo.md`.
 
 ---
 
 ## Review
-
-### What changed
-- **Per-route link previews** (commit `cee63b0`).
-  - New files:
-    - `seo/pages.json` holds the SEO text for the 8 static routes, copied verbatim from the pages.
-    - `seo/pages.ts` adds the types, `pageTitle()` and `routeSEO()`.
-    - `seo/routeHeads.ts` has `escapeHtml`, `renderRouteHead` and the `writeBundle` Vite plugin.
-    - `tests/routeHeads.test.ts` adds 22 tests.
-  - Changed files:
-    - `vite.config.ts` registers the plugin.
-    - `scripts/generate-sitemap.js` reads its routes from the JSON. `public/sitemap.xml` is byte-identical.
-    - `useSEO` uses `pageTitle()`, and `'event'` is dropped from `ogType`.
-    - The 8 pages call `useSEO(routeSEO('/x'))`.
-    - `index.html` loses `<meta name="title">` and gains a comment.
-  - Build output: `dist/<route>/index.html` for the 7 non-root routes. `dist/index.html` gets the `/` values and no canonical.
-- **Self-hosted Inter and a stricter CSP** (commit `50fcd6f`).
-  - Inter now comes from `@fontsource-variable/inter@^5.3.0`: weight axis 100–900, `font-display: swap`, 7 unicode-range subsets. The browser downloads only `inter-latin` on this site.
-  - Tailwind `sans` is now `"Inter Variable"`.
-  - All Google Fonts tags are removed from `index.html`.
-  - The CSP in `render.yaml` and in the setup guide is now `script-src 'self'`, `style-src 'self' 'unsafe-inline'` and `font-src 'self'`.
-  - The privacy policy no longer lists Google Fonts. `LAST_UPDATED` stays at 28 October 2026, which is already today.
-- Docs: no README or other doc mentioned Google Fonts, apart from the setup guide's CSP line. `DESIGN.md` still says "Inter", which is still true.
-
-### Deviations (rulings)
-- **Vite `writeBundle` plugin instead of a separate post-build Node script.** It runs at the same point and is TypeScript, so it shares `pageTitle()` with `useSEO` and is typechecked. If this is wrong, it costs moving about 20 lines into a script.
-- **SEO data is in JSON, not a TS module.** The Node sitemap script can't import TS on Node 20.19.
-- **`og:type 'event'` removed and `<meta name="title">` removed.** These tags now reach crawlers, so invalid or stale values would ship.
-- **No font preload.** The woff2 file name is hashed, and the CSS that loads it is already render-blocking in `<head>`.
-- **Unused font subsets are kept** (the package's default `index.css`). Browsers don't download them, and trimming them would need per-subset imports.
-
-### Verification
-- `npm run typecheck` exit 0. `npm test` 63/63 (41 before, plus 22 new). `npm run build` exit 0 and logs "Wrote per-route head tags for 8 routes". `git status` is clean after the build.
-- TDD: `tests/routeHeads.test.ts` failed first because the module was missing, then passed.
-- Every `dist/<route>/index.html` head was inspected:
-  - Each has the right title, description, keywords, robots, `og:*`, `twitter:*` and canonical, and `&` is escaped.
-  - Privacy has `noindex, nofollow` and no keywords.
-  - Bodies are byte-identical to `dist/index.html`.
-- `vite preview` (Vite's own convention) serves `dist/events/index.html` only at `/events/`, and `/events` at `events.html`. So the raw-fetch checks used a Render-like server (scratchpad). That server serves a file or `<dir>/index.html` if one exists, otherwise falls back to `/index.html`, and sends the `render.yaml` CSP as a header.
-  - `curl` on all 8 routes returned each route's own head.
-  - `/does-not-exist` got the home head with no canonical.
-- Built-in browser on the Render-like server:
-  - **375 px light and dark, and 1440 px light and dark:** computed `font-family` is `"Inter Variable", sans-serif` and `document.fonts.check` is true. The only font request is `/assets/inter-latin-wght-normal-*.woff2`, with zero requests to Google Fonts hosts. Horizontal overflow is 0 on every route.
-  - **Client-side navigation across all 8 routes plus a 404:** title, canonical, `og:url` and robots updated each time, with exactly one canonical and no duplicate meta tags.
-  - **CSP:** full loads of all 9 URLs showed no violations, and the Maps embed on `/contact` renders. Control check: an injected inline script and an inline `onerror` handler were both blocked and reported, so the console capture does catch violations.
-  - **Not covered locally:** the Sheets API request under `connect-src`, because there are no Sheets env vars locally. That directive is unchanged.
-- Code review: a fresh reviewer subagent (Opus) read the full diff and built the project in a temporary worktree. Verdict: ready to merge. No Critical or Important findings, and all 5 review-focus items pass.
-
-### Deferred minors (from review)
-- `routeHeadsPlugin().writeBundle` file writing has no unit test. Every build exercises it, and it was inspected by hand.
-- No test for the "tag appears twice" branch of `replaceTag`. The missing-tag branch is tested.
-- The build-note HTML comment in `index.html` ships in `dist/`. It's harmless.
-- Carried over from before this batch, not changed: client-side keywords go stale when navigating to a page without keywords; `/privacy-policy` is in the sitemap but noindex; unknown URLs carry a static `index, follow` until NotFound's JS sets noindex.
-
-### Left to do
-Everything that needs the client's Render or Google access, plus the developer steps and checks that go with it, is collected in `docs/pending-tasks.md` (renamed from `docs/account-owner-setup-guide.md`), with Google, Render, Developer and Testing sections and a suggested order:
-- **Render R1–R2:** response headers (CSP Report-Only, then enforced after a week as X3; HSTS; `Cache-Control`; etc.) and the build command.
-- **Developer X1–X2:** ship a `dist/404.html` page and remove the `render.yaml` catch-all rewrite. Neither is done yet. Render staff on the community forum say a static site serves `/404.html` for paths that match no file and no rule.
-- **Testing T3:** after the next deploy, check the per-route files are served without a redirect and link previews show each page's title.
-- **Render R3 + Testing T4:** remove the `/* → /index.html` rewrite so unknown URLs return a real 404, then check every page still loads.
-
-Not account work: **D2** (DigitalOutreach THEMES and the remaining UI components) is a separate session.
-
----
-
-## Follow-up: pending tasks X1–X2 (2026-10-28)
-
-**Goal:** prepare the code so the Render catch-all rewrite can be removed (`docs/pending-tasks.md` R3) and unknown URLs get a real 404.
-
-**Approach:**
-- The build also writes `dist/404.html`. It's the built `index.html` with the NotFound page's title and description, `noindex, nofollow`, and no canonical. The body is the SPA, so React Router renders the NotFound page in the browser. Render serves `/404.html` for paths that match no file and no rule.
-- NotFound's SEO values move to `NOT_FOUND_SEO` in `seo/pages.ts`, shared by `pages/NotFound.tsx` and the build. They stay out of `pages.json`, whose keys are the sitemap's routes.
-- The plugin's file writing moves into `writeRouteHeads(outDir)`, which the plugin calls, so it can be unit-tested on a temp directory without faking Vite's plugin context. This also covers a deferred minor from the review.
-- `render.yaml`: remove the `routes:` catch-all rewrite. It isn't live (the Blueprint isn't linked), so this changes nothing until R3. Update the README and `docs/pending-tasks.md` X1/X2.
-
-**Steps:**
-- [x] Test (RED): `writeRouteHeads` on a temp dir writes the 7 route files and `404.html` (title "Page Not Found | CVOCA", `noindex, nofollow`, no canonical, body unchanged) and rewrites `index.html` without a canonical.
-- [x] Implement (GREEN); NotFound uses `NOT_FOUND_SEO`.
-- [x] `render.yaml`, README, `docs/pending-tasks.md`.
-- [x] Verify: typecheck, tests, build, clean `git status`. On the Render-like local server, with the rewrite switched off, `/does-not-exist` returns 404 with the NotFound page and all 8 routes still load. Console clean.
-- [x] Commit.
-
-**Review (done 2026-10-28):**
-- What changed:
-  - `seo/pages.ts` gains `NOT_FOUND_SEO`, which `pages/NotFound.tsx` now uses.
-  - `seo/routeHeads.ts` adds `writeRouteHeads(outDir)`, which writes `404.html` as well as the route files. The plugin just calls it.
-  - `render.yaml` loses its `routes:` catch-all.
-  - The README build and deploy notes are updated, and `docs/pending-tasks.md` marks X1 as built (not yet deployed) and X2 as done.
-- Verification:
-  - `npm run typecheck` exit 0. `npm test` 67/67 (4 new; watched the new ones fail on the missing `writeRouteHeads` first). `npm run build` exit 0, "Wrote head tags for 9 pages (incl. 404.html)". `git status` clean after the build.
-  - `render.yaml` still parses as YAML.
-  - Render-like local server with the rewrite switched off (what R3 produces):
-    - All 8 routes and `/about/` return 200 with their own titles.
-    - `/does-not-exist`, `/events/2026/foo` and `/data/missing.json` return 404 with the "Page Not Found" head.
-  - In the browser, at 1440 px and at 375 px in dark mode:
-    - The nested unknown path renders the NotFound page, with every asset 200, Inter loaded and no overflow.
-    - "Go Home" navigates in the app and robots goes back to `index, follow`.
-    - The only console errors are the 404 document loads themselves.
-- Not changed: on the 404 page, `useSEO` still sets a client-side canonical to the current URL. This existed before, and the page is noindex.
-- Still needs the live site: deploy, then `docs/pending-tasks.md` T3 → R3 → T4.
+_(filled in at the end)_
