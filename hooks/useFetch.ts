@@ -31,7 +31,7 @@ export default function useFetch<T>(
     return () => {
       active = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Runs once on mount: callers pass an inline fetcher, so listing it would refetch every render
   }, []);
 
   return { data, loading, error };

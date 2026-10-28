@@ -1,6 +1,4 @@
 
-import React from 'react';
-
 export interface CommitteeMember {
   name: string;
   role: string;
@@ -45,12 +43,6 @@ export interface CvoEvent {
   imageUrl?: string;
 }
 
-export interface NavLink {
-  label: string;
-  href: string;
-  icon: React.ReactNode;
-}
-
 // New Data Types for JSON migration
 
 export interface HomeStat {
@@ -75,16 +67,6 @@ export interface HomeData {
   stats: HomeStat[];
   features: HomeFeature[];
   presidentDefault: PresidentDefault;
-}
-
-export interface BlogPost {
-  id: number;
-  image: string;
-  category: string;
-  date: string;
-  author: string;
-  title: string;
-  excerpt: string;
 }
 
 export interface MembershipTier {
