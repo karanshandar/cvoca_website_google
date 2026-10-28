@@ -14,15 +14,16 @@ import { getContactHref } from '../utils/contactLinks';
 import Icon from '../components/Icon';
 import PageHero from '../components/ui/PageHero';
 import Card from '../components/ui/Card';
+import IconTile from '../components/ui/IconTile';
 
 const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; href?: string; delay: string }> = ({ icon, label, value, href, delay }) => (
     <div 
         className="flex items-start p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-2xl transition-colors duration-300 animate-fade-in-up group"
         style={{ animationDelay: delay }}
     >
-        <div className="flex-shrink-0 mr-5 w-12 h-12 flex items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+        <IconTile className="mr-5">
             {icon}
-        </div>
+        </IconTile>
         <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{label}</p>
             <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-white leading-snug break-words">
