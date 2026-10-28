@@ -19,6 +19,16 @@
   .btn-outline {
     @apply inline-flex items-center justify-center px-6 py-3 bg-card-light dark:bg-card-dark border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-full shadow-md hover:shadow-lg hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
+  /* On a bg-primary band: white ring, offset in the band's colour */
+  .btn-on-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-white hover:bg-primary-50 text-primary-700 font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary;
+  }
+  .btn-on-primary-outline {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-primary-dark hover:bg-primary-900 text-white border border-white/30 font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary;
+  }
+  .btn-disabled {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold rounded-full cursor-not-allowed;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

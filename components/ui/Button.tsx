@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../Icon';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'onPrimary' | 'onPrimaryOutline';
 type ButtonSize = 'md' | 'sm';
 
 interface ButtonProps {
@@ -14,6 +14,8 @@ interface ButtonProps {
   href?: string;
   target?: '_blank';
   onClick?: () => void;
+  /** Renders a native disabled <button> (ignored with `to`/`href`). */
+  disabled?: boolean;
   /** Layout only (margins, width). Colours and shape come from the variant. */
   className?: string;
   children: React.ReactNode;
@@ -24,6 +26,9 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary: 'btn-primary',
   secondary: 'btn-secondary',
   outline: 'btn-outline',
+  // For buttons on a primary-coloured band
+  onPrimary: 'btn-on-primary',
+  onPrimaryOutline: 'btn-on-primary-outline',
 };
 
 // sm keeps a 44px tap target.
@@ -39,10 +44,12 @@ const Button: React.FC<ButtonProps> = ({
   href,
   target,
   onClick,
+  disabled = false,
   className = '',
   children,
 }) => {
-  const classes = `${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`.trim();
+  const variantClass = disabled && !to && !href ? 'btn-disabled' : VARIANT_CLASSES[variant];
+  const classes = `${variantClass} ${SIZE_CLASSES[size]} ${className}`.trim();
 
   if (to) {
     return (
@@ -74,7 +81,7 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <button type="button" onClick={onClick} className={classes}>
+    <button type="button" onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   );
