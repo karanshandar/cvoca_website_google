@@ -1,115 +1,144 @@
-# Batch C: cleanup, docs and tooling
+# Batch D1: per-route link previews + self-hosted Inter
 
-## Status: DONE (2026-10-28). Committed on `main` in five commits, not pushed. See Review below.
+## Status: DONE (2026-10-28). Committed on `main` in three commits, not pushed. See Review below.
 
-Source: `tasks/review-maintainability.md` (A3, D2, D3, F1, F2, F4, F5, G1, G3, G4, G5 Node pin) and `tasks/review-architecture.md` (B2, D6, I1).
-The previous contents of this file (the Batch B plan and its review) are preserved in git history at `b3e054c`.
-Execution: inline (superpowers:executing-plans) on `main`, no worktree/branch/push; plan approval waived by the session that started this one.
+> **For agentic workers:** executed inline with superpowers:executing-plans; steps use `- [ ]` checkboxes.
+
+**Goal:** Link previews (WhatsApp, LinkedIn, etc.) show each page's own title and description, and the site loads Inter from its own origin so the CSP can drop `'unsafe-inline'` scripts and Google Fonts.
+
+**Architecture:** One data file, `seo/pages.json`, holds each static route's title, description, keywords and noindex flag. The pages (through `useSEO`), the sitemap script and the build all read it. A small Vite build plugin (`seo/routeHeads.ts`, wired in `vite.config.ts`) rewrites the built `dist/index.html` head with the `/` values, then writes `dist/<route>/index.html` for every other route with that route's title, description, canonical, `og:*` and `twitter:*`. Bodies are unchanged, so the SPA still boots. Inter comes from `@fontsource-variable/inter` (one variable woff2 per unicode subset, `font-display: swap`).
+
+**Tech stack:** React 19, Vite 7, Tailwind 3, Vitest 4, Node `^20.19.0 || >=22.12.0`.
+
+**Source:** session brief (Batch D1) and `tasks/review-architecture.md` SEO1, `tasks/review-security-performance.md` SEO1, P4, S3, PR1.
+The previous contents of this file (the Batch C plan and its review) are preserved in git history at `7cd1942`.
+Execution: inline on `main`, no worktree/branch/push; plan approval waived by the session that started this one.
 
 ---
 
 ## Global constraints
-- Minimal, targeted changes only. Touch only what each task names. No content changes.
-- No `any`, no `@ts-ignore`, no casts added just to silence errors.
-- Node floor = Vite 7's own: `^20.19.0 || >=22.12.0`. `.nvmrc` = `22` (matches local Node 22.12 and `@types/node@22`).
-- Vitest **4.x** (`^4.1.12`), not 5.x: Vitest 5 needs Node ≥ 22.12, which would contradict the Node 20.19 floor.
-- Helpers extracted for tests are pure moves: same logic, same output.
-- Out of scope: Batch D (prerender, self-hosted font, THEMES, remaining shared components), ESLint/Prettier, major upgrades, anything needing the client's Google/Render accounts.
+- Minimal, targeted changes. No page UI changes (D2 owns THEMES and UI components).
+- No `any`, no `@ts-ignore`, no casts to silence errors.
+- Every value inserted into HTML is escaped (`& < > " '`).
+- `dist/index.html` gets **no** canonical or `og:url`: Render's SPA rewrite also serves it for unknown URLs (Batch B decision).
+- A build must leave `git status` clean.
+- CSP after this batch: `script-src 'self'`; `style-src 'self' 'unsafe-inline'`; `font-src 'self'`; everything else unchanged.
 
-## Findings from checking the code first
-- `tsc --noEmit --strict` already exits 0 (earlier rounds added React types and typed the code). Turning on `strict` is a config change with no code fallout.
-- `.btn-primary/.btn-secondary/.btn-outline` are all live now (`components/ui/Button.tsx` maps its variants to them; `Blog.tsx` uses `secondary`, `Home.tsx` uses `outline`). Keep them.
-- `ImageSizePresets` in use: `TEAM_PHOTO`, `EVENT_CARD`, `LARGE`. Unused: `THUMBNAIL`, `HERO`.
-- `isCloudinaryUrl` is used only inside `imageUtils.ts`.
-- The only ESLint-disable comment is `hooks/useFetch.ts:34`; ESLint is not installed. Replace it with a plain comment saying why the effect runs once.
-- README build steps describe a JSON minify step that no longer exists.
-- `tsconfig.json`: `paths` (`@/*`, nothing imports it) and `allowJs` (only `.ts/.tsx` are included) are unused. `types: ["node"]` stays (the data-contract test reads files with `node:fs`). `allowImportingTsExtensions` stays (harmless with `noEmit`; out of scope to audit imports).
+## Decisions (and why they differ from the brief's example)
+- **Vite plugin instead of a separate Node script.** The brief suggested "a small Node script after `vite build`". A `writeBundle` plugin runs at the same point (after `dist/index.html` is written), but it's TypeScript, so it shares `pageTitle()` with `useSEO` instead of copying the title rule into JS. It is also typechecked and runs on every `vite build`.
+- **Data in JSON.** `scripts/generate-sitemap.js` is plain Node and can't import TS on Node 20.19, so the route list and SEO text live in `seo/pages.json`. TS reads it through `seo/pages.ts`, which adds the types.
+- **Render serving.** Render docs: "Render does not apply redirect or rewrite rules to a path if a resource exists at that path." A Render feature request (feedback.render.com, "Configurable trailing slashes") says `page1/index.html` is served at both `/page1` and `/page1/` with no redirect. Checked live on two Render static sites (`rndr-id` header): `jekyll.onrender.com/about` and `gatsby.onrender.com/page-2` both return 200 with the subpage's own `<title>`, no redirect, with or without the trailing slash. So `/about` serves `dist/about/index.html` before the `/* → /index.html` rewrite applies. `/about/` is also served, and its canonical points to `/about`. The CVOCA service itself can only be checked after a deploy (see Review).
+- **`og:type`.** `'event'` isn't a valid Open Graph type (review SEO1). Since these tags now reach crawlers, Events uses the default `website` and `'event'` is removed from the union.
+- **`<meta name="title">`** is non-standard and `useSEO` never updated it, so it went stale on navigation. Removed from `index.html`.
+- **No font preload.** Vite hashes the woff2 file name, and the CSS that references it is already a render-blocking `<link>` in `<head>`, so a preload would need extra plugin code for little gain.
 
-## Review focus (failure modes no single task exercises)
-1. **Sheets date typed as `5/9/2026`** (no zero padding): must become `2026-09-05`, not `2026-9-5` (`convertValue` test).
-2. **Committee role misspelt** (`Convenor`): member is dropped with a warning, not crash (grouping test).
-3. **Event on today's date**: counts as upcoming, not past (upcoming-filter test pins `today` at local midnight).
-4. **Event time `TBD`** or a single start time: calendar link still valid, 2-hour default (calendar test).
-5. **A new JSON file added to `public/data/`** with no contract: the data-contract test fails rather than silently ignoring it.
+## Review focus
+1. **Value with `&`, `"` or `<`** (e.g. "Chartered & Cost"): escaped in the generated head, raw in `useSEO` (`setAttribute` escapes itself). Test: `renderRouteHead` escapes.
+2. **`index.html` template changes and a tag disappears**: the build must fail loudly, not ship a homepage head on `/events`. Test: missing tag throws.
+3. **Client-side navigation after landing on `/events`**: `useSEO` must reuse the static canonical/`og:url` tags, not add second ones. Checked in the browser (count of `link[rel=canonical]` = 1).
+4. **Unknown URL (`/does-not-exist`)**: still gets `dist/index.html` with no canonical, then NotFound sets noindex. Checked with curl.
+5. **Privacy policy noindex**: its generated head must say `noindex, nofollow`. Test.
 
 ---
 
-## Task 1: Dead code (commit 1)
-**Files:** `public/data/blog.json`, `public/_redirects`, `types.ts`, `utils/imageUtils.ts`, `.env.example`, `tsconfig.json`, `vite.config.ts`, `hooks/useFetch.ts`
-- [x] Delete `public/data/blog.json` and `public/_redirects` (Render ignores `_redirects`; the live rewrite is in the dashboard, mirrored by `render.yaml` `routes`).
-- [x] `types.ts`: remove `NavLink` (and the now-unused `import React`) and `BlogPost`.
-- [x] `utils/imageUtils.ts`: un-export `isCloudinaryUrl`; remove `getOptimizedImageUrlWithPreset`, `THUMBNAIL`, `HERO`.
-- [x] `.env.example`: remove the Cloudinary block. (README line handled in Task 2.)
-- [x] `tsconfig.json`: remove `paths` and `allowJs`.
-- [x] `vite.config.ts`: remove `host: '0.0.0.0'`.
-- [x] `hooks/useFetch.ts`: replace the `eslint-disable` line with a comment that the fetcher runs once on mount.
-- [x] Grep each removed name → no references outside `tasks/review-*` and history. `npm run typecheck` + `npm run build` pass.
+## Task 1: Shared SEO data + head generator (TDD)
+**Files:** create `seo/pages.json`, `seo/pages.ts`, `seo/routeHeads.ts`, `tests/routeHeads.test.ts`; modify `vite.config.ts`, `scripts/generate-sitemap.js`.
 
-## Task 2: Docs (commit 2)
-**Files:** `claude.md` → `CLAUDE.md`, `docs/editing-content.md` (new), `docs/association-website-implementation-guide.md`, `docs/cloudinary-guide.md`, `README.md`
-- [x] `git mv claude.md claude.tmp.md && git mv claude.tmp.md CLAUDE.md`.
-- [x] `docs/editing-content.md`: where-to-change-X table (Sheet tabs / JSON-only / hard-coded TSX); each of the 6 Sheet tabs with the exact headers the code reads; `committeeMembers` roles; `managingCommittee` `President` role used on Home; date format (`DD/MM/YYYY` or `YYYY-MM-DD` in Sheets, `YYYY-MM-DD` in JSON); `tags` comma-separated; `isNew` `TRUE`/`1`; how the JSON fallback relates to the Sheet (used only when Sheets is unreachable/unconfigured; keep it in step by hand); images.
-- [x] Implementation guide §2.5 and §6.2: replace the wrong `events`/`teams` tables and steps with a pointer to `docs/editing-content.md`; drop the `VITE_CLOUDINARY_CLOUD_NAME` step.
-- [x] `docs/cloudinary-guide.md:88`: "managingCommittee tab".
-- [x] README: versions without pinned numbers, Node ≥ 20.19, build steps (typecheck → sitemap → vite build), `typecheck`/`test` scripts, current structure, link to editing doc, drop `_redirects`, Cloudinary env var, minify claims, "Accessibility compliant", Lighthouse/metric claims.
-- [x] Check every column name in the doc against `utils/googleSheets.ts` and the page code.
+**Interfaces (produces):**
+- `seo/pages.json`: `{ "<route>": { "title": string, "description": string, "keywords"?: string, "noIndex"?: boolean } }`, keys in sitemap order: `/`, `/about`, `/membership`, `/events`, `/blog`, `/digital-outreach`, `/contact`, `/privacy-policy`. Text copied verbatim from each page's current `useSEO` call.
+- `seo/pages.ts`: `type StaticRoute`, `interface PageSEO`, `PAGE_SEO: Record<StaticRoute, PageSEO>`, `pageTitle(title: string): string` (`'Home'` → `SITE_NAME`, else `` `${title} | CVOCA` ``), `routeSEO(route: StaticRoute)` → `PageSEO & { canonicalUrl }`.
+- `seo/routeHeads.ts`: `escapeHtml(s: string): string`; `renderRouteHead(html: string, page: PageSEO, canonicalUrl?: string): string`; `routeHeadsPlugin(): Plugin`.
 
-## Task 3: Strict mode + Node pin (commit 3)
-**Files:** `tsconfig.json`, `.nvmrc` (new), `package.json`
-- [x] `"strict": true` in `tsconfig.json`; `npm run typecheck` exits 0.
-- [x] `.nvmrc` = `22`; `package.json` `"engines": { "node": "^20.19.0 || >=22.12.0" }`.
+- [x] Write `tests/routeHeads.test.ts`: for `/events`, rendered from the real `index.html`, the output has exactly one each of `<title>Events | CVOCA</title>`, description, keywords, `robots index, follow`, `og:title`, `og:description`, `og:type website`, `og:url https://cvoca.org/events`, `canonical https://cvoca.org/events`, `twitter:title`, `twitter:description`; `escapeHtml('a & "b" <c>')` = `a &amp; &quot;b&quot; &lt;c&gt;`; a description with `"><script>` comes out escaped; `/privacy-policy` → `noindex, nofollow`; no canonical arg → no canonical/`og:url`; a template missing `og:title` throws; the body is untouched; every route in `PAGE_SEO` renders.
+- [x] Run `npm test`: fails (module missing).
+- [x] Implement. Each tag is replaced by one anchored regex; zero matches throws `Error("route heads: <tag> not found in index.html")`. Canonical and `og:url` are inserted before `</head>`. The plugin (`apply: 'build'`, `writeBundle`) reads `<outDir>/index.html`, rewrites it for `/` without a canonical, and writes `<outDir><route>/index.html` for the other routes.
+- [x] Sitemap reads routes from `Object.keys` of `seo/pages.json` (fs + `JSON.parse`).
+- [x] `npm test` and `npm run typecheck` pass.
 
-## Task 4: Tests + CI (commit 4), TDD
-**Files:** `package.json`, `package-lock.json`, `utils/events.ts` (new), `pages/Events.tsx`, `pages/Home.tsx`, `utils/googleSheets.ts`, `tests/*.test.ts` (new), `.github/workflows/ci.yml` (new)
+## Task 2: Pages use the shared data
+**Files:** `hooks/useSEO.ts`, the 8 static pages, `index.html`.
+- [x] `useSEO` uses `pageTitle()` (one rule, no other change); drop `'event'` from `ogType`.
+- [x] Each static page calls `useSEO(routeSEO('/x'))` and drops its now-unused `canonical` import. NotFound unchanged.
+- [x] `index.html`: remove `<meta name="title">`; comment that the head values are replaced at build from `seo/pages.json`.
+- [x] Build; inspect every `dist/<route>/index.html` head; `git status` clean.
+- [x] Commit: `feat(seo): per-route head tags in built HTML for link previews`.
 
-**Interfaces produced:**
-- `utils/events.ts`: `getGoogleCalendarUrl(event: CvoEvent): string` (moved verbatim from `pages/Events.tsx`); `getUpcomingEvents(events: CvoEvent[], limit: number, now: Date = new Date()): CvoEvent[]` (the filter ≥ local midnight / ascending sort / slice used in `Home.tsx` (limit 2) and the `Events.tsx` schema list (limit 10)).
-- `utils/googleSheets.ts`: `export function convertValue(...)` (unchanged); `export function groupCommitteeMembers(members: Record<string, unknown>[]): Committee[]` (the body of `fetchCommittees`, now typed with `Map<string, Committee>`); `fetchCommittees` calls it.
+## Task 3: Self-host Inter, tighten CSP, privacy policy
+**Files:** `package.json`/lock, `index.tsx`, `tailwind.config.js`, `index.html`, `render.yaml`, `docs/account-owner-setup-guide.md`, `pages/PrivacyPolicy.tsx`.
+- [x] `npm i @fontsource-variable/inter`; `import '@fontsource-variable/inter';` in `index.tsx` (wght axis only); Tailwind `sans: ['"Inter Variable"', 'sans-serif']`.
+- [x] Remove the Google Fonts preconnects, preload, `media="print" onload` link and `<noscript>` from `index.html`.
+- [x] Check `dist/index.html` has no inline `<script>` without `src` and no `on*=` handler. Then the CSP in `render.yaml` and the setup guide: `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `font-src 'self'`.
+- [x] Privacy policy: delete the Google Fonts `<li>`; `LAST_UPDATED` stays `'28 October 2026'` (already today's date).
+- [x] Commit: `perf: self-host Inter and drop 'unsafe-inline' scripts and Google Fonts from the CSP`.
 
-Steps:
-- [x] `npm i -D vitest@^4.1.12`; add `"test": "vitest run"`.
-- [x] `tests/dates.test.ts`: `parseLocalDate('2026-09-05')` → local Y/M/D 2026/8/5 at 00:00; non-ISO input falls back to `new Date(input)`. (Function exists → expect PASS on first run; confirm a deliberately wrong assertion fails once.)
-- [x] `tests/googleSheets.test.ts`: write first, run → FAIL (not exported). `convertValue`: `id '7'`→`7`, `id 'abc'`→`'abc'`, `isNew 'TRUE'`/`'1'`→`true`, `'no'`→`false`, `tags 'a, b,,c'`→`['a','b','c']`, empty `tags`→`[]`, `date '5/9/2026'`→`'2026-09-05'`, `date '2026-09-05'` unchanged, other fields unchanged. `groupCommitteeMembers`: two committees grouped in first-seen order, each role lands in its array, `chairperson` set, unknown role dropped + `console.warn` called.
-- [x] Export/extract in `googleSheets.ts` → PASS.
-- [x] `tests/events.test.ts`: write first → FAIL (module missing). `getUpcomingEvents` with `now` = 2026-09-05 15:00: keeps today and future, drops yesterday, ascending, honours `limit`. `getGoogleCalendarUrl`: `'10:00 AM - 1:30 PM'` → `dates=20260905T100000/20260905T133000`; `'6:00 PM'` → `T180000/T200000`; `'TBD'` → `T090000/T110000`; `'12:00 PM'` → `T120000`; title/description/location URL-encoded; `ctz=Asia/Kolkata`.
-- [x] Create `utils/events.ts` (move), switch `Events.tsx`/`Home.tsx` to it → PASS.
-- [x] `tests/dataContract.test.ts`: reads every `public/data/*.json`; a table of per-file checks (required string/array fields the pages read, e.g. events `id,title,date(YYYY-MM-DD),time,location,committee,tags[],cost,description`; committees role arrays are arrays; contact/membership/social nested fields; `OutreachContact.type` and `MembershipTier.variant` in their allowed values); fails if a file has no entry.
-- [x] `.github/workflows/ci.yml`: on push + pull_request to `main`; `actions/checkout@v4`, `actions/setup-node@v4` with `node-version-file: .nvmrc`, `cache: npm`; `npm ci`, `npm run typecheck`, `npm test`, `npm run build`.
+## Task 4: Verify
+- [x] `npm run typecheck`, `npm test`, `npm run build`; `git status` clean.
+- [x] `vite preview`: `curl /events` raw has the Events title and OG tags; `/does-not-exist` has the homepage head and no canonical.
+- [x] Browser at 375 and 1440 px, light and dark: computed `font-family` is Inter Variable, `document.fonts` loaded; network shows local woff2 and no Google Fonts hosts; no overflow; console clean; navigating between routes updates title and canonical with one tag each.
+- [x] Local server with the new CSP as a response header: no violations on any route, including the Maps embed on `/contact`.
 
-## Task 5: Verify + review
-- [x] `npm run typecheck`, `npm test`, `npm run build` pass; `git status` clean after build.
-- [x] Dev server in built-in browser: all 9 routes at 375 and 1440 px, light + dark; no console errors beyond the known Sheets-not-configured warning; no horizontal overflow; data on Home, Events, About (3 tabs), DigitalOutreach.
-- [x] Fresh reviewer subagent on the full diff (superpowers:requesting-code-review); fix Critical/Important.
-- [x] Fill in Review below; commit per task.
+## Task 5: Review and record
+- [x] Fresh reviewer subagent on the full diff (superpowers:requesting-code-review); fix Critical and Important findings.
+- [x] Fill in the Review section; commit `docs: record Batch D1 in tasks/todo.md`.
 
 ---
 
 ## Review
 
 ### What changed
-- **Dead code** (`e32fe1c`): deleted `public/data/blog.json`, `public/_redirects`, the `BlogPost`/`NavLink` types (and `types.ts`'s now-unused React import), `getOptimizedImageUrlWithPreset` and the `THUMBNAIL`/`HERO` presets; `isCloudinaryUrl` is module-private. Dropped `VITE_CLOUDINARY_CLOUD_NAME` from `.env.example` and README, the `@/*` alias and `allowJs` from `tsconfig.json`, and `host: '0.0.0.0'` from `vite.config.ts` (the dev server now listens on localhost only). The `eslint-disable` in `useFetch` became a plain comment. Grep at HEAD finds no references to any removed name outside the review reports.
-  - `_redirects`: Render ignores it. The live `/* → /index.html` rewrite is set in the Render dashboard, and `render.yaml` `routes` mirrors it, so there is now one place to look (plus its mirror).
-- **Docs** (`023b490`, plus the review fix): `claude.md` → `CLAUDE.md` (two-step `git mv`). New `docs/editing-content.md`: where-to-change table, the six Sheet tabs with exact headers, `committeeMembers` roles, the `President` lookup, date rules, fallback behaviour, JSON contract check. The implementation guide's wrong `events`/`teams` schema and `image` column now point to it; the Cloudinary guide no longer mentions a `teams` tab. README rewritten: no pinned versions, Node floor, real build steps, scripts table, CI, current structure, editing-doc link; no `_redirects`, minify, Lighthouse or "Accessibility compliant" claims.
-- **Strict + Node** (`0510556`): `"strict": true`; `engines` `^20.19.0 || >=22.12.0`; `.nvmrc` `22`.
-- **Tests + CI** (`5b3c917`): Vitest 4, `npm test`. `utils/events.ts` holds `getGoogleCalendarUrl` (moved unchanged) and `getUpcomingEvents` (the identical filter/sort/slice from Home and the Events schema list). `googleSheets.ts` exports `convertValue` and `groupCommitteeMembers`. Four test files in `tests/` (41 tests). `.github/workflows/ci.yml` runs `npm ci`, typecheck, test, build on push/PR to `main`.
+- **Per-route link previews** (commit `cee63b0`).
+  - New files:
+    - `seo/pages.json` holds the SEO text for the 8 static routes, copied verbatim from the pages.
+    - `seo/pages.ts` adds the types, `pageTitle()` and `routeSEO()`.
+    - `seo/routeHeads.ts` has `escapeHtml`, `renderRouteHead` and the `writeBundle` Vite plugin.
+    - `tests/routeHeads.test.ts` adds 22 tests.
+  - Changed files:
+    - `vite.config.ts` registers the plugin.
+    - `scripts/generate-sitemap.js` reads its routes from the JSON. `public/sitemap.xml` is byte-identical.
+    - `useSEO` uses `pageTitle()`, and `'event'` is dropped from `ogType`.
+    - The 8 pages call `useSEO(routeSEO('/x'))`.
+    - `index.html` loses `<meta name="title">` and gains a comment.
+  - Build output: `dist/<route>/index.html` for the 7 non-root routes. `dist/index.html` gets the `/` values and no canonical.
+- **Self-hosted Inter and a stricter CSP** (commit `50fcd6f`).
+  - Inter now comes from `@fontsource-variable/inter@^5.3.0`: weight axis 100–900, `font-display: swap`, 7 unicode-range subsets. The browser downloads only `inter-latin` on this site.
+  - Tailwind `sans` is now `"Inter Variable"`.
+  - All Google Fonts tags are removed from `index.html`.
+  - The CSP in `render.yaml` and in the setup guide is now `script-src 'self'`, `style-src 'self' 'unsafe-inline'` and `font-src 'self'`.
+  - The privacy policy no longer lists Google Fonts. `LAST_UPDATED` stays at 28 October 2026, which is already today.
+- Docs: no README or other doc mentioned Google Fonts, apart from the setup guide's CSP line. `DESIGN.md` still says "Inter", which is still true.
 
-### Deviations
-- **Strict mode needed no code fixes**: `tsc --strict` already exited 0 before the flag was set.
-- **`.btn-*` CSS kept**: all three classes are live through `components/ui/Button.tsx`.
-- **Vitest 4, not 5**: Vitest 5 requires Node ≥ 22.12, which would contradict the Node 20.19 floor.
-- **npm 10.9 bug**: `npm i -D vitest` failed with arborist's `edgesOut` error, so the install ran through `npx npm@11`. The lockfile diff is additions only, and npm 10 `npm ci` installs from it cleanly.
-- **Four test files, not five**: the upcoming filter and the calendar URL share `tests/events.test.ts` because they share `utils/events.ts`.
-- **`groupCommitteeMembers` is not a byte-for-byte move**: typing it reads cells through `cellText`, so a missing `committeeName`/`memberName`/`nativePlace` *column* gives `''` instead of `undefined`. Output is the same for every real Sheet row (cells are always strings); for a missing column it avoids a crash in the About committee search (`nativePlace.toLowerCase()`).
-- **Ledger kept outside the repo** (scratchpad), since the work is on `main` without a worktree.
+### Deviations (rulings)
+- **Vite `writeBundle` plugin instead of a separate post-build Node script.** It runs at the same point and is TypeScript, so it shares `pageTitle()` with `useSEO` and is typechecked. If this is wrong, it costs moving about 20 lines into a script.
+- **SEO data is in JSON, not a TS module.** The Node sitemap script can't import TS on Node 20.19.
+- **`og:type 'event'` removed and `<meta name="title">` removed.** These tags now reach crawlers, so invalid or stale values would ship.
+- **No font preload.** The woff2 file name is hashed, and the CSS that loads it is already render-blocking in `<head>`.
+- **Unused font subsets are kept** (the package's default `index.css`). Browsers don't download them, and trimming them would need per-subset imports.
 
 ### Verification
-- `npm run typecheck` exit 0; `npm test` 41/41 (4 files); `npm run build` exit 0 and `git status` clean afterwards.
-- Each new test was watched failing first (missing export / missing module); `parseLocalDate` (existing code) was shown to fail under `TZ=America/New_York` with the UTC bug reintroduced; the contract test was shown to fail on a `28/02/2026` date in `events.json` (restored).
-- Built-in browser, dev server: all 9 routes at 375 and 1440 px, light and dark: no horizontal overflow, no `role=alert` errors, no console errors (only the known "Google Sheets is not configured" warning). Home (stats, president message, "More Events Coming Soon", outreach), Events (Past filter: 9 cards with valid calendar links; no Event JSON-LD while nothing is upcoming), About (all three tabs) and DigitalOutreach render data.
-- Doc columns checked mechanically against `types.ts` and `googleSheets.ts`: every tab matches (`pastPresidents.srNo` is deliberately undocumented: About numbers rows itself).
-- Fresh reviewer subagent on `b3e054c..5b3c917`: no Critical. One Important, fixed: the date advice. A real date cell reaches the site in the Sheet's locale format, which `convertValue` always reads as day/month/year, and the implementation guide recommended Date data validation. Both docs now say to keep `date` columns as Plain text. Also fixed: the doc said CI runs on "every push" (it runs on `main` pushes and PRs).
+- `npm run typecheck` exit 0. `npm test` 63/63 (41 before, plus 22 new). `npm run build` exit 0 and logs "Wrote per-route head tags for 8 routes". `git status` is clean after the build.
+- TDD: `tests/routeHeads.test.ts` failed first because the module was missing, then passed.
+- Every `dist/<route>/index.html` head was inspected:
+  - Each has the right title, description, keywords, robots, `og:*`, `twitter:*` and canonical, and `&` is escaped.
+  - Privacy has `noindex, nofollow` and no keywords.
+  - Bodies are byte-identical to `dist/index.html`.
+- `vite preview` (Vite's own convention) serves `dist/events/index.html` only at `/events/`, and `/events` at `events.html`. So the raw-fetch checks used a Render-like server (scratchpad). That server serves a file or `<dir>/index.html` if one exists, otherwise falls back to `/index.html`, and sends the `render.yaml` CSP as a header.
+  - `curl` on all 8 routes returned each route's own head.
+  - `/does-not-exist` got the home head with no canonical.
+- Built-in browser on the Render-like server:
+  - **375 px light and dark, and 1440 px light and dark:** computed `font-family` is `"Inter Variable", sans-serif` and `document.fonts.check` is true. The only font request is `/assets/inter-latin-wght-normal-*.woff2`, with zero requests to Google Fonts hosts. Horizontal overflow is 0 on every route.
+  - **Client-side navigation across all 8 routes plus a 404:** title, canonical, `og:url` and robots updated each time, with exactly one canonical and no duplicate meta tags.
+  - **CSP:** full loads of all 9 URLs showed no violations, and the Maps embed on `/contact` renders. Control check: an injected inline script and an inline `onerror` handler were both blocked and reported, so the console capture does catch violations.
+  - **Not covered locally:** the Sheets API request under `connect-src`, because there are no Sheets env vars locally. That directive is unchanged.
+- Code review: a fresh reviewer subagent (Opus) read the full diff and built the project in a temporary worktree. Verdict: ready to merge. No Critical or Important findings, and all 5 review-focus items pass.
 
-### Deferred / left
-- Reviewer minors not done: the contract test ignores misspelt *optional* keys (for example `imageURL`), which needs an unknown-key check; CI runs `tsc` twice (`typecheck` and inside `build`), which is harmless; `__dirname` → `import.meta.dirname`.
-- Batch D: prerendering, self-hosted font, collapsing DigitalOutreach THEMES, the remaining shared components.
-- Still open from the reviews and out of this batch: normalisers for Sheets rows (A4–A7), the `as unknown as` casts at Sheets call sites, stale fallback events (D4), `iconPath`/`delay` presentation data in JSON (D6), ESLint/Prettier, in-range dependency bumps (G5), and whether Render should wait for CI before deploying (needs the client's Render dashboard).
+### Deferred minors (from review)
+- `routeHeadsPlugin().writeBundle` file writing has no unit test. Every build exercises it, and it was inspected by hand.
+- No test for the "tag appears twice" branch of `replaceTag`. The missing-tag branch is tested.
+- The build-note HTML comment in `index.html` ships in `dist/`. It's harmless.
+- Carried over from before this batch, not changed: client-side keywords go stale when navigating to a page without keywords; `/privacy-policy` is in the sitemap but noindex; unknown URLs carry a static `index, follow` until NotFound's JS sets noindex.
+
+### Left to do
+- **After the next deploy**, run `curl -sI https://cvoca.org/about`. Expect 200 with no `Location` header. Then run `curl -s https://cvoca.org/about | grep canonical` and expect `https://cvoca.org/about`. This also checks that Cloudflare doesn't normalise the trailing slash. Then try a WhatsApp or LinkedIn preview of `/events`.
+- **True 404s** need a Render dashboard change: limit the rewrite to the known routes, or serve a `404.html`. That needs the client's Render access.
+- **Response headers** (CSP, HSTS, `Cache-Control`, etc.) still need setting in the Render dashboard (setup guide, Part C) or by linking the Blueprint. Only the CSP value was updated here.
+- **D2** (DigitalOutreach THEMES and the remaining UI components) is a separate session.
