@@ -132,6 +132,7 @@ Execution: inline on `main`, no worktree/branch/push; plan approval waived by th
 - A fresh reviewer read the full diff: no Critical or Important findings.
 
 ### Deferred minors / left for later
+The two open items below are tracked in `docs/pending-tasks.md` as X6 (numeric tags) and X5 (owner question).
 - `textList` keeps only text items, so a numeric tag in JSON (`2024`) is dropped, while `text()` accepts numbers elsewhere. Sheets cells are always text and the contract test requires text tags, so nothing hits it today.
 - Ids like `7a`/`7.5` and unpadded `2026-9-5` dates used to slip through and now skip the row (with a warning). This is intended: the docs now name the exact formats.
 - **Question for the owner:** if a Sheets tab has rows but every row is dropped (e.g. a misspelt header), the section shows empty rather than the JSON fallback. Treating "all rows dropped" as a failure in `fetchWithFallback` would show the fallback instead. That is a product decision, so it is left as is.

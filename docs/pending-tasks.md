@@ -33,6 +33,8 @@ Tick each box as you go. When you finish, send the completed checklist at the en
 | 8 | Both | **Testing** T4 |
 | 9 | Developer, about one week later | **Developer** X3 |
 | 10 | Developer, any time | **Developer** X4 (done in code, 2026-10-29) |
+| 11 | Developer, with the account owner's answer | **Developer** X5 |
+| 12 | Developer, any time | **Developer** X6 |
 
 ---
 
@@ -221,6 +223,21 @@ Done in code (2026-10-29): `tests/interactions.test.tsx` runs in jsdom and cover
 
 - [x] Interaction tests added
 
+### X5. Decide what a Sheet tab with only unreadable rows shows (needs the account owner's answer)
+Since Batch E, the site skips any Sheet row with a missing required value or an unreadable date (see `docs/editing-content.md`). If **every** row in a tab is skipped, for example because a column header was misspelt or renamed, that section (Events, the committee lists, the reports, the past presidents) shows as empty. It does not switch to the JSON fallback, which only takes over when the Sheet can't be reached.
+
+Ask the account owner which they prefer:
+- **Keep as is:** an empty section makes the mistake obvious, and the editor fixes the Sheet.
+- **Show the fallback:** visitors see the (possibly older) JSON content until the Sheet is fixed. In code: in `utils/fetchWithFallback.ts`, treat "the Sheet had rows but none survived the checks" as a failure, and add a test for it.
+
+- [ ] Decision recorded: keep as is / show the fallback
+- [ ] Code changed if needed
+
+### X6. Accept numbers as event tags in the JSON (any time, minor)
+In `utils/normalize.ts`, `textList` keeps only text items, so a tag written as a number in `events.json` (`2024` rather than `"2024"`) is silently dropped. Other fields accept a number and treat it as text. Nothing triggers this today: Sheet cells are always text, and the data-contract test requires text tags in the JSON. To make it consistent, run each list item through `text()` and add a test case to `tests/normalize.test.ts`.
+
+- [ ] Numeric tags kept as text
+
 ### Planned later: Google Sheet read at build time
 The developer plans to move the Google Sheet reading **out of the browser** and into the website build. Visitors' browsers would then never see the key. When that happens:
 
@@ -314,6 +331,8 @@ Developer
 [x] X2 render.yaml catch-all removed
 [ ] X3 CSP enforced (one week after R1)
 [x] X4 Interaction tests for show/hide controls
+[ ] X5 Sheet tab with only unreadable rows: keep empty / show fallback (owner's choice: ____)
+[ ] X6 Numeric event tags accepted
 
 Testing
 [ ] T1 Events and About pages show Sheet data
