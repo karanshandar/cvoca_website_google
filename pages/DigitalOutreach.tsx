@@ -55,7 +55,7 @@ export const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick:
                 type="button"
                 onClick={() => onImageClick(initiative.image)}
                 aria-label={`View image for ${initiative.title}`}
-                className="lg:w-5/12 relative min-h-[350px] lg:min-h-full cursor-pointer group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                className="lg:w-5/12 relative min-h-[350px] lg:min-h-full cursor-pointer group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:focus-visible:ring-primary-light"
             >
                 <img src={getOptimizedImageUrl(initiative.image, ImageSizePresets.EVENT_CARD)} alt={initiative.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent lg:bg-black/10"></div>
@@ -91,7 +91,7 @@ export const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick:
                     {shouldTruncate && (
                         <button
                             {...triggerProps}
-                            className="mt-2 text-sm font-bold text-primary dark:text-primary-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded"
+                            className="mt-2 text-sm font-bold text-primary dark:text-primary-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light focus-visible:rounded"
                         >
                             {isExpanded ? "Read Less" : "Read More"}
                         </button>

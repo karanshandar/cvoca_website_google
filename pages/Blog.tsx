@@ -22,7 +22,7 @@ const ActionCard: React.FC<{
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:focus-visible:ring-primary-light dark:focus-visible:ring-offset-background-dark"
         >
             <Card interactive padding="xl" className="relative overflow-hidden flex flex-col h-full">
             <div className={`absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500`}>

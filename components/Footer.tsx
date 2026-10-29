@@ -10,7 +10,7 @@ const SocialIcon: React.FC<{ href: string, path: string, name: string }> = ({ hr
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex p-2.5 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="inline-flex p-2.5 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
         aria-label={name}
     >
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

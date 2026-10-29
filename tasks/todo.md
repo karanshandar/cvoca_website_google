@@ -132,3 +132,38 @@ No Tailwind hue outside the brand ramps is left. These remain, on purpose:
 - Site-wide: `focus-visible:ring-primary` on dark surfaces (Header, buttons, social icons, Events controls) is ~2.8:1. This batch fixed only the footer and Contact text links; a `dark:focus-visible:ring-primary-light` sweep (or a shared focus utility) would fix the rest.
 - Still open from the design review, outside this batch: the Events Clear button has only the browser's default focus outline, not the branded ring, Membership hero density (§8 #13), and migrating pages to `text-h1`… (optional).
 - X5 (owner question) is unchanged.
+
+---
+
+# Batch G: dark-mode focus rings ≥ 3:1
+
+## Status: DONE (2026-10-29). Committed on `main`, not pushed.
+
+`focus-visible:ring-primary` (#2563eb) is ~2.8:1 on `card-dark` / `background-dark`. Rings with `ring-offset-2` also show the default **white** offset in dark mode, so a `primary-light` ring would sit 2.5:1 against that white band.
+
+## Plan
+- [x] `index.css`: `.btn-primary`, `.btn-secondary`, `.btn-outline` add `dark:focus-visible:ring-primary-light dark:focus-visible:ring-offset-background-dark` (one shared fix for every `<Button>`). `.btn-on-primary*` use a white ring on a primary band: unchanged.
+- [x] Call sites with `ring-primary` (no offset): add `dark:focus-visible:ring-primary-light`. About (3), DigitalOutreach (2), Events (2), Footer social icon, Header theme toggle + menu button.
+- [x] Call sites with `ring-offset-2`: also add `dark:focus-visible:ring-offset-background-dark`. Home (2), Blog, Header nav links + logo.
+- [x] `ring-primary/50` controls (Events filter selects + Filters button, `SearchInput`): add `dark:focus-visible:ring-primary-light`.
+- [x] Events "Clear": add the branded ring (`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light`).
+- [x] Light mode unchanged; no copy changes. `ImageLightbox` / `Modal` already use `ring-white` on a dark overlay.
+- [x] Verify in-page (dark): each ring's colour vs its surface ≥ 3:1; then lint, typecheck, test, build; record and commit.
+
+## Review
+### What changed
+- `index.css`: `.btn-primary`, `.btn-secondary` and `.btn-outline` get `dark:focus-visible:ring-primary-light dark:focus-visible:ring-offset-background-dark`, so every `<Button>` of those variants is fixed in one place.
+- 8 call sites with `ring-offset-2` (Home ×2, Blog, Header nav links + logo) get the same pair. In dark mode the 2px offset band is now `background-dark` instead of white.
+- 10 call sites with a plain `ring-primary` (About ×3, DigitalOutreach ×2, Events ×2, Footer social icons, Header theme toggle + menu button) and 5 with `ring-primary/50` (Events Filters button + 3 selects, `SearchInput`) get `dark:focus-visible:ring-primary-light`.
+- Events "Clear" now has the branded ring (it had only the browser default).
+- Light mode and copy unchanged. `.btn-on-primary*`, `ImageLightbox` and `Modal` (white rings) unchanged.
+
+### Verification
+- In-page script (dark mode, real keyboard focus so `:focus-visible` matches): read each ring's `--tw-ring-color` / offset colour and composited the background behind it. Home, About, Events (incl. Clear, filters, event cards with "All" selected), Blog, Contact, DigitalOutreach and Membership: every ring ≥ 5.75:1 (`#60a5fa` on `card-dark` 5.75, on the filters panel 5.89, on `background-dark` 7.02; offset band 7.02). `.btn-on-primary` white ring on primary: 5.17.
+- Light mode spot check (Events): ring `#2563eb`, offset `#fff`, filters `primary/50`, as before.
+- `npm run lint`, `npm run typecheck`, `npm test` (9 files, 144 tests), `npm run build`: all pass.
+
+### Not covered
+- Blog cards did not render in dev (no data); they use the same class string as the Home cards, which measured 7.02.
+- Event flyer and DigitalOutreach video rings are `ring-inset` over images; contrast there depends on the image and was measured only against the page colour.
+- Light mode still has `ring-primary/50` on the Events filters/search (blended ≈ `#92b1f5`, under 3:1 on `gray-50`) and `ring-primary` over the dark hero header; out of scope (light mode kept unchanged).

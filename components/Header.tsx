@@ -40,7 +40,7 @@ const NavLinks: React.FC<{onLinkClick?: () => void, mobile?: boolean, onDark?: b
         { name: 'Contact', path: '/contact' }
     ];
 
-    const baseClass = "transition-all duration-200 block rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
+    const baseClass = "transition-all duration-200 block rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:focus-visible:ring-primary-light dark:focus-visible:ring-offset-background-dark";
     const activeClass = "text-white bg-primary font-semibold shadow-md";
     
     // Determine inactive class based on context
@@ -76,7 +76,7 @@ const ThemeToggle: React.FC<{ theme: string; toggleTheme: () => void; }> = ({ th
     <button 
       onClick={toggleTheme} 
       type="button"
-      className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
         {theme === 'dark' ? (
@@ -160,7 +160,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
             : 'top-0 left-0 w-full bg-transparent py-6 px-4 sm:px-6 lg:px-8'}`}>
         
         <div className="flex items-center justify-between w-full">
-            <NavLink to="/" onClick={() => setIsOpen(false)} aria-label="CVOCA home" className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+            <NavLink to="/" onClick={() => setIsOpen(false)} aria-label="CVOCA home" className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:focus-visible:ring-primary-light dark:focus-visible:ring-offset-background-dark">
                 <HeaderLogo textColorClass={textColorClass} onDark={onDarkHero} />
             </NavLink>
             
@@ -181,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
                 <button 
                   type="button"
                   onClick={() => setIsOpen(!isOpen)}
-                  className={`p-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors ${onDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                  className={`p-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light transition-colors ${onDarkHero ? 'text-white hover:bg-white/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
                   aria-label={isOpen ? 'Close menu' : 'Open menu'}
                   aria-expanded={isOpen}
                   aria-controls="mobile-menu"

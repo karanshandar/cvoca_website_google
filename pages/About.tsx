@@ -24,7 +24,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
         role="tab"
         aria-selected={active}
         onClick={onClick}
-        className={`flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm leading-tight sm:leading-normal font-bold rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all duration-300 ${active ? 'bg-primary text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-gray-700'
+        className={`flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm leading-tight sm:leading-normal font-bold rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light transition-all duration-300 ${active ? 'bg-primary text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-gray-700'
             }`}
     >
         {children}
@@ -65,7 +65,7 @@ const SortableHeader: React.FC<{
             <button
                 type="button"
                 onClick={() => onSort(column)}
-                className={`group w-full px-6 py-4 flex items-center gap-2 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary ${align === 'center' ? 'justify-center' : 'justify-start'}`}
+                className={`group w-full px-6 py-4 flex items-center gap-2 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:focus-visible:ring-primary-light ${align === 'center' ? 'justify-center' : 'justify-start'}`}
             >
                 {label}
                 {!isActive ? (
@@ -113,7 +113,7 @@ export const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committ
             <h3>
             <button
                 {...triggerProps}
-                className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                className="w-full px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-left transition-colors bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:focus-visible:ring-primary-light"
             >
                 <span className="flex-1 text-lg font-bold text-gray-900 dark:text-white">{committee.name}</span>
 

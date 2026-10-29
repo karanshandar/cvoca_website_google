@@ -80,7 +80,7 @@ export const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) 
                         type="button"
                         onClick={() => onImageClick(event.imageUrl!)}
                         aria-label={`View flyer for ${event.title}`}
-                        className="block w-full h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                        className="block w-full h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:focus-visible:ring-primary-light"
                     >
                         {/* Blurred copy of the flyer fills the 3:4 box, so the uncropped flyer has no letterbox bands */}
                         <img
@@ -199,7 +199,7 @@ export const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) 
                             {!isExpanded && <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white dark:from-slate-800 to-transparent pointer-events-none"></div>}
                             <button
                                 {...triggerProps}
-                                className="text-primary dark:text-primary-light text-xs font-bold hover:text-primary-dark dark:hover:text-primary-300 flex items-center gap-1 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded transition-colors duration-200"
+                                className="text-primary dark:text-primary-light text-xs font-bold hover:text-primary-dark dark:hover:text-primary-300 flex items-center gap-1 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light focus-visible:rounded transition-colors duration-200"
                             >
                                 {isExpanded ? 'Collapse' : 'Expand'}
                                 <Icon name="chevron-down" className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'group-hover/btn:translate-y-0.5'}`} />
@@ -374,7 +374,7 @@ const Events: React.FC = () => {
                                 {hasActiveFilters && (
                                     <button
                                         onClick={clearFilters}
-                                        className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-danger-700 dark:text-danger-light bg-danger-50 dark:bg-danger/20 hover:bg-danger-100 dark:hover:bg-danger/30 rounded-full transition-all"
+                                        className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-danger-700 dark:text-danger-light bg-danger-50 dark:bg-danger/20 hover:bg-danger-100 dark:hover:bg-danger/30 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
                                         title="Remove all filters"
                                     >
                                         <span>Clear</span>
@@ -393,7 +393,7 @@ const Events: React.FC = () => {
 
                                 <button
                                     {...filtersTriggerProps}
-                                    className="md:hidden flex items-center justify-between w-full min-h-11 px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-all"
+                                    className="md:hidden flex items-center justify-between w-full min-h-11 px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-primary-light focus-visible:border-primary transition-all"
                                 >
                                     <span>Filters{selectFilterCount > 0 ? ` (${selectFilterCount})` : ''}</span>
                                     <Icon name="chevron-down" className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`} />
@@ -407,7 +407,7 @@ const Events: React.FC = () => {
                                             aria-label="Filter events by time"
                                             value={timeFilter}
                                             onChange={(e) => setTimeFilter(e.target.value)}
-                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer font-medium"
+                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-primary-light focus-visible:border-primary appearance-none transition-all cursor-pointer font-medium"
                                         >
                                             <option value="upcoming">Upcoming Events</option>
                                             <option value="past">Past Events</option>
@@ -423,7 +423,7 @@ const Events: React.FC = () => {
                                             aria-label="Filter events by organizer"
                                             value={organizerFilter}
                                             onChange={(e) => setOrganizerFilter(e.target.value)}
-                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
+                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-primary-light focus-visible:border-primary appearance-none transition-all cursor-pointer"
                                         >
                                             <option value="all">All Organizers</option>
                                             {allOrganizers.filter(org => org !== 'all').map(org => <option key={org} value={org}>{org}</option>)}
@@ -437,7 +437,7 @@ const Events: React.FC = () => {
                                             aria-label="Filter events by tag"
                                             value={tagFilter}
                                             onChange={(e) => setTagFilter(e.target.value)}
-                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
+                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-primary-light focus-visible:border-primary appearance-none transition-all cursor-pointer"
                                         >
                                             {allTags.map(tag => <option key={tag} value={tag} className="capitalize">{tag === 'all' ? 'All Tags' : tag}</option>)}
                                         </select>
