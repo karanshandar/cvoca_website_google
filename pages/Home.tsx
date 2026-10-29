@@ -106,7 +106,7 @@ const OutreachCompactCard: React.FC<{ initiative: OutreachInitiative }> = ({ ini
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{initiative.title}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 flex-grow">{initiative.description}</p>
             <Link to="/digital-outreach" className="text-primary dark:text-primary-light text-sm font-bold hover:text-primary-dark dark:hover:text-primary-300 inline-flex items-center mt-auto">
-                Learn more <Icon name="arrow-right" className="w-4 h-4 ml-1" />
+                Learn more<span className="sr-only"> about {initiative.title}</span> <Icon name="arrow-right" className="w-4 h-4 ml-1" />
             </Link>
         </div>
     </Card>
@@ -184,7 +184,7 @@ const Home: React.FC = () => {
             {/* President's Message Strip */}
             <section className="relative w-full py-12 mt-16 mb-12 overflow-hidden">
                 {/* Background with gradient and pattern */}
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-50/80 via-white to-blue-50/80 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 border-y border-cyan-100/50 dark:border-slate-700"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-secondary-50/80 via-white to-primary-50/80 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 border-y border-secondary-100/50 dark:border-slate-700"></div>
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#2563eb 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -285,30 +285,28 @@ const Home: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {/* Static Compliance Calendar Card - First Position */}
-                        <a href="https://blog.cvoca.org/category/karvera-na-ata-pata-monthly-planner/" target="_blank" rel="noopener noreferrer" className="block h-full group">
-                            <div className="flex flex-col bg-gradient-to-br from-cyan-50 to-teal-50 dark:from-cyan-950/30 dark:to-teal-950/30 rounded-2xl shadow-lg overflow-hidden border border-cyan-200 dark:border-cyan-800 hover:shadow-2xl hover:border-cyan-400/50 transition-all duration-300 transform hover:-translate-y-1 h-full relative">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-200/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                        <a href="https://blog.cvoca.org/category/karvera-na-ata-pata-monthly-planner/" target="_blank" rel="noopener noreferrer" className="block h-full group rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+                            <div className="flex flex-col bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/30 dark:to-secondary-900/30 rounded-2xl shadow-lg overflow-hidden border border-primary-100 dark:border-primary-800 hover:shadow-2xl hover:border-primary/30 transition-all duration-300 transform hover:-translate-y-1 h-full relative">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-primary-200/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                                 {/* Card Header */}
-                                <div className="p-4 border-b border-cyan-100 dark:border-cyan-800/50 flex justify-between items-center bg-white/30 dark:bg-black/10 backdrop-blur-sm">
-                                    <span className="inline-block px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-cyan-100 text-cyan-800 dark:bg-cyan-900/50 dark:text-cyan-200 border border-cyan-200 dark:border-cyan-800">
-                                        Monthly Resource
-                                    </span>
-                                    <Icon name="calendar" className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                                <div className="p-4 border-b border-primary-100 dark:border-primary-800/50 flex justify-between items-center bg-white/30 dark:bg-black/10 backdrop-blur-sm">
+                                    <Badge>Monthly Resource</Badge>
+                                    <Icon name="calendar" className="w-5 h-5 text-primary dark:text-primary-light" />
                                 </div>
                                 {/* Content */}
                                 <div className="p-6 flex-grow flex flex-col relative z-10">
                                     <div className="mb-4">
-                                        <span className="text-xs font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wide mb-1 block">
+                                        <span className="text-xs font-bold text-primary-700 dark:text-primary-300 uppercase tracking-wide mb-1 block">
                                             Karvera Na Ata Pata
                                         </span>
-                                        <h3 className="text-xl font-extrabold text-gray-900 dark:text-white leading-tight group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
+                                        <h3 className="text-xl font-extrabold text-gray-900 dark:text-white leading-tight group-hover:text-primary-700 dark:group-hover:text-primary-light transition-colors">
                                             Compliance Calendar
                                         </h3>
                                     </div>
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mb-6 flex-grow leading-relaxed font-medium">
                                         Stay ahead of statutory due dates for Income Tax, GST, and ROC.
                                     </p>
-                                    <span className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white text-sm font-bold rounded-xl shadow-md shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group-hover:shadow-lg">
+                                    <span className="w-full py-3 bg-primary group-hover:bg-primary-dark text-white text-sm font-bold rounded-full shadow-md transition-all flex items-center justify-center gap-2 group-hover:shadow-lg">
                                         View Deadlines
                                         <Icon name="arrow-long-right" className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                     </span>
