@@ -20,7 +20,7 @@ const SocialIcon: React.FC<{ href: string, path: string, name: string }> = ({ hr
 );
 
 // Footer text links: padded for tapping, primary on hover, branded focus ring
-const LINK_CLASS = 'inline-block py-1 hover:text-primary dark:hover:text-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded';
+const LINK_CLASS = 'inline-block py-1 hover:text-primary dark:hover:text-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light focus-visible:rounded';
 
 const Footer: React.FC = () => {
     const [contactData, setContactData] = useState<ContactData | null>(null);

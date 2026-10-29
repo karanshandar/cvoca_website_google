@@ -28,7 +28,7 @@ const InfoCard: React.FC<{ icon: React.ReactNode; label: string; value: string; 
             <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{label}</p>
             <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-white leading-snug break-words">
                 {href ? (
-                    <a href={href} className="hover:text-primary dark:hover:text-primary-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded">{value}</a>
+                    <a href={href} className="hover:text-primary dark:hover:text-primary-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light focus-visible:rounded">{value}</a>
                 ) : value}
             </p>
         </div>
