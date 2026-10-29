@@ -154,11 +154,13 @@ Execution: inline on `main`, no worktree/branch/push; plan approval waived by th
 - Final review: fresh reviewer on `0f37c22..f297706`. Critical 0, Important 0, verdict "Ready to merge: Yes". The six minors are listed below.
 
 ### What's left
-- Reviewer minors (deferred):
-  - CoordinatorPill keeps the dead dark-card hover classes (`hover:bg-white/5`), so coordinator links have no visible hover.
-  - `Button` allows `disabled` together with `to`/`href` in its types and ignores it there.
-  - DESIGN.md documents only the light `button-disabled` pair.
-  - Tests don't cover href + disabled, IconTile's hover class, or toggling (no jsdom).
+- Reviewer minors: fixed in a follow-up commit (2026-10-29):
+  - CoordinatorPill hover is `hover:bg-gray-50 dark:hover:bg-slate-700/50`; the dead white/5 classes are gone.
+  - `Button` props are a union: `disabled` only exists on the native-button form. A `@ts-expect-error` test pins this (RED on typecheck first).
+  - DESIGN.md adds `button-disabled-dark`; lint is still 0 errors / 39 warnings.
+  - The new IconTile hover-class test pins existing behaviour, so it passed on first run.
+  - Toggle tests need jsdom (a new dev dependency). Moved to `docs/pending-tasks.md` as Developer X4.
+  - Checks: typecheck 0, `npm test` 81/81, build 0, status clean; coordinator-link hover checked in the browser.
 - Contrast items outside this batch: the Home compliance card (cyan/teal "View Deadlines" ≈ 2.4:1), the off-brand Events meta tiles (rose/emerald) and fallback gradients, and the Outreach page background `dark:bg-slate-950`.
 - Recorded follow-up: expose type tokens in Tailwind and restrict `borderRadius` to the four-step scale (review §8 item 10). This was out of scope here.
 - `.claude/launch.json` stays untracked.

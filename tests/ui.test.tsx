@@ -62,6 +62,10 @@ describe('IconTile', () => {
     const html = render(<IconTile><svg /></IconTile>);
     expect(html).toContain('w-14 h-14 rounded-xl bg-primary/10');
   });
+
+  it('fills with primary when its group is hovered', () => {
+    expect(render(<IconTile><svg /></IconTile>)).toContain('group-hover:bg-primary group-hover:text-white');
+  });
 });
 
 describe('Button', () => {
@@ -70,6 +74,16 @@ describe('Button', () => {
     expect(html).toMatch(/^<button[^>]*disabled=""/);
     expect(html).toContain('btn-disabled');
     expect(html).not.toContain('btn-primary');
+  });
+
+  it('only allows disabled on the native button, not on links', () => {
+    // A disabled link would still navigate, so the props type forbids it.
+    // @ts-expect-error disabled is not allowed together with href
+    const link = <Button href="https://example.com" disabled>Register</Button>;
+    // @ts-expect-error disabled is not allowed together with to
+    const route = <Button to="/events" disabled>Events</Button>;
+    expect(link).toBeTruthy();
+    expect(route).toBeTruthy();
   });
 
   it('has on-colour variants for primary-coloured bands', () => {

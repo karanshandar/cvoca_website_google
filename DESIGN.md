@@ -146,6 +146,10 @@ components:
     backgroundColor: "#f3f4f6"
     textColor: "#4b5563"
     rounded: "{rounded.full}"
+  button-disabled-dark:
+    backgroundColor: "#334155"
+    textColor: "#d1d5db"
+    rounded: "{rounded.full}"
   card:
     backgroundColor: "{colors.card-light}"
     textColor: "{colors.text-light}"
@@ -296,7 +300,8 @@ whether it sits over a dark or light hero.
   `rounded-full`, bold, `px-6 py-3`, `shadow-md` → `shadow-lg` on hover.
   `button-outline` is a white/`card` surface with a gray border that fills with
   `primary` on hover. `size="sm"` keeps a 44px tap target. `disabled` renders a
-  native disabled button in muted gray (`button-disabled`).
+  native disabled button in muted gray (`button-disabled`, `button-disabled-dark`).
+  Only the native button can be disabled; links cannot.
 - **On-colour buttons** (`variant="onPrimary"` / `"onPrimaryOutline"`,
   `.btn-on-primary*`): only for a `bg-primary` band, where the normal variants
   disappear. `onPrimary` is white with `primary-700` text (6.7:1) for the main

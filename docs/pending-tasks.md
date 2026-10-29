@@ -32,6 +32,7 @@ Tick each box as you go. When you finish, send the completed checklist at the en
 | 7 | Account owner, with developer | **Render** R3 |
 | 8 | Both | **Testing** T4 |
 | 9 | Developer, about one week later | **Developer** X3 |
+| 10 | Developer, any time | **Developer** X4 |
 
 ---
 
@@ -213,6 +214,11 @@ If the browser console shows no "Content Security Policy" reports on any page, r
 
 - [ ] CSP switched from Report-Only to enforced
 
+### X4. Interaction tests for show/hide controls (any time, no account needed)
+The unit tests run without a browser environment, so they only check how components first render. Toggling is not tested automatically: the About accordion, the "View Archive" toggle, the Events "Expand" text and the Outreach "Read More" all use `hooks/useDisclosure.ts`, and they were checked by hand in the browser (Batch D2). To cover them, add `jsdom` and `@testing-library/react` as dev dependencies and write tests that click and press Enter/Space, then check that `aria-expanded` flips and the accordion body's `inert` follows.
+
+- [ ] Interaction tests added
+
 ### Planned later: Google Sheet read at build time
 The developer plans to move the Google Sheet reading **out of the browser** and into the website build. Visitors' browsers would then never see the key. When that happens:
 
@@ -305,6 +311,7 @@ Developer
 [ ] X1 dist/404.html deployed (built in code: done)
 [x] X2 render.yaml catch-all removed
 [ ] X3 CSP enforced (one week after R1)
+[ ] X4 Interaction tests for show/hide controls
 
 Testing
 [ ] T1 Events and About pages show Sheet data
