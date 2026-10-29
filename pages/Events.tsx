@@ -25,21 +25,23 @@ import ImageLightbox from '../components/ui/ImageLightbox';
 import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
 
-// Gradient mapping based on committee/id for fallback visuals
+// Brand gradients for events without a flyer, picked by id. Each is dark enough
+// for the white initial (large text, at least 3:1).
 const getFallbackGradient = (id: number) => {
     const gradients = [
-        "from-blue-600 to-indigo-700",
-        "from-emerald-500 to-teal-700",
-        "from-orange-500 to-red-600",
-        "from-purple-600 to-fuchsia-700",
-        "from-cyan-500 to-blue-600",
-        "from-pink-500 to-rose-600"
+        "from-primary-600 to-primary-900",
+        "from-secondary-700 to-primary-800",
+        "from-primary-700 to-secondary-800",
+        "from-accent to-primary-800",
+        "from-secondary-600 to-primary-700",
+        "from-primary-800 to-secondary-900"
     ];
     return gradients[id % gradients.length];
 };
 
-const IconWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-    <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl shadow-sm border border-black/5 ${className}`}>
+// Time, Location and Entry Fee share one primary tile: none of them is a status.
+const IconWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl shadow-sm border bg-primary-50 text-primary border-primary-100 dark:bg-primary-900/20 dark:text-primary-light dark:border-primary-800">
         {children}
     </div>
 );
@@ -80,12 +82,21 @@ export const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) 
                         aria-label={`View flyer for ${event.title}`}
                         className="block w-full h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
                     >
+                        {/* Blurred copy of the flyer fills the 3:4 box, so the uncropped flyer has no letterbox bands */}
+                        <img
+                            src={getOptimizedImageUrl(event.imageUrl, ImageSizePresets.EVENT_CARD)}
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                            decoding="async"
+                            className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl opacity-60"
+                        />
                         <img
                             src={getOptimizedImageUrl(event.imageUrl, ImageSizePresets.EVENT_CARD)}
                             alt={event.title}
                             loading="lazy"
                             decoding="async"
-                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                            className="relative w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                         />
                         {/* Zoom overlay hint */}
                         <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all duration-300 flex items-center justify-center">
@@ -139,7 +150,7 @@ export const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) 
                 {/* Meta Info */}
                 <div className="space-y-4 mb-6">
                     <div className="flex items-start gap-4">
-                        <IconWrapper className="bg-primary-50 text-primary dark:bg-primary-900/20 dark:text-primary-light border-primary-100 dark:border-primary-800">
+                        <IconWrapper>
                             <Icon name="clock" className="w-5 h-5" />
                         </IconWrapper>
                         <div className="flex-1 py-0.5 min-w-0">
@@ -149,7 +160,7 @@ export const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) 
                     </div>
 
                     <div className="flex items-start gap-4">
-                        <IconWrapper className="bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 border-rose-100 dark:border-rose-800">
+                        <IconWrapper>
                             <Icon name="location" className="w-5 h-5" />
                         </IconWrapper>
                         <div className="flex-1 py-0.5 min-w-0">
@@ -161,7 +172,7 @@ export const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) 
                     {/* Cost Block - Moved inside Meta Info for better flow */}
                     {event.fullPricing && (
                         <div className="flex items-start gap-4">
-                            <IconWrapper className="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800">
+                            <IconWrapper>
                                 {/* Ticket Icon - Outlined */}
                                 <Icon name="ticket" className="w-5 h-5" />
                             </IconWrapper>
@@ -310,6 +321,9 @@ const Events: React.FC = () => {
     };
 
     const hasActiveFilters = searchTerm !== '' || organizerFilter !== 'all' || tagFilter !== 'all' || timeFilter !== 'upcoming';
+    // Below md the select filters sit behind a disclosure; its label counts the ones in use
+    const selectFilterCount = [organizerFilter !== 'all', tagFilter !== 'all', timeFilter !== 'upcoming'].filter(Boolean).length;
+    const { open: filtersOpen, panelId: filtersPanelId, triggerProps: filtersTriggerProps } = useDisclosure();
 
     // Event schema covers the next 10 upcoming events, whatever the visitor's filters,
     // so past events are never marked as scheduled
@@ -360,7 +374,7 @@ const Events: React.FC = () => {
                                 {hasActiveFilters && (
                                     <button
                                         onClick={clearFilters}
-                                        className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-danger-700 dark:text-danger-light bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full transition-all"
+                                        className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-danger-700 dark:text-danger-light bg-danger-50 dark:bg-danger/20 hover:bg-danger-100 dark:hover:bg-danger/30 rounded-full transition-all"
                                         title="Remove all filters"
                                     >
                                         <span>Clear</span>
@@ -377,48 +391,59 @@ const Events: React.FC = () => {
                                     onChange={setSearchTerm}
                                 />
 
-                                {/* Time Filter */}
-                                <div className="relative">
-                                    <select
-                                        aria-label="Filter events by time"
-                                        value={timeFilter}
-                                        onChange={(e) => setTimeFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer font-medium"
-                                    >
-                                        <option value="upcoming">Upcoming Events</option>
-                                        <option value="past">Past Events</option>
-                                        <option value="all">All Events</option>
-                                    </select>
-                                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <Icon name="calendar" className="h-5 w-5 text-gray-400" />
-                                    </div>
-                                </div>
+                                <button
+                                    {...filtersTriggerProps}
+                                    className="md:hidden flex items-center justify-between w-full min-h-11 px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-all"
+                                >
+                                    <span>Filters{selectFilterCount > 0 ? ` (${selectFilterCount})` : ''}</span>
+                                    <Icon name="chevron-down" className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`} />
+                                </button>
 
-                                <div className="relative">
-                                    <select
-                                        aria-label="Filter events by organizer"
-                                        value={organizerFilter}
-                                        onChange={(e) => setOrganizerFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
-                                    >
-                                        <option value="all">All Organizers</option>
-                                        {allOrganizers.filter(org => org !== 'all').map(org => <option key={org} value={org}>{org}</option>)}
-                                    </select>
-                                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <Icon name="chevron-down" className="h-5 w-5 text-gray-400" />
+                                {/* Select filters: a disclosure panel below md; md:contents puts them straight into the grid above */}
+                                <div id={filtersPanelId} className={`${filtersOpen ? 'grid' : 'hidden'} grid-cols-1 gap-6 md:contents`}>
+                                    {/* Time Filter */}
+                                    <div className="relative">
+                                        <select
+                                            aria-label="Filter events by time"
+                                            value={timeFilter}
+                                            onChange={(e) => setTimeFilter(e.target.value)}
+                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer font-medium"
+                                        >
+                                            <option value="upcoming">Upcoming Events</option>
+                                            <option value="past">Past Events</option>
+                                            <option value="all">All Events</option>
+                                        </select>
+                                        <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <Icon name="calendar" className="h-5 w-5 text-gray-400" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="relative">
-                                    <select
-                                        aria-label="Filter events by tag"
-                                        value={tagFilter}
-                                        onChange={(e) => setTagFilter(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
-                                    >
-                                        {allTags.map(tag => <option key={tag} value={tag} className="capitalize">{tag === 'all' ? 'All Tags' : tag}</option>)}
-                                    </select>
-                                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <Icon name="tag" className="h-5 w-5 text-gray-400" />
+
+                                    <div className="relative">
+                                        <select
+                                            aria-label="Filter events by organizer"
+                                            value={organizerFilter}
+                                            onChange={(e) => setOrganizerFilter(e.target.value)}
+                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
+                                        >
+                                            <option value="all">All Organizers</option>
+                                            {allOrganizers.filter(org => org !== 'all').map(org => <option key={org} value={org}>{org}</option>)}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <Icon name="chevron-down" className="h-5 w-5 text-gray-400" />
+                                        </div>
+                                    </div>
+                                    <div className="relative">
+                                        <select
+                                            aria-label="Filter events by tag"
+                                            value={tagFilter}
+                                            onChange={(e) => setTagFilter(e.target.value)}
+                                            className="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary appearance-none transition-all cursor-pointer"
+                                        >
+                                            {allTags.map(tag => <option key={tag} value={tag} className="capitalize">{tag === 'all' ? 'All Tags' : tag}</option>)}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <Icon name="tag" className="h-5 w-5 text-gray-400" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
