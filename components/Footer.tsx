@@ -19,6 +19,9 @@ const SocialIcon: React.FC<{ href: string, path: string, name: string }> = ({ hr
     </a>
 );
 
+// Footer text links: padded for tapping, primary on hover, branded focus ring
+const LINK_CLASS = 'inline-block py-1 hover:text-primary dark:hover:text-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded';
+
 const Footer: React.FC = () => {
     const [contactData, setContactData] = useState<ContactData | null>(null);
     const [socialData, setSocialData] = useState<SocialMediaData | null>(null);
@@ -65,12 +68,12 @@ const Footer: React.FC = () => {
                     <div>
                         <h3 className="text-sm font-semibold tracking-wider uppercase">Quick Links</h3>
                         <ul className="mt-4 space-y-1">
-                            <li><Link to="/about" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">About</Link></li>
-                            <li><Link to="/membership" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Membership</Link></li>
-                            <li><Link to="/events" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Events</Link></li>
-                            <li><Link to="/blog" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Blog</Link></li>
-                            <li><Link to="/digital-outreach" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Digital Outreach</Link></li>
-                            <li><Link to="/contact" className="inline-block py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light">Contact</Link></li>
+                            <li><Link to="/about" className={`${LINK_CLASS} text-sm text-gray-500 dark:text-gray-400`}>About</Link></li>
+                            <li><Link to="/membership" className={`${LINK_CLASS} text-sm text-gray-500 dark:text-gray-400`}>Membership</Link></li>
+                            <li><Link to="/events" className={`${LINK_CLASS} text-sm text-gray-500 dark:text-gray-400`}>Events</Link></li>
+                            <li><Link to="/blog" className={`${LINK_CLASS} text-sm text-gray-500 dark:text-gray-400`}>Blog</Link></li>
+                            <li><Link to="/digital-outreach" className={`${LINK_CLASS} text-sm text-gray-500 dark:text-gray-400`}>Digital Outreach</Link></li>
+                            <li><Link to="/contact" className={`${LINK_CLASS} text-sm text-gray-500 dark:text-gray-400`}>Contact</Link></li>
                         </ul>
                     </div>
                     {contactData && (
@@ -84,7 +87,7 @@ const Footer: React.FC = () => {
                                         const href = getContactHref(id, value);
                                         return (
                                             <li key={id}>
-                                                {href ? <a href={href} className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">{value}</a> : value}
+                                                {href ? <a href={href} className={LINK_CLASS}>{value}</a> : value}
                                             </li>
                                         );
                                     })}
@@ -96,9 +99,9 @@ const Footer: React.FC = () => {
                 <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                     <p>&copy; {new Date().getFullYear()} CVOCA. All rights reserved.</p>
                     <div className="flex space-x-4 mt-4 md:mt-0">
-                        <Link to="/privacy-policy" className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">Privacy Policy</Link>
-                        <Link to="/contact" className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">Contact</Link>
-                         <Link to="/membership" className="inline-block py-1 hover:text-primary dark:hover:text-primary-light">Membership</Link>
+                        <Link to="/privacy-policy" className={LINK_CLASS}>Privacy Policy</Link>
+                        <Link to="/contact" className={LINK_CLASS}>Contact</Link>
+                         <Link to="/membership" className={LINK_CLASS}>Membership</Link>
                     </div>
                 </div>
             </div>
