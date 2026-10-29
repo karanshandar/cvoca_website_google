@@ -8,8 +8,10 @@ Everything still to do on the live site that can't be done from the code alone, 
 
 **Why it matters:**
 - The website reads its events, committee and president data straight from a Google Sheet, using a Google "API key". That key is visible to anyone who opens the website, which is normal for this setup. But it **must be locked down**, so that nobody can misuse it or run up costs on the CVOCA Google account.
-- The website's security settings are written down in the code (`render.yaml`) but **are not switched on** for the live site.
-- Mistyped addresses still show the home page with a "200 OK" instead of a proper "page not found".
+- The website's security settings are written down in the code (`render.yaml`) but weren't switched on for the live site. **Done 2026-10-29:** entered in the Render dashboard (R1–R3).
+- Mistyped addresses showed the home page with a "200 OK" instead of a proper "page not found". **Fixed 2026-10-29** (R3): they now return 404.
+
+**Still to do (as of 2026-10-29):** the **Google** section (G1–G8) and **Testing** T1, which need the Google account; **Developer** X3 (about 2026-11-05) and X5 (needs the account owner's answer). Optional Render extras skipped for now: Auto-Deploy "After CI Checks Pass" and a deploy hook.
 
 **What you need:**
 - A login to the Google account that owns the CVOCA spreadsheet and Google Cloud project
@@ -26,12 +28,12 @@ Tick each box as you go. When you finish, send the completed checklist at the en
 | 1 | Account owner | **Google** G1–G8 |
 | 2 | Account owner | **Testing** T1 |
 | 3 | Developer | **Developer** X1–X2, then deploy (done, deployed 2026-10-29) |
-| 4 | Account owner, with developer | **Render** R2b, then **Testing** T3 |
-| 5 | Account owner | **Render** R1–R2 |
-| 6 | Both | **Testing** T2 |
-| 7 | Account owner, with developer | **Render** R3 |
-| 8 | Both | **Testing** T4 |
-| 9 | Developer, about one week later | **Developer** X3 |
+| 4 | Account owner, with developer | **Render** R2b, then **Testing** T3 (done, 2026-10-29) |
+| 5 | Account owner | **Render** R1–R2 (done, 2026-10-29) |
+| 6 | Both | **Testing** T2 (done, 2026-10-29) |
+| 7 | Account owner, with developer | **Render** R3 (done, 2026-10-29) |
+| 8 | Both | **Testing** T4 (done, 2026-10-29) |
+| 9 | Developer, about one week later | **Developer** X3 (R1 done 2026-10-29, so about 2026-11-05) |
 | 10 | Developer, any time | **Developer** X4 (done in code, 2026-10-29) |
 | 11 | Developer, with the account owner's answer | **Developer** X5 |
 | 12 | Developer, any time | **Developer** X6 (done in code, 2026-10-29) |
@@ -135,7 +137,11 @@ Anyone who can edit the sheet can change what the website shows, including where
 
 ## Render (account owner, ~25 min)
 
-The code repository contains a file (`render.yaml`) listing these settings, but the live site isn't using it. You can check this yourself: https://securityheaders.com/?q=cvoca.org currently shows most items missing. These steps enter the settings in the Render dashboard directly.
+The code repository contains a file (`render.yaml`) listing these settings, but the live site isn't using it. These steps enter the settings in the Render dashboard directly.
+
+**Done 2026-10-29**, in the order R2b → T3, R2, R1 → T2, R3 → T4. All checks passed.
+
+**Render's cache:** Render's Cloudflare layer keeps each page for up to 5 minutes (`s-maxage=300`) and ignores `?query` strings, so after any change here, pages can show the old version (or old headers) for up to 5 minutes. Wait that long before deciding a step failed. Files nobody has requested recently show the change straight away.
 
 ### R1. Add the security headers
 1. Go to https://dashboard.render.com → open the **cvoca-website** service.
@@ -165,7 +171,9 @@ default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-sr
 - `X-XSS-Protection` is outdated, so leave it out.
 - `preload` is not added to `Strict-Transport-Security`. That would permanently commit every cvoca.org sub-address to HTTPS. Only add it once every subdomain, including email-related ones, is confirmed to use HTTPS.
 
-- [ ] All 7 headers added and saved
+Done 2026-10-29: all 7 headers checked exactly on all 8 pages; `/assets/*` files carry the one-year cache.
+
+- [x] All 7 headers added and saved
 
 ### R2. Check the build command
 1. In **Settings** → **Build & Deploy**, find **Build Command**.
@@ -176,7 +184,9 @@ default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-sr
    If it says `npm install && npm run build`, change it to the line above and save. `npm ci` installs exactly the tested versions of the site's building blocks.
 3. Check that **Publish Directory** is `dist`.
 
-- [ ] Build command is `npm ci && npm run build`
+Done 2026-10-29: it was `npm install; npm run build` (the `;` also ran the build after a failed install). Changed, then redeployed successfully. Publish Directory is `dist`.
+
+- [x] Build command is `npm ci && npm run build`
 
 ### R2b. Add one rewrite per page (with the developer, ~5 min)
 Each page now has its own file with its own title and link preview, for example `about/index.html`. But the live catch-all rule (`/*` → `/index.html`) catches `/about` first and serves the home page file, so links shared without a trailing slash still preview as the home page. Checked on 2026-10-29: `https://cvoca.org/about/` shows "About Us | CVOCA", while `https://cvoca.org/about` shows the home page title.
@@ -200,7 +210,7 @@ These rules stay in place after R3. They make each page's file explicit, so R3 o
 
 **Undo:** delete the 7 rules. The site goes back to how it was.
 
-- [ ] 7 page rewrites added above `/*`
+- [x] 7 page rewrites added above `/*` (2026-10-29)
 
 ### R3. Remove the catch-all rewrite (with the developer)
 Each page of the site now has its own file, so a shared link (WhatsApp, LinkedIn, etc.) shows that page's own title and description. Because of that, the old catch-all rule that sends every address to the home page is no longer needed. Removing it lets mistyped addresses return a proper "page not found", which search engines need.
@@ -214,7 +224,9 @@ Each page of the site now has its own file, so a shared link (WhatsApp, LinkedIn
 
 **Undo:** if any real page shows "Not Found", add the rule back exactly as before (`/*` → `/index.html`, Rewrite) and tell the developer.
 
-- [ ] Catch-all rewrite removed
+Done 2026-10-29. Redirects/Rewrites now holds only the 7 page rules.
+
+- [x] Catch-all rewrite removed
 
 ---
 
@@ -236,6 +248,8 @@ Done in code (2026-10-28). `render.yaml` isn't live until the Blueprint is linke
 - [x] `render.yaml` catch-all removed
 
 ### X3. Switch the CSP to enforced (about one week after R1)
+R1 was done on 2026-10-29, so this is due around **2026-11-05**. On that day, the only CSP message in the console was Chrome noting that `upgrade-insecure-requests` is ignored in Report-Only mode. That's expected, not a violation, and it goes away once the policy is enforced.
+
 If the browser console shows no "Content Security Policy" reports on any page, rename the header in Render from `Content-Security-Policy-Report-Only` to `Content-Security-Policy`, keeping the same value.
 
 - [ ] CSP switched from Report-Only to enforced
@@ -288,8 +302,10 @@ The developer plans to move the Google Sheet reading **out of the browser** and 
 1. Open https://securityheaders.com/?q=cvoca.org and click **Scan**. Most items should now be green. A grade of **A** is expected; the full A+ comes after the CSP is switched from Report-Only to enforced (X3).
 2. Open https://cvoca.org, browse Home, About, Events and Contact (check the map loads), and make sure everything looks normal.
 
-- [ ] securityheaders.com shows the headers
-- [ ] Site browsed and looks normal
+Done 2026-10-29: grade **A**, with only the enforced CSP missing (X3). Home, About, Events and Contact browsed: the map loads, the Sheets request returns 200, and there are no CSP violations. Seen in passing: the `events` Sheet tab row 10 (id 16, 13/8/2026, YouTube Live) has an empty title, so the site skips it. The Sheet editor should fill it in.
+
+- [x] securityheaders.com shows the headers
+- [x] Site browsed and looks normal
 
 ### T3. After R2b (developer)
 First run on 2026-10-29 (code deployed, before R2b): **failed**. `/about`, `/events` and `/membership` returned the home page title. `/events/` (with the slash) returned "Events | CVOCA". Cause: the catch-all rewrite matches first. Run again after R2b:
@@ -301,15 +317,19 @@ curl -s https://cvoca.org/about | grep canonical
 - The second should show `https://cvoca.org/about`.
 - Paste `https://cvoca.org/events` into a WhatsApp or LinkedIn message (without sending it). The preview should say **Events | CVOCA**, not the home page title.
 
-- [ ] Per-page files served without redirect; link preview shows the page's own title
+Second run on 2026-10-29 (after R2b): **passed**. All 7 pages return `200` with no `Location:` line and their own title; `/about` canonical is `https://cvoca.org/about`; `/events` `og:title` is "Events | CVOCA". (Two pages briefly showed the home page title until Render's 5-minute cache expired.)
+
+- [x] Per-page files served without redirect; link preview shows the page's own title
 
 ### T4. After removing the catch-all rewrite (R3)
 1. In a private/incognito window, open each page directly: https://cvoca.org/, `/about`, `/membership`, `/events`, `/blog`, `/digital-outreach`, `/contact`, `/privacy-policy`. Each should load normally, including after pressing refresh.
 2. Open https://cvoca.org/this-page-does-not-exist. It should show the site's "page not found" page.
 3. Developer: `curl -sI https://cvoca.org/this-page-does-not-exist` should now show `404`, not `200`.
 
-- [ ] All 8 pages load directly
-- [ ] Unknown address shows "page not found" (developer: status 404)
+Done 2026-10-29: all 8 pages return `200` with their own titles, including after a reload. Unknown addresses (top-level, nested and under `/assets/`) return `404` with "Page Not Found | CVOCA". `robots.txt`, `sitemap.xml`, the icon and the share image still load. `/favicon.ico` now returns 404; that's correct, since it was never a real file (the site's icon is `/images/logo-light-theme.webp`).
+
+- [x] All 8 pages load directly
+- [x] Unknown address shows "page not found" (developer: status 404)
 
 ---
 
@@ -347,25 +367,26 @@ Google
 [ ] G7 All tabs checked; nothing private left
 [ ] G8 General access = Viewer; editors limited to:
 
-Render
-[ ] R1 Seven headers added
-[ ] R2 Build command = npm ci && npm run build
-[ ] R2b Seven page rewrites added above /* (with developer)
-[ ] R3 Catch-all rewrite removed (with developer)
+Render (done 2026-10-29)
+[x] R1 Seven headers added
+[x] R2 Build command = npm ci && npm run build   (was: npm install; npm run build)
+[x] R2b Seven page rewrites added above /* (with developer)
+[x] R3 Catch-all rewrite removed (with developer)
+[ ] Optional, skipped: Auto-Deploy "After CI Checks Pass"; deploy hook
 
 Developer
 [x] X1 dist/404.html deployed (2026-10-29)
 [x] X2 render.yaml catch-all removed
-[ ] X3 CSP enforced (one week after R1)
+[ ] X3 CSP enforced (one week after R1: about 2026-11-05)
 [x] X4 Interaction tests for show/hide controls
 [ ] X5 Sheet tab with only unreadable rows: keep empty / show fallback (owner's choice: ____)
 [x] X6 Numeric event tags accepted
 
 Testing
 [ ] T1 Events and About pages show Sheet data
-[ ] T2 securityheaders.com grade: ____ ; site browsed, map loads
-[ ] T3 /about served without redirect; link preview shows page title
-[ ] T4 All 8 pages load directly; unknown address shows "page not found" (404)
+[x] T2 securityheaders.com grade: A ; site browsed, map loads
+[x] T3 /about served without redirect; link preview shows page title
+[x] T4 All 8 pages load directly; unknown address shows "page not found" (404)
 
 Notes / problems:
 ```
