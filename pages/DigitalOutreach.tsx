@@ -195,7 +195,7 @@ const DigitalOutreach: React.FC = () => {
     const closeLightbox = useCallback(() => setSelectedImage(null), []);
 
     return (
-        <div className="bg-gray-50 dark:bg-slate-950 min-h-screen font-sans selection:bg-primary/20">
+        <div className="bg-background-light dark:bg-background-dark min-h-screen font-sans selection:bg-primary/20">
             {/* Hero Section */}
             <PageHero
                 eyebrow="CVOCA Initiatives"

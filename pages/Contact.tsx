@@ -68,7 +68,7 @@ const Contact: React.FC = () => {
     ]);
 
     return (
-        <div className="bg-gray-50 dark:bg-background-dark min-h-screen">
+        <div className="bg-background-light dark:bg-background-dark min-h-screen">
             {/* The global Organization schema (App.tsx) already carries the address, phone and hours */}
             <SchemaMarkup schema={[breadcrumbSchema]} />
 
@@ -107,7 +107,7 @@ const Contact: React.FC = () => {
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{contactData.map.title}</h2>
                             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{contactData.map.description}</p>
                         </div>
-                        <div className="relative w-full flex-grow min-h-[400px] rounded-2xl overflow-hidden bg-gray-100 dark:bg-slate-900">
+                        <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:flex-grow lg:min-h-[400px] rounded-2xl overflow-hidden bg-gray-100 dark:bg-slate-900">
                              <iframe
                                 src={contactData.map.embedUrl}
                                 className="absolute inset-0 w-full h-full"
