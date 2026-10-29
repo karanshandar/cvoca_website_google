@@ -35,7 +35,7 @@ const CoordinatorPill: React.FC<{ contact: OutreachContact }> = ({ contact }) =>
     );
 }
 
-const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: string) => void; index: number }> = ({ initiative, onImageClick, index }) => {
+export const BentoCard: React.FC<{ initiative: OutreachInitiative; onImageClick: (url: string) => void; index: number }> = ({ initiative, onImageClick, index }) => {
     const hasStats = initiative.stats && initiative.stats.length > 0;
     const hasContacts = initiative.contacts && initiative.contacts.length > 0;
     // A phone contact named like the CTA (e.g. a helpline) is shown as the main button

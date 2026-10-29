@@ -105,7 +105,7 @@ const CommitteeRoleSection: React.FC<{ title: string; members?: CoreMember[] | C
     );
 };
 
-const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) => {
+export const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) => {
     const { open: isOpen, panelId: bodyId, triggerProps } = useDisclosure();
 
     return (
@@ -157,7 +157,7 @@ const CommitteeAccordion: React.FC<{ committee: Committee }> = ({ committee }) =
     );
 };
 
-const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }) => {
+export const AnnualReportsSection: React.FC<{ reports: AnnualReport[] }> = ({ reports }) => {
     const { open: showAll, panelId: archiveId, triggerProps: archiveToggleProps } = useDisclosure();
 
     if (!reports || reports.length === 0) return null;

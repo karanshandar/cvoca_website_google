@@ -44,7 +44,7 @@ const IconWrapper: React.FC<{ children: React.ReactNode; className?: string }> =
     </div>
 );
 
-const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void }> = ({ event, onImageClick }) => {
+export const EventCard: React.FC<{ event: CvoEvent; onImageClick: (url: string) => void }> = ({ event, onImageClick }) => {
     const { open: isExpanded, panelId: descriptionId, triggerProps } = useDisclosure();
     const [contentHeight, setContentHeight] = useState<string>('4.5em'); // Default roughly 3 lines
     const textRef = useRef<HTMLParagraphElement>(null);
