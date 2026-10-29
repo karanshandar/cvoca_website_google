@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
  * Unmount-safe: ignores results that resolve after the component unmounts.
  * Knows nothing about JSON paths or Google Sheets — pass any async fn,
  * e.g. () => fetch(url).then(r => r.json()) or
- * () => fetchWithFallback(fetchEvents, '/data/events.json').
+ * () => fetchWithFallback(fetchEvents, '/data/events.json', toEvent).
  */
 export default function useFetch<T>(
   fetcher: () => Promise<T>,

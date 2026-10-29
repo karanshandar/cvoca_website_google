@@ -1,6 +1,6 @@
 # Batch E: row checks, interaction tests, ESLint, minor dependency updates
 
-## Status: IN PROGRESS (2026-10-29)
+## Status: DONE (2026-10-29). Committed on `main` in five commits, not pushed. See Review below.
 
 > **For agentic workers:** executed inline with superpowers:executing-plans + superpowers:test-driven-development; steps use `- [ ]` checkboxes.
 
@@ -57,58 +57,82 @@ Execution: inline on `main`, no worktree/branch/push; plan approval waived by th
 - `groupCommitteeMembers(members: CommitteeMemberRow[]): Committee[]`.
 - `fetchWithFallback<T>(primaryFetch: () => Promise<T[]>, fallbackJsonPath: string, toItem: (row: unknown) => T | null): Promise<T[]>`.
 
-- [ ] Before any change: record what the current JSON renders (Home, Events "All", About all tabs + Sr. No. sort desc, DigitalOutreach) in the browser at 1440px, as the baseline.
-- [ ] Write `tests/dates.test.ts` cases for `toIsoDate`: `'2026-09-05'` unchanged; `'5/9/2026'` → `'2026-09-05'`; `'25/12/2026'` → `'2026-12-25'`; `'31/02/2026'`, `'2026-13-01'`, `'5 Sep 2026'`, `'05-09-2026'`, `''` → `null`.
-- [ ] Write `tests/normalize.test.ts`, per normaliser: a valid row returns the expected object; missing optional fields get defaults; each missing required field (and a whitespace-only one) gives `null`; a bad date gives `null` (event, president message); a string id/srNo is coerced (`'7'` → `7`, `'abc'` → event `null` / srNo left out). Plus: tags from a comma string (`'CPE, Taxation,,  GST '` → three tags) and from an array; `isNew` from `'TRUE'`/`'1'`/`'no'`; numeric `year` → text; `toCommittee` defaults lists to `[]`, drops a nameless nested member with a warning; `normalizeRows` keeps valid rows in order, warns once per dropped row with the dataset name and row number, throws on a non-array.
-- [ ] Run `npm test`: the new tests fail (module/function missing).
-- [ ] Implement `toIsoDate` and `utils/normalize.ts`.
-- [ ] Rewire `googleSheets.ts` (remove `convertValue`; move its remaining tests into `normalize.test.ts`; typed wrappers), `fetchWithFallback.ts`, and the three pages; remove every `as unknown as`.
-- [ ] Extend `tests/dataContract.test.ts`: each of the 5 fallback files normalises with no row dropped and each row equal to its source (ignoring `managingCommittee.json`'s unread `email`); `home.json` `presidentDefault` passes `toPresidentMessage`.
-- [ ] Run `npm test` and `npm run typecheck`: pass.
-- [ ] Update `docs/editing-content.md`: rows missing a required value, or with an unreadable date, are left off the site (warning in the browser console); a non-number `id` drops the event.
-- [ ] Commit: `feat(data): normalise Sheets and fallback rows (Batch E)`.
+- [x] Before any change: record what the current JSON renders (Home, Events "All", About all tabs + Sr. No. sort desc, DigitalOutreach) in the browser at 1440px, as the baseline.
+- [x] Write `tests/dates.test.ts` cases for `toIsoDate`: `'2026-09-05'` unchanged; `'5/9/2026'` → `'2026-09-05'`; `'25/12/2026'` → `'2026-12-25'`; `'31/02/2026'`, `'2026-13-01'`, `'5 Sep 2026'`, `'05-09-2026'`, `''` → `null`.
+- [x] Write `tests/normalize.test.ts`, per normaliser: a valid row returns the expected object; missing optional fields get defaults; each missing required field (and a whitespace-only one) gives `null`; a bad date gives `null` (event, president message); a string id/srNo is coerced (`'7'` → `7`, `'abc'` → event `null` / srNo left out). Plus: tags from a comma string (`'CPE, Taxation,,  GST '` → three tags) and from an array; `isNew` from `'TRUE'`/`'1'`/`'no'`; numeric `year` → text; `toCommittee` defaults lists to `[]`, drops a nameless nested member with a warning; `normalizeRows` keeps valid rows in order, warns once per dropped row with the dataset name and row number, throws on a non-array.
+- [x] Run `npm test`: the new tests fail (module/function missing).
+- [x] Implement `toIsoDate` and `utils/normalize.ts`.
+- [x] Rewire `googleSheets.ts` (remove `convertValue`; move its remaining tests into `normalize.test.ts`; typed wrappers), `fetchWithFallback.ts`, and the three pages; remove every `as unknown as`.
+- [x] Extend `tests/dataContract.test.ts`: each of the 5 fallback files normalises with no row dropped and each row equal to its source (ignoring `managingCommittee.json`'s unread `email`); `home.json` `presidentDefault` passes `toPresidentMessage`.
+- [x] Run `npm test` and `npm run typecheck`: pass.
+- [x] Update `docs/editing-content.md`: rows missing a required value, or with an unreadable date, are left off the site (warning in the browser console); a non-number `id` drops the event.
+- [x] Commit: `feat(data): normalise Sheets and fallback rows (Batch E)`.
 
 ## Task 2: X4 interaction tests
 **Files:** create `tests/interactions.test.tsx`; modify `package.json`/lock (dev deps), `pages/About.tsx`, `pages/Events.tsx`, `pages/DigitalOutreach.tsx` (named exports only), `docs/pending-tasks.md`.
 
-- [ ] `npm i -D jsdom@^28 @testing-library/react @testing-library/dom @testing-library/user-event`.
-- [ ] Write `tests/interactions.test.tsx` (`// @vitest-environment jsdom`, `afterEach(cleanup)`), one `describe` per control:
+- [x] `npm i -D jsdom@^28 @testing-library/react @testing-library/dom @testing-library/user-event`.
+- [x] Write `tests/interactions.test.tsx` (`// @vitest-environment jsdom`, `afterEach(cleanup)`), one `describe` per control:
   - `CommitteeAccordion`: button starts `aria-expanded="false"`, body (`#` + `aria-controls`) has `inert`; click → `true`, no `inert`; click again → back; focus + `{Enter}` and `{ }` each flip it.
   - `AnnualReportsSection` (3 reports): "View Archive" `aria-expanded` false, archive grid has class `hidden`; click → true, text "Hide Archive", grid not `hidden`; Enter/Space flip.
   - `EventCard` (description > 120 chars): "Expand" false → click → true and text "Collapse"; Enter/Space flip; short description shows no button.
   - `BentoCard` (description > 250 chars): "Read More" false, text truncated with `...`; click → true, full text, "Read Less"; Enter/Space flip.
-- [ ] Run: fails (components not exported).
-- [ ] Add the named exports. Run `npm test`: all pass, and the node-environment files still run on node.
-- [ ] Mark X4 done in `docs/pending-tasks.md` (section checkbox, suggested-order row, final checklist).
-- [ ] Commit: `test(ui): interaction tests for show/hide controls (Batch E, X4)`.
+- [x] Run: fails (components not exported).
+- [x] Add the named exports. Run `npm test`: all pass, and the node-environment files still run on node.
+- [x] Mark X4 done in `docs/pending-tasks.md` (section checkbox, suggested-order row, final checklist).
+- [x] Commit: `test(ui): interaction tests for show/hide controls (Batch E, X4)`.
 
 ## Task 3: ESLint (minimal)
 **Files:** create `eslint.config.js`; modify `package.json`/lock, `.github/workflows/ci.yml`, `README.md`, any file with real findings.
 
-- [ ] `npm i -D eslint@^9 @eslint/js@^9 typescript-eslint eslint-plugin-react-hooks`.
-- [ ] `eslint.config.js`: ignore `dist`; for `**/*.{ts,tsx}`: `js.configs.recommended`, `tseslint.configs.recommended`, `reactHooks.configs.flat.recommended`.
-- [ ] Add `"lint": "eslint ."`; CI step `npm run lint` after `npm ci`; README scripts table + CI line.
-- [ ] Run `npm run lint`; fix each real finding at its root; disable only with a one-line reason; check the existing `useFetch` comment is a real disable (or remove it if stale).
-- [ ] `npm run lint`, `npm run typecheck`, `npm test`: pass.
-- [ ] Commit: `chore(lint): minimal ESLint with recommended configs (Batch E)`.
+- [x] `npm i -D eslint@^9 @eslint/js@^9 typescript-eslint eslint-plugin-react-hooks`.
+- [x] `eslint.config.js`: ignore `dist`; for `**/*.{ts,tsx}`: `js.configs.recommended`, `tseslint.configs.recommended`, `reactHooks.configs.flat.recommended`.
+- [x] Add `"lint": "eslint ."`; CI step `npm run lint` after `npm ci`; README scripts table + CI line.
+- [x] Run `npm run lint`; fix each real finding at its root; disable only with a one-line reason; check the existing `useFetch` comment is a real disable (or remove it if stale).
+- [x] `npm run lint`, `npm run typecheck`, `npm test`: pass.
+- [x] Commit: `chore(lint): minimal ESLint with recommended configs (Batch E)`.
 
 ## Task 4: Minor dependency updates
 **Files:** `package.json`, `package-lock.json`.
 
-- [ ] `npm update @vitejs/plugin-react autoprefixer postcss react-router-dom tailwindcss @types/node` (if npm 10 hits the arborist bug, `npx npm@11 update …`).
-- [ ] Check versions: plugin-react 5.2.x, tailwindcss 3.4.19, @types/node 22.x, no major changes in `package.json`.
-- [ ] `npm audit` (record the result); `npm ci` from clean; then lint/typecheck/test/build.
-- [ ] Commit: `chore(deps): in-range updates (Batch E)`.
+- [x] `npm update @vitejs/plugin-react autoprefixer postcss react-router-dom tailwindcss @types/node` (if npm 10 hits the arborist bug, `npx npm@11 update …`).
+- [x] Check versions: plugin-react 5.2.x, tailwindcss 3.4.19, @types/node 22.x, no major changes in `package.json`.
+- [x] `npm audit` (record the result); `npm ci` from clean; then lint/typecheck/test/build.
+- [x] Commit: `chore(deps): in-range updates (Batch E)`.
 
 ## Task 5: Verification and review
-- [ ] `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`; `git status` clean after the build.
-- [ ] Browser (dev server, `.claude/launch.json`): all 9 routes at 375 and 1440 px, light and dark; Home, Events, About (all tabs, Sr. No. sort), DigitalOutreach match the baseline; no overflow; no new console errors/warnings.
-- [ ] Break `public/data/events.json` (remove a `title`, set another event's date to `31/02/2026`): Events still renders, one warning per broken row; revert with `git checkout`.
-- [ ] Fresh reviewer subagent on the full Batch E diff (superpowers:requesting-code-review). Fix Critical/Important; fix or record minors.
-- [ ] Fill in the Review section; update `docs/pending-tasks.md`, README.
+- [x] `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`; `git status` clean after the build.
+- [x] Browser (dev server, `.claude/launch.json`): all 9 routes at 375 and 1440 px, light and dark; Home, Events, About (all tabs, Sr. No. sort), DigitalOutreach match the baseline; no overflow; no new console errors/warnings.
+- [x] Break `public/data/events.json` (remove a `title`, set another event's date to `31/02/2026`): Events still renders, one warning per broken row; revert with `git checkout`.
+- [x] Fresh reviewer subagent on the full Batch E diff (superpowers:requesting-code-review). Fix Critical/Important; fix or record minors.
+- [x] Fill in the Review section; update `docs/pending-tasks.md`, README.
 
 ---
 
 ## Review
 
-_(filled in when done)_
+### What changed
+- **Row checks** (`9090494`): `utils/normalize.ts` with a `toX` per domain type and `normalizeRows`. Sheets rows and fallback JSON go through the same functions, so the two sources can't drift. Sheets wrappers return domain types; `fetchWithFallback(primary, path, toItem)` normalises the fallback. No `as unknown as` left. `convertValue` is gone; `toIsoDate` (`utils/dates.ts`) reads both date formats and rejects impossible dates. The data-contract test runs the 5 Sheet-backed fallback files through the normalisers and requires every row to come back unchanged. It also caught what the old regex check couldn't (e.g. `2025-02-31`). `docs/editing-content.md` explains skipped rows.
+- **X4 interaction tests** (`baa3afd`): jsdom 28 + Testing Library + user-event; `tests/interactions.test.tsx` (per-file `// @vitest-environment jsdom`) covers the About accordion (`aria-expanded` + `inert`), View Archive, Events Expand and Outreach Read More with click, Enter and Space. X4 is ticked in `docs/pending-tasks.md` (section, suggested order, checklist).
+- **ESLint** (`118abab`): flat `eslint.config.js`, recommended configs only, `npm run lint` in CI and README. Real findings fixed: Header closes the menu during render instead of setState-in-effect (new Header test); useFetch drops redundant initial setState calls, and its "runs once" comment becomes a real disable with its reason; Events/Home memoise their `data ?? []` fallbacks; About case blocks get braces; an unused catch binding is removed. No other disables.
+- **Dependencies** (`0f85a75`): in-range `npm update` (lockfile only): plugin-react 5.2.0, autoprefixer 10.6.2, postcss 8.5.32, react-router-dom 7.18.5, tailwindcss 3.4.19, @types/node 22.20.5. `npm audit`: 0 vulnerabilities. npm 10.9.0 did not hit the arborist bug.
+- **Review fixes** (last commit): stale `useFetch` example, two-digit-date wording in the docs, `matchMedia` stub restored after its tests, this section.
+
+### Deviations from the plan
+- jsdom 28 and ESLint 9 instead of the latest majors: jsdom 29/30 and ESLint 10 need Node 22.13+/22.22+, but `engines` allows 22.12.
+- `convertValue` was removed rather than kept beside the normalisers. They have to coerce JSON values anyway, and two converters would drift. Its test cases moved to `tests/normalize.test.ts`.
+- Added a Header interaction test (not planned), because the lint fix changed how the menu closes.
+- `npm ci` was verified on a clean `git archive` copy with the new lockfile, not in this checkout. A Vite dev server on port 3000 that predates this batch (not started by it, left running) locks `node_modules/@esbuild/win32-x64/esbuild.exe`. The first `npm ci` here failed with EPERM, and `npm install` restored `node_modules` from the unchanged lockfile. In the clean copy, `npm ci`, lint, typecheck, 140 tests and the build all passed.
+
+### Verification
+- `npm run lint`, `npm run typecheck`, `npm test` (8 files, 140 tests), `npm run build`: all exit 0; `git status` clean after the build.
+- TDD: each new test was watched failing first. Mutations caught: `inert={false}` → 3 failures; removing the Header close → 1 failure; a broken `events.json` → contract tests fail.
+- Browser (dev server): all 9 routes at 375 and 1440, light and dark. No horizontal overflow, every page shows its h1 and content, no stuck spinner. A text hash of each data view matched the pre-change baseline exactly: Home, Events (All), About Managing / Core (all expanded, archive open) / Past / Sr. No. sorted desc, DigitalOutreach. The console shows no errors and no new warnings. The mobile menu closes on browser Back and releases the scroll lock.
+- Broken fallback row (`title` removed, one date `31/02/2026`): Events showed 7 of 9 cards, no load error, and one warning per bad row per fetch. Dev StrictMode fetches twice, so the dev console shows each warning twice. Reverted with `git checkout`.
+- A fresh reviewer read the full diff: no Critical or Important findings.
+
+### Deferred minors / left for later
+- `textList` keeps only text items, so a numeric tag in JSON (`2024`) is dropped, while `text()` accepts numbers elsewhere. Sheets cells are always text and the contract test requires text tags, so nothing hits it today.
+- Ids like `7a`/`7.5` and unpadded `2026-9-5` dates used to slip through and now skip the row (with a warning). This is intended: the docs now name the exact formats.
+- **Question for the owner:** if a Sheets tab has rows but every row is dropped (e.g. a misspelt header), the section shows empty rather than the JSON fallback. Treating "all rows dropped" as a failure in `fetchWithFallback` would show the fallback instead. That is a product decision, so it is left as is.
+- Next: Batch F (remaining design items).

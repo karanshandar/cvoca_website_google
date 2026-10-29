@@ -3,7 +3,7 @@
  * Show/hide controls (all built on hooks/useDisclosure.ts): clicking, Enter and
  * Space flip aria-expanded, and the collapsed About accordion body stays inert.
  */
-import { describe, it, expect, afterEach, beforeAll } from 'vitest';
+import { describe, it, expect, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import React from 'react';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -169,10 +169,13 @@ describe('Digital Outreach: "Read More"', () => {
 describe('Header: mobile menu', () => {
   // jsdom has no matchMedia; the open menu listens for the desktop breakpoint, which never matches here
   beforeAll(() => {
-    window.matchMedia = (query: string) => ({
+    vi.stubGlobal('matchMedia', (query: string) => ({
       matches: false, media: query, onchange: null,
       addEventListener: noop, removeEventListener: noop, addListener: noop, removeListener: noop, dispatchEvent: () => false,
-    });
+    }));
+  });
+  afterAll(() => {
+    vi.unstubAllGlobals();
   });
 
   /** Navigates without touching the menu, like the browser's back/forward buttons. */
