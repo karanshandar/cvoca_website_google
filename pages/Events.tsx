@@ -33,7 +33,7 @@ const getFallbackGradient = (id: number) => {
         "from-secondary-700 to-primary-800",
         "from-primary-700 to-secondary-800",
         "from-accent to-primary-800",
-        "from-secondary-600 to-primary-700",
+        "from-secondary-800 to-primary-700",
         "from-primary-800 to-secondary-900"
     ];
     return gradients[id % gradients.length];
