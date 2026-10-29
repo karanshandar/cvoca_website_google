@@ -16,8 +16,6 @@ export default function useFetch<T>(
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    setError(null);
     fetcher()
       .then((result) => {
         if (active) setData(result);
@@ -32,6 +30,7 @@ export default function useFetch<T>(
       active = false;
     };
     // Runs once on mount: callers pass an inline fetcher, so listing it would refetch every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only on purpose (see above)
   }, []);
 
   return { data, loading, error };

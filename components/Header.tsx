@@ -111,10 +111,13 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
-  // Close the mobile menu on any navigation (including back/forward)
-  useEffect(() => {
+  // Close the mobile menu on any navigation (including back/forward). Done while
+  // rendering, not in an effect, so the open menu never paints on the new page.
+  const [menuPathname, setMenuPathname] = useState(location.pathname);
+  if (menuPathname !== location.pathname) {
+    setMenuPathname(location.pathname);
     setIsOpen(false);
-  }, [location.pathname]);
+  }
 
   // Close the mobile menu on Escape, or when the viewport grows past the lg breakpoint
   useEffect(() => {

@@ -292,7 +292,7 @@ const About: React.FC = () => {
                         ))}
                     </div>
                 );
-            case 'core':
+            case 'core': {
                 // Helper to check if a member string includes search term
                 const checkMember = (member: CoreMember | undefined) =>
                     member?.name.toLowerCase().includes(coreSearch.toLowerCase()) ||
@@ -335,7 +335,8 @@ const About: React.FC = () => {
                         )}
                     </div>
                 );
-            case 'past':
+            }
+            case 'past': {
                 // Filtering and Sorting Logic
                 const sortedAndFilteredPresidents = [...pastPresidents]
                     .filter(p =>
@@ -460,6 +461,7 @@ const About: React.FC = () => {
                         </div>
                     </div>
                 );
+            }
             default:
                 return null;
         }

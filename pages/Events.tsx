@@ -248,7 +248,7 @@ const Events: React.FC = () => {
     const { data, loading, error } = useFetch<CvoEvent[]>(
         () => fetchWithFallback(fetchEvents, '/data/events.json', toEvent),
     );
-    const allEvents = data ?? [];
+    const allEvents = useMemo(() => data ?? [], [data]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const closeLightbox = useCallback(() => setSelectedImage(null), []);
 

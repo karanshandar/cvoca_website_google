@@ -3,11 +3,12 @@
  * Show/hide controls (all built on hooks/useDisclosure.ts): clicking, Enter and
  * Space flip aria-expanded, and the collapsed About accordion body stays inert.
  */
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, afterEach, beforeAll } from 'vitest';
 import React from 'react';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 import { CommitteeAccordion, AnnualReportsSection } from '../pages/About';
 import { EventCard } from '../pages/Events';
 import { BentoCard } from '../pages/DigitalOutreach';
@@ -162,5 +163,30 @@ describe('Digital Outreach: "Read More"', () => {
   it('toggles with Enter and Space', async () => {
     renderInRouter(<BentoCard initiative={initiative} onImageClick={noop} index={0} />);
     await expectKeyboardToggles(trigger());
+  });
+});
+
+describe('Header: mobile menu', () => {
+  // jsdom has no matchMedia; the open menu listens for the desktop breakpoint, which never matches here
+  beforeAll(() => {
+    window.matchMedia = (query: string) => ({
+      matches: false, media: query, onchange: null,
+      addEventListener: noop, removeEventListener: noop, addListener: noop, removeListener: noop, dispatchEvent: () => false,
+    });
+  });
+
+  /** Navigates without touching the menu, like the browser's back/forward buttons. */
+  const GoToEvents = () => {
+    const navigate = useNavigate();
+    return <button type="button" onClick={() => navigate('/events')}>outside navigation</button>;
+  };
+
+  it('closes when the route changes from outside the menu', async () => {
+    const user = userEvent.setup();
+    renderInRouter(<><Header theme="light" toggleTheme={noop} /><GoToEvents /></>);
+    await user.click(screen.getByRole('button', { name: 'Open menu' }));
+    expect(expanded(screen.getByRole('button', { name: 'Close menu' }))).toBe('true');
+    await user.click(screen.getByRole('button', { name: 'outside navigation' }));
+    expect(expanded(screen.getByRole('button', { name: 'Open menu' }))).toBe('false');
   });
 });

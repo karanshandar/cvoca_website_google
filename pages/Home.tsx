@@ -136,18 +136,16 @@ const Home: React.FC = () => {
         () => fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json', toCommitteeMember),
     );
 
-    const events = eventsData ?? [];
-    const outreach = outreachData ?? [];
     const president = committee?.find((m) => m.role === 'President');
     const presidentPhoto = president?.photoUrl ?? '';
 
     // Logic to filter upcoming events (Next 2, as we have 1 static card)
-    const upcomingEvents = React.useMemo(() => getUpcomingEvents(events, 2), [events]);
+    const upcomingEvents = React.useMemo(() => getUpcomingEvents(eventsData ?? [], 2), [eventsData]);
 
     // Logic to get featured outreach (First 3)
     const featuredOutreach = React.useMemo(() => {
-        return outreach.slice(0, 3);
-    }, [outreach]);
+        return (outreachData ?? []).slice(0, 3);
+    }, [outreachData]);
 
     if (homeError) {
         return <LoadError fullPage />;
@@ -229,7 +227,7 @@ const Home: React.FC = () => {
                                             const [year, month, day] = dateStr.split('-').map(Number);
                                             const date = new Date(year, month - 1, day);
                                             return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-                                        } catch (e) {
+                                        } catch {
                                             return dateStr;
                                         }
                                     })()}

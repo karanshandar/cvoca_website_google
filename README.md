@@ -62,8 +62,9 @@ The site will be available at `http://localhost:3000`
 | Command | What it does |
 |---|---|
 | `npm run dev` | Development server on port 3000 |
+| `npm run lint` | ESLint (recommended rules only, no style rules) |
 | `npm run typecheck` | TypeScript check (`tsc --noEmit`) |
-| `npm test` | Unit tests and the `public/data/*.json` data-contract check (Vitest) |
+| `npm test` | Unit tests, interaction tests (jsdom) and the `public/data/*.json` data-contract check (Vitest) |
 | `npm run build` | Production build into `dist/` (see below) |
 | `npm run preview` | Serve the production build locally |
 | `npm run design:lint` / `design:export` | Lint `DESIGN.md` / export its tokens |
@@ -81,7 +82,7 @@ This command:
 
 ## Continuous Integration
 
-`.github/workflows/ci.yml` runs `npm ci`, `npm run typecheck`, `npm test` and `npm run build` on every push and pull request to `main`.
+`.github/workflows/ci.yml` runs `npm ci`, `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` on every push and pull request to `main`.
 
 ## Deployment (Render)
 
