@@ -72,6 +72,10 @@ describe('toEvent', () => {
     expect(toEvent({ ...event, tags: '' })?.tags).toEqual([]);
   });
 
+  it('keeps numeric tags as text and drops blank or non-text items', () => {
+    expect(toEvent({ ...event, tags: ['GST', 2024, ' ', null, { tag: 'x' }] })?.tags).toEqual(['GST', '2024']);
+  });
+
   it('returns null for something that is not a row', () => {
     expect(toEvent(null)).toBeNull();
     expect(toEvent('event')).toBeNull();

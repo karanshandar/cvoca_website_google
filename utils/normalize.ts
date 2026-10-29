@@ -38,10 +38,10 @@ const date = (value: unknown): string | undefined => {
   return (raw && toIsoDate(raw.trim())) ?? undefined;
 };
 
-/** A list of text, or comma-separated text from a Sheet cell. Missing reads as an empty list. */
+/** A list of text (numbers read as text), or comma-separated text from a Sheet cell. Missing reads as an empty list. */
 const textList = (value: unknown): string[] => {
-  const items = Array.isArray(value) ? value : typeof value === 'string' ? value.split(',') : [];
-  return items.filter((item): item is string => typeof item === 'string').map((item) => item.trim()).filter((item) => item !== '');
+  const items: unknown[] = Array.isArray(value) ? value : typeof value === 'string' ? value.split(',') : [];
+  return items.map(text).filter((item): item is string => item !== undefined).map((item) => item.trim()).filter((item) => item !== '');
 };
 
 /** `true`, `TRUE`/`true` or `1` is yes; any other given value is no; missing stays undefined. */

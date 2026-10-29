@@ -34,7 +34,7 @@ Tick each box as you go. When you finish, send the completed checklist at the en
 | 9 | Developer, about one week later | **Developer** X3 |
 | 10 | Developer, any time | **Developer** X4 (done in code, 2026-10-29) |
 | 11 | Developer, with the account owner's answer | **Developer** X5 |
-| 12 | Developer, any time | **Developer** X6 |
+| 12 | Developer, any time | **Developer** X6 (done in code, 2026-10-29) |
 
 ---
 
@@ -260,7 +260,9 @@ Ask the account owner which they prefer:
 ### X6. Accept numbers as event tags in the JSON (any time, minor)
 In `utils/normalize.ts`, `textList` keeps only text items, so a tag written as a number in `events.json` (`2024` rather than `"2024"`) is silently dropped. Other fields accept a number and treat it as text. Nothing triggers this today: Sheet cells are always text, and the data-contract test requires text tags in the JSON. To make it consistent, run each list item through `text()` and add a test case to `tests/normalize.test.ts`.
 
-- [ ] Numeric tags kept as text
+Done in code (2026-10-29, Batch F): `textList` runs each item through `text()`, so `2024` is kept as `"2024"`; blank and non-text items are still dropped. Nothing to deploy beyond the next release.
+
+- [x] Numeric tags kept as text
 
 ### Planned later: Google Sheet read at build time
 The developer plans to move the Google Sheet reading **out of the browser** and into the website build. Visitors' browsers would then never see the key. When that happens:
@@ -357,7 +359,7 @@ Developer
 [ ] X3 CSP enforced (one week after R1)
 [x] X4 Interaction tests for show/hide controls
 [ ] X5 Sheet tab with only unreadable rows: keep empty / show fallback (owner's choice: ____)
-[ ] X6 Numeric event tags accepted
+[x] X6 Numeric event tags accepted
 
 Testing
 [ ] T1 Events and About pages show Sheet data
