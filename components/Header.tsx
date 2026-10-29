@@ -198,7 +198,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 
         {/* Mobile Menu Overlay */}
         {isOpen && (
-            <div id="mobile-menu" className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-slate-950 pt-28 pb-8 px-6 overflow-y-auto animate-fade-in-up">
+            <div id="mobile-menu" className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-background-dark pt-28 pb-8 px-6 overflow-y-auto animate-fade-in-up">
                  <div className="flex flex-col items-center space-y-4 min-h-full">
                      <nav aria-label="Main" className="flex flex-col items-center space-y-4 w-full">
                          <NavLinks mobile onLinkClick={() => setIsOpen(false)}/>
