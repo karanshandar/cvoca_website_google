@@ -237,6 +237,11 @@ tokens rather than introducing one-off values.
   in near-black (`text-gray-900`) / white in dark mode. Heading tokens map to
   Tailwind size classes (`h1`→`text-5xl`, `h2`→`text-4xl`, `h3`→`text-xl`);
   use responsive variants (`text-4xl md:text-5xl`) for hero text.
+- **Type utilities:** every `typography` token is also a Tailwind size:
+  `text-h1`, `text-h2`, `text-h3`, `text-body-lg`, `text-body-md`,
+  `text-body-sm` and `text-caption`. Each sets the token's size and weight,
+  with the line height of the Tailwind size it stands for. Existing pages still
+  use the plain Tailwind classes; new UI may use either.
 - **Body:** weight 400, `body-md` default, in `text-gray-600` /
   `text-gray-400` (dark) with relaxed line-height (`leading-relaxed`).
 - **Gradient text:** reserve `bg-clip-text` + `bg-gradient-to-r from-primary
@@ -286,6 +291,13 @@ new keyframes.
 - **`rounded-xl` (0.75rem):** icon tiles and inner elements (date badges).
 - **`rounded-full`:** buttons and pill badges.
 - **`rounded-lg` (0.5rem):** small inputs/controls where a pill is too round.
+- **`rounded` (0.25rem) and `rounded-none`:** only for focus-ring corners on
+  text links (`focus-visible:rounded`) and for resets.
+
+`tailwind.config.js` replaces Tailwind's radius scale with exactly these
+steps, so an off-scale class such as `rounded-md` or `rounded-3xl` does not
+compile (Tailwind drops unknown classes silently, so check the built CSS
+after adding a radius).
 
 ## Components
 

@@ -9,9 +9,30 @@ export default {
   ],
   darkMode: 'class',
   theme: {
+    // DESIGN.md `rounded` scale. Replaces Tailwind's defaults, so an off-scale class
+    // (rounded-md, rounded-3xl) no longer compiles. DEFAULT is the small corner on focus rings.
+    borderRadius: {
+      none: '0px',
+      DEFAULT: '0.25rem',
+      lg: '0.5rem',
+      xl: '0.75rem',
+      '2xl': '1rem',
+      full: '9999px',
+    },
     extend: {
       fontFamily: {
         sans: ['"Inter Variable"', 'sans-serif'],
+      },
+      // DESIGN.md `typography` tokens as text-h1 … text-caption. Line heights match the
+      // Tailwind sizes they stand for (h1 = text-5xl, h2 = text-4xl, h3 = text-xl, …).
+      fontSize: {
+        h1: ['3rem', { lineHeight: '1', fontWeight: '800' }],
+        h2: ['2.25rem', { lineHeight: '2.5rem', fontWeight: '800' }],
+        h3: ['1.25rem', { lineHeight: '1.75rem', fontWeight: '700' }],
+        'body-lg': ['1.125rem', { lineHeight: '1.75rem', fontWeight: '400' }],
+        'body-md': ['1rem', { lineHeight: '1.5rem', fontWeight: '400' }],
+        'body-sm': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '400' }],
+        caption: ['0.75rem', { lineHeight: '1rem', fontWeight: '700' }],
       },
       colors: {
         primary: {

@@ -95,7 +95,7 @@ const CommitteeRoleSection: React.FC<{ title: string; members?: CoreMember[] | C
                 {list.map((member, idx) => (
                     <li key={idx} className="flex justify-between items-baseline text-sm">
                         <span className="font-semibold text-gray-800 dark:text-gray-200">{member.name}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-slate-800 px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-700">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-gray-200 dark:border-gray-700">
                             {member.nativePlace}
                         </span>
                     </li>
