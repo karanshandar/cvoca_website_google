@@ -1,6 +1,6 @@
 # Batch D2: DigitalOutreach themes + remaining shared UI components
 
-## Status: IN PROGRESS (2026-10-28)
+## Status: DONE (2026-10-29). Committed on `main` in eleven commits, not pushed. See Review below.
 
 > **For agentic workers:** executed inline with superpowers:executing-plans; steps use `- [ ]` checkboxes.
 
@@ -56,45 +56,109 @@ Execution: inline on `main`, no worktree/branch/push; plan approval waived by th
 - `useDisclosure(initialOpen = false) → { open: boolean; toggle: () => void; panelId: string; triggerProps: { type: 'button'; onClick; 'aria-expanded': boolean; 'aria-controls': string } }`.
 - `Button`: `variant` adds `'onPrimary' | 'onPrimaryOutline'`; new `disabled?: boolean` (only for the `<button>` branch).
 
-- [ ] Write `tests/ui.test.tsx` (static render): SectionHeader renders one `h2` and the eyebrow/lede only when given; EmptyState has no `h3` without a title; Stat shows value and label; Button `disabled` gives `<button … disabled` with `btn-disabled`; Button `onPrimary` uses `btn-on-primary`; a test component using `useDisclosure` renders `aria-expanded="false"` and `aria-controls` equal to the panel id.
-- [ ] Run `npm test`: fails (modules missing).
-- [ ] Implement; add `.btn-on-primary`, `.btn-on-primary-outline`, `.btn-disabled` to `index.css`.
-- [ ] `npm test` and `npm run typecheck` pass. Commit `feat(ui): add SectionHeader, IconTile, EmptyState, Stat, useDisclosure and on-colour/disabled Button`.
+- [x] Write `tests/ui.test.tsx` (static render): SectionHeader renders one `h2` and the eyebrow/lede only when given; EmptyState has no `h3` without a title; Stat shows value and label; Button `disabled` gives `<button … disabled` with `btn-disabled`; Button `onPrimary` uses `btn-on-primary`; a test component using `useDisclosure` renders `aria-expanded="false"` and `aria-controls` equal to the panel id.
+- [x] Run `npm test`: fails (modules missing).
+- [x] Implement; add `.btn-on-primary`, `.btn-on-primary-outline`, `.btn-disabled` to `index.css`.
+- [x] `npm test` and `npm run typecheck` pass. Commit `feat(ui): add SectionHeader, IconTile, EmptyState, Stat, useDisclosure and on-colour/disabled Button`.
 
 ## Task 2: DigitalOutreach (one commit)
-- [ ] Delete `CardTheme`, `THEMES`, `getTheme`, the `theme` prop, every `isDarkCard` branch and the `featureIcon.replace(...)`.
-- [ ] Card shell → `Card padding="none" emphasis` (layout classes only). Subtitle, checks, stat values, Read More → `text-primary dark:text-primary-light`.
-- [ ] Floating pill → `Badge` with the initiative icon, on an opaque `bg-card-light dark:bg-card-dark` rounded backing; same corner as before.
-- [ ] Read More/Less → `useDisclosure`. "Registrations Closed" → `<Button disabled>`.
-- [ ] Commit `refactor(digital-outreach): one brand card style with a category Badge`.
+- [x] Delete `CardTheme`, `THEMES`, `getTheme`, the `theme` prop, every `isDarkCard` branch and the `featureIcon.replace(...)`.
+- [x] Card shell → `Card padding="none" emphasis` (layout classes only). Subtitle, checks, stat values, Read More → `text-primary dark:text-primary-light`.
+- [x] Floating pill → `Badge` with the initiative icon, on an opaque `bg-card-light dark:bg-card-dark` rounded backing; same corner as before.
+- [x] Read More/Less → `useDisclosure`. "Registrations Closed" → `<Button disabled>`.
+- [x] Commit `refactor(digital-outreach): one brand card style with a category Badge`.
 
 ## Task 3: Page migrations (one commit each)
-- [ ] **Home**: StatCard → `Card` + `Stat size="lg"`; FeatureCard tile → `IconTile`; three section headers → `SectionHeader`; no-events fallback → `EmptyState`; CTA band → `Button variant="onPrimary"` / `"onPrimaryOutline"`.
-- [ ] **About**: "What We Do", "Leadership & Structure", "Annual Reports & Governance" → `SectionHeader`; accordion and archive toggle → `useDisclosure` (accordion keeps `h3`, `inert`); the two "no match" messages outside the table → `EmptyState`.
-- [ ] **Events**: expand text → `useDisclosure`; in-card actions → `Button size="sm"` (outline/primary/outline/disabled); empty result → `EmptyState` with "Clear all filters" as `Button size="sm"`.
-- [ ] **Membership**: "Why Join CVOCA?" → `SectionHeader`; benefit tile → `IconTile`.
-- [ ] **Blog**: stats bar → `Stat size="md"` ×4 inside the existing Card.
-- [ ] **Contact**: InfoCard tile → `IconTile`.
-- [ ] `npm run typecheck` before each commit.
+- [x] **Home**: StatCard → `Card` + `Stat size="lg"`; FeatureCard tile → `IconTile`; three section headers → `SectionHeader`; no-events fallback → `EmptyState`; CTA band → `Button variant="onPrimary"` / `"onPrimaryOutline"`.
+- [x] **About**: "What We Do", "Leadership & Structure", "Annual Reports & Governance" → `SectionHeader`; accordion and archive toggle → `useDisclosure` (accordion keeps `h3`, `inert`); the two "no match" messages outside the table → `EmptyState`.
+- [x] **Events**: expand text → `useDisclosure`; in-card actions → `Button size="sm"` (outline/primary/outline/disabled); empty result → `EmptyState` with "Clear all filters" as `Button size="sm"`.
+- [x] **Membership**: "Why Join CVOCA?" → `SectionHeader`; benefit tile → `IconTile`.
+- [x] **Blog**: stats bar → `Stat size="md"` ×4 inside the existing Card.
+- [x] **Contact**: InfoCard tile → `IconTile`.
+- [x] `npm run typecheck` before each commit.
 
 ## Task 4: DESIGN.md
-- [ ] `npm run design:lint` before: **0 errors, 54 warnings** (53 orphaned tokens + the known `button-secondary` contrast).
-- [ ] Add `components:` entries: `card`, `card-dark`, `badge-primary`, `badge-success`, `badge-warning`, `badge-danger`, `icon-tile`, `icon-tile-hover`, `hero`, `hero-light`, `page`, `page-dark`, `button-primary-hover`, `button-on-primary`, `button-on-primary-outline`. Only values the code really uses.
-- [ ] Prose: list the new components; document `animate-fade-in-up` and `animate-float` (durations, use, reduced motion).
-- [ ] Lint after, record counts. Commit `docs(design): component tokens, on-colour buttons and motion`.
+- [x] `npm run design:lint` before: **0 errors, 54 warnings** (53 orphaned tokens + the known `button-secondary` contrast).
+- [x] Add `components:` entries: `card`, `card-dark`, `badge-primary`, `badge-success`, `badge-warning`, `badge-danger`, `icon-tile`, `icon-tile-hover`, `hero`, `hero-light`, `page`, `page-dark`, `button-primary-hover`, `button-on-primary`, `button-on-primary-outline`. Only values the code really uses.
+- [x] Prose: list the new components; document `animate-fade-in-up` and `animate-float` (durations, use, reduced motion).
+- [x] Lint after, record counts. Commit `docs(design): component tokens, on-colour buttons and motion`.
 
 ## Task 5: Verify
-- [ ] `npm run typecheck`, `npm test`, `npm run build`; `git status` clean.
-- [ ] Browser on the dev server: Home, About, Events, Membership, Blog, Contact, DigitalOutreach at 375/768/1440, light and dark: no horizontal overflow, console clean (apart from known Sheets errors), one h1 and no skipped heading levels.
-- [ ] In-page contrast check on migrated elements, especially every Outreach card text/badge pair.
-- [ ] Keyboard: accordion, archive toggle, Events Expand, Outreach Read More (Enter/Space, `aria-expanded`); Events buttons reachable, disabled one skipped.
-- [ ] After screenshots of DigitalOutreach (scratchpad only).
+- [x] `npm run typecheck`, `npm test`, `npm run build`; `git status` clean.
+- [x] Browser on the dev server: Home, About, Events, Membership, Blog, Contact, DigitalOutreach at 375/768/1440, light and dark: no horizontal overflow, console clean (apart from known Sheets errors), one h1 and no skipped heading levels.
+- [x] In-page contrast check on migrated elements, especially every Outreach card text/badge pair.
+- [x] Keyboard: accordion, archive toggle, Events Expand, Outreach Read More (Enter/Space, `aria-expanded`); Events buttons reachable, disabled one skipped.
+- [x] After screenshots of DigitalOutreach (scratchpad only).
 
 ## Task 6: Review
-- [ ] Fresh reviewer subagent on the full diff (superpowers:requesting-code-review); fix Critical and Important findings.
-- [ ] Fill in the Review below; commit `docs: record Batch D2 in tasks/todo.md`.
+- [x] Fresh reviewer subagent on the full diff (superpowers:requesting-code-review); fix Critical and Important findings.
+- [x] Fill in the Review below; commit `docs: record Batch D2 in tasks/todo.md`.
 
 ---
 
 ## Review
-_(filled in at the end)_
+
+### Commits (on `main`, not pushed)
+1. `7fba2c0` docs: plan Batch D2 in tasks/todo.md
+2. `36e58c3` feat(ui): add SectionHeader, IconTile, EmptyState, Stat, useDisclosure and on-colour/disabled Button
+3. `b64505e` refactor(digital-outreach): one brand card style with a category Badge
+4. `268b024` refactor(home)
+5. `63ca412` refactor(about)
+6. `4d26efb` refactor(events)
+7. `18ceea4` refactor(membership)
+8. `36cd465` refactor(blog)
+9. `72f6b18` refactor(contact)
+10. `f297706` docs(design): component tokens, on-colour buttons and motion
+11. this record
+
+### What changed visibly, per page
+- **DigitalOutreach:** every card uses `primary` for the subtitle, check icons, stat values and Read More (`primary-light` in dark). The five emerald/violet/amber/blue/rose accents are gone. The category pill is a `Badge` (primary-50/700, dark primary-300) with the initiative icon, on an opaque card-coloured backing. It is smaller than the old `px-4 py-2` pill. The card no longer deepens its shadow on hover (it isn't clickable). "Registrations Closed" is a grey pill instead of a `rounded-xl` block.
+- **Home:** stat labels are bold caption style, and dark-mode stat numbers use the light gradient ramp. The CTA band's "Join CVOCA Today" and "Contact Support" are standard-size pills (were `px-8 py-4` with `hover:scale-105`). "Contact Support" is solid `primary-dark` with a white/30 border (was `primary-dark/50` + blur). Both have a white focus ring.
+- **About:** "What We Do", "Leadership & Structure" and "Annual Reports & Governance" headers are extrabold `text-3xl md:text-4xl` with a `text-lg` gray-600 lede (were bold `text-3xl`, gray-500 base-size lede). The committee no-match message is now a dashed empty-state card, like the past-presidents one. The archive toggle announces expanded/collapsed.
+- **Events:** the card actions are pills. Add to Calendar and Read More are outline, Register Now is primary, Registration Closed is disabled grey. The three links show an external-link icon and "(opens in new tab)". Read More lost its own icon and Register Now its arrow. In narrow cards the two pills stack instead of wrapping their labels. Empty result: `py-16` (was `py-24`), bold title, small "Clear all filters" pill.
+- **Membership:** "Why Join CVOCA?" header is extrabold with a `text-lg` lede. Benefit icon tiles are 56px `rounded-xl` `primary/10` (were 48px `rounded-2xl` `primary-50`).
+- **Blog:** stats bar labels use `tracking-wide`; dark-mode numbers use the light gradient ramp.
+- **Contact:** info-row icon tiles are 56px (were 48px).
+
+### Deviations from the plan / brief
+1. **Disclosure is a hook (`hooks/useDisclosure.ts`), not a component.** The three users share state and ARIA wiring but not markup. The About accordion keeps `h3 > button` and adds `inert` itself.
+2. **`Stat` not used for the Outreach "Impact" rows.** They are a different pattern (label left, value right, inside a tile), used once. They got the brand colour instead.
+3. **`IconTile` not used for Blog** (two tones, no hover) **or the Events meta rows** (40px, per-row hues). It was applied on Contact and Membership, where it changes the tile from 48px to 56px (noted by the reviewer). The plan wrongly said the spec was "already copied" there.
+4. **Events actions row:** `grid sm:grid-cols-2` became `flex flex-wrap` with `flex-1 whitespace-nowrap` pills. In ~153px columns (1024 and 1440 widths) the pill labels wrapped onto two lines.
+5. **Events empty state** picks up the shared styling (padding, bold title, small button), as listed above.
+6. **Disabled button text** is gray-600 / gray-300 (6.9:1 / 7.0:1). Disabled controls are exempt from contrast rules, but the label stays readable.
+7. **The Outreach "Read More" disclosure has no live data to exercise it:** all four descriptions are under 250 characters. It shares `useDisclosure` with Events, which was keyboard-tested.
+8. **DESIGN.md has no entries for dark badges or the resting icon-tile fill.** Their fills are translucent tints that a colour token can't express. 38 orphan warnings remain.
+9. `Container`/`Section` were skipped, as allowed.
+10. The JSON `category` is kept as the Badge text only. No style or lookup depends on its exact value any more.
+
+### Verification
+- `npm run typecheck` exit 0; `npm test` 79/79 (13 new in `tests/ui.test.tsx`); `npm run build` exit 0; `git status` clean afterwards (only the untracked `.claude/`).
+- `design:lint`: 0 errors / 54 warnings before, 0 errors / 39 warnings after (38 orphaned ramp shades + the known `button-secondary` contrast).
+- Browser (built-in, dev server): Home, About, Membership, Events (default and "All events"), Blog, DigitalOutreach and Contact at 375, 768 and 1440 px, light and dark:
+  - no horizontal overflow;
+  - exactly one h1 and no skipped heading levels on every page;
+  - no console errors or server errors.
+- In-page contrast (computed colours, transitions disabled while measuring):
+  - **Outreach:** no failures in either theme. Badge 6.16 (light) / 7.41 (dark), disabled button 6.87 / 7.03, stat values ≥ 4.87 (large text).
+  - **Home CTA:** onPrimary 6.7, onPrimaryOutline 8.72. "Don't Miss Out" 4.95 / 7.02.
+  - **Events buttons:** 5.17 to 11.82.
+  - The only flagged elements are unmigrated text over gradients or photos, which the script can't measure: Home compliance card and outreach image pills, About featured report.
+- Keyboard:
+  - About accordion: Enter opens (`aria-expanded` true, body not inert), Space closes (inert again).
+  - Archive toggle: Enter shows the grid, label "Hide Archive".
+  - Events Expand: Enter switches to "Collapse", then Tab goes to "Add to Calendar".
+  - Disabled "Registration Closed" is not focusable.
+  - On-colour buttons show the white focus ring with a `primary` offset.
+- Before/after DigitalOutreach screenshots (375 and 1440, light and dark) are in the session scratchpad only, not committed.
+- Final review: fresh reviewer on `0f37c22..f297706`. Critical 0, Important 0, verdict "Ready to merge: Yes". The six minors are listed below.
+
+### What's left
+- Reviewer minors (deferred):
+  - CoordinatorPill keeps the dead dark-card hover classes (`hover:bg-white/5`), so coordinator links have no visible hover.
+  - `Button` allows `disabled` together with `to`/`href` in its types and ignores it there.
+  - DESIGN.md documents only the light `button-disabled` pair.
+  - Tests don't cover href + disabled, IconTile's hover class, or toggling (no jsdom).
+- Contrast items outside this batch: the Home compliance card (cyan/teal "View Deadlines" ≈ 2.4:1), the off-brand Events meta tiles (rose/emerald) and fallback gradients, and the Outreach page background `dark:bg-slate-950`.
+- Recorded follow-up: expose type tokens in Tailwind and restrict `borderRadius` to the four-step scale (review §8 item 10). This was out of scope here.
+- `.claude/launch.json` stays untracked.
