@@ -1,45 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { convertValue, groupCommitteeMembers } from '../utils/googleSheets';
-
-describe('convertValue', () => {
-  it('turns numeric id and srNo cells into numbers', () => {
-    expect(convertValue('id', '7')).toBe(7);
-    expect(convertValue('srNo', '12')).toBe(12);
-  });
-
-  it('keeps a non-numeric id as text', () => {
-    expect(convertValue('id', 'abc')).toBe('abc');
-  });
-
-  it('reads isNew as TRUE or 1', () => {
-    expect(convertValue('isNew', 'TRUE')).toBe(true);
-    expect(convertValue('isNew', 'true')).toBe(true);
-    expect(convertValue('isNew', '1')).toBe(true);
-    expect(convertValue('isNew', 'no')).toBe(false);
-  });
-
-  it('splits comma-separated tags and drops blanks', () => {
-    expect(convertValue('tags', 'CPE, Taxation,,  GST ')).toEqual(['CPE', 'Taxation', 'GST']);
-  });
-
-  it('turns an empty tags cell into an empty list', () => {
-    expect(convertValue('tags', '')).toEqual([]);
-  });
-
-  it('converts DD/MM/YYYY dates to zero-padded YYYY-MM-DD', () => {
-    expect(convertValue('date', '5/9/2026')).toBe('2026-09-05');
-    expect(convertValue('date', '25/12/2026')).toBe('2026-12-25');
-  });
-
-  it('leaves YYYY-MM-DD dates unchanged', () => {
-    expect(convertValue('date', '2026-09-05')).toBe('2026-09-05');
-  });
-
-  it('leaves other fields as text', () => {
-    expect(convertValue('title', '42')).toBe('42');
-    expect(convertValue('cost', '')).toBe('');
-  });
-});
+import { groupCommitteeMembers } from '../utils/googleSheets';
 
 describe('groupCommitteeMembers', () => {
   afterEach(() => {

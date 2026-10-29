@@ -8,6 +8,7 @@ import SchemaMarkup from '../components/SchemaMarkup';
 import { getEventSchema, getBreadcrumbSchema } from '../utils/schema';
 import { fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
+import { toEvent } from '../utils/normalize';
 import { parseLocalDate } from '../utils/dates';
 import { getGoogleCalendarUrl, getUpcomingEvents } from '../utils/events';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
@@ -245,7 +246,7 @@ const Events: React.FC = () => {
     const [tagFilter, setTagFilter] = useState('all');
     const [timeFilter, setTimeFilter] = useState('upcoming'); // Default to Upcoming events
     const { data, loading, error } = useFetch<CvoEvent[]>(
-        () => fetchWithFallback(fetchEvents, '/data/events.json') as unknown as Promise<CvoEvent[]>,
+        () => fetchWithFallback(fetchEvents, '/data/events.json', toEvent),
     );
     const allEvents = data ?? [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);

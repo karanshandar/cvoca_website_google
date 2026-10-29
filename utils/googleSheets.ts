@@ -3,7 +3,17 @@
  * Fetches data from Google Sheets and converts to JSON format
  */
 
-import type { Committee, CoreMember } from '../types';
+import type { AnnualReport, Committee, CommitteeMember, CoreMember, CvoEvent, PastPresident, PresidentMessage } from '../types';
+import {
+  normalizeRows,
+  toAnnualReport,
+  toCommitteeMember,
+  toCommitteeMemberRow,
+  toEvent,
+  toPastPresident,
+  toPresidentMessage,
+  type CommitteeMemberRow,
+} from './normalize';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
@@ -33,9 +43,9 @@ const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
 /**
  * Fetches data from a specific Google Sheet tab
  * @param tabName - The name of the sheet tab (e.g., 'Events', 'Managing Committee')
- * @returns Array of objects with data from the sheet
+ * @returns One object per row, keyed by the header row, holding the raw cell text
  */
-export async function fetchSheetData<T = Record<string, unknown>>(tabName: string): Promise<T[]> {
+export async function fetchSheetData(tabName: string): Promise<Record<string, string>[]> {
   if (!IS_CONFIGURED) {
     throw new SheetsNotConfiguredError();
   }
@@ -65,14 +75,12 @@ export async function fetchSheetData<T = Record<string, unknown>>(tabName: strin
     const headers = data.values[0]; // First row contains headers
     const rows = data.values.slice(1); // Remaining rows are data
 
-    // Map each row to an object using headers as keys
+    // Map each row to an object using headers as keys. Sheets leaves out trailing
+    // empty cells, so a missing cell reads as ''. The normalisers turn the text into typed values.
     const jsonData = rows.map((row: string[]) => {
-      const obj: Record<string, unknown> = {};
+      const obj: Record<string, string> = {};
       headers.forEach((header: string, index: number) => {
-        const value = row[index] || ''; // Use empty string if cell is empty
-
-        // Convert string values to appropriate types
-        obj[header] = convertValue(header, value);
+        obj[header] = row[index] || ''; // Use empty string if cell is empty
       });
       return obj;
     });
@@ -87,82 +95,41 @@ export async function fetchSheetData<T = Record<string, unknown>>(tabName: strin
 }
 
 /**
- * Convert string values to appropriate types based on field name
- */
-export function convertValue(fieldName: string, value: string): string | number | boolean | string[] {
-  // Empty values
-  if (value === '' || value === null || value === undefined) {
-    return fieldName === 'tags' ? [] : value;
-  }
-
-  // Number fields
-  if (fieldName === 'id' || fieldName === 'srNo') {
-    const num = parseInt(value);
-    return isNaN(num) ? value : num;
-  }
-
-  // Boolean fields
-  if (fieldName === 'isNew') {
-    return value.toLowerCase() === 'true' || value === '1';
-  }
-
-  // Array fields (comma-separated)
-  if (fieldName === 'tags') {
-    return value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
-  }
-
-  // Date fields - Convert DD/MM/YYYY to YYYY-MM-DD
-  if (fieldName === 'date' && value.includes('/')) {
-    const parts = value.split('/');
-    if (parts.length === 3) {
-      const [day, month, year] = parts;
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
-  }
-
-  // Default: return as string
-  return value;
-}
-
-/**
  * Fetches events data from Google Sheets
  */
-export async function fetchEvents() {
-  return fetchSheetData('events');
+export async function fetchEvents(): Promise<CvoEvent[]> {
+  return normalizeRows('Sheet tab "events"', await fetchSheetData('events'), toEvent);
 }
 
 /**
  * Fetches managing committee data from Google Sheets
  */
-export async function fetchManagingCommittee() {
-  return fetchSheetData('managingCommittee');
+export async function fetchManagingCommittee(): Promise<CommitteeMember[]> {
+  return normalizeRows('Sheet tab "managingCommittee"', await fetchSheetData('managingCommittee'), toCommitteeMember);
 }
 
 /**
  * Fetches annual reports data from Google Sheets
  */
-export async function fetchAnnualReports() {
-  return fetchSheetData('annualReports');
+export async function fetchAnnualReports(): Promise<AnnualReport[]> {
+  return normalizeRows('Sheet tab "annualReports"', await fetchSheetData('annualReports'), toAnnualReport);
 }
 
 /**
  * Fetches past presidents data from Google Sheets
  */
-export async function fetchPastPresidents() {
+export async function fetchPastPresidents(): Promise<PastPresident[]> {
   // Serial numbers are assigned on the About page, so Sheets and the JSON fallback match
-  return fetchSheetData('pastPresidents');
+  return normalizeRows('Sheet tab "pastPresidents"', await fetchSheetData('pastPresidents'), toPastPresident);
 }
 
 /**
  * Fetches committee members and transforms to nested structure
  */
-export async function fetchCommittees() {
-  const members = await fetchSheetData('committeeMembers');
+export async function fetchCommittees(): Promise<Committee[]> {
+  const members = normalizeRows('Sheet tab "committeeMembers"', await fetchSheetData('committeeMembers'), toCommitteeMemberRow);
   return groupCommitteeMembers(members);
 }
-
-/** Sheet cells arrive as text; a missing column reads as an empty string. */
-const cellText = (value: unknown): string => (value == null ? '' : String(value));
 
 /** A committee whose member lists always exist, so rows can be pushed straight in */
 type CommitteeDraft = Committee & Required<Omit<Committee, 'chairperson'>>;
@@ -181,11 +148,11 @@ const emptyCommittee = (name: string): CommitteeDraft => ({
  * Groups flat committeeMembers rows (one per person) into committees,
  * in the order each committee first appears
  */
-export function groupCommitteeMembers(members: Record<string, unknown>[]): Committee[] {
+export function groupCommitteeMembers(members: CommitteeMemberRow[]): Committee[] {
   const committeesMap = new Map<string, CommitteeDraft>();
 
   members.forEach((member) => {
-    const committeeName = cellText(member.committeeName);
+    const committeeName = member.committeeName;
 
     let committee = committeesMap.get(committeeName);
     if (!committee) {
@@ -193,7 +160,7 @@ export function groupCommitteeMembers(members: Record<string, unknown>[]): Commi
       committeesMap.set(committeeName, committee);
     }
 
-    const coreMember: CoreMember = { name: cellText(member.memberName), nativePlace: cellText(member.nativePlace) };
+    const coreMember: CoreMember = { name: member.memberName, nativePlace: member.nativePlace };
 
     switch (member.role) {
       case 'chairperson':
@@ -223,9 +190,9 @@ export function groupCommitteeMembers(members: Record<string, unknown>[]): Commi
 }
 
 /**
- * Fetches president's message from Google Sheets
+ * Fetches president's message from Google Sheets (only the first row is used)
  */
-export async function fetchPresidentMessage() {
-  const data = await fetchSheetData('presidentMessage');
-  return data.length > 0 ? data[0] : null;
+export async function fetchPresidentMessage(): Promise<PresidentMessage | null> {
+  const [first] = normalizeRows('Sheet tab "presidentMessage"', (await fetchSheetData('presidentMessage')).slice(0, 1), toPresidentMessage);
+  return first ?? null;
 }

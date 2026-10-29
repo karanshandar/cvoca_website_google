@@ -2,9 +2,10 @@
  * Loads every public/data/*.json file and checks the fields the pages read,
  * so a broken content edit fails CI instead of breaking a page.
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { normalizeRows, toAnnualReport, toCommittee, toCommitteeMember, toEvent, toPastPresident, toPresidentMessage } from '../utils/normalize';
 
 /** A check returns one message per problem found at `path`. */
 type Check = (value: unknown, path: string) => string[];
@@ -136,5 +137,46 @@ describe('public/data', () => {
     const events = load('events.json');
     const ids = Array.isArray(events) ? events.map((event) => new Map<string, unknown>(Object.entries(event)).get('id')) : [];
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+// The files that are also Sheet tabs go through the same normalisers as the Sheet rows.
+// Every row must survive them unchanged, apart from fields no page reads.
+const normalised: Record<string, { toItem: (row: unknown) => unknown; unread?: string[] }> = {
+  'events.json': { toItem: toEvent },
+  'managingCommittee.json': { toItem: toCommitteeMember, unread: ['email'] },
+  'committees.json': { toItem: toCommittee },
+  'annualReports.json': { toItem: toAnnualReport },
+  'pastPresidents.json': { toItem: toPastPresident },
+};
+
+/** A committee's missing member lists come back as []; fill them in so the comparison is like for like. */
+const withListDefaults = (file: string, row: unknown) =>
+  file === 'committees.json' && typeof row === 'object' && row !== null
+    ? { advisors: [], convenors: [], jointConvenors: [], specialInvitees: [], subCommittee: [], ...row }
+    : row;
+
+const withoutUnread = (row: unknown, unread: string[] = []) =>
+  typeof row === 'object' && row !== null ? Object.fromEntries(Object.entries(row).filter(([key]) => !unread.includes(key))) : row;
+
+describe('public/data through the row checks', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it.each(Object.keys(normalised))('%s keeps every row, unchanged', (file) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { toItem, unread } = normalised[file];
+    const rows = load(file);
+    expect(Array.isArray(rows)).toBe(true);
+    const source = (rows as unknown[]).map((row) => withoutUnread(withListDefaults(file, row), unread));
+    expect(normalizeRows(file, rows, toItem)).toEqual(source);
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it("home.json's default President's message passes the presidentMessage check", () => {
+    const home = load('home.json');
+    const presidentDefault = typeof home === 'object' && home !== null ? new Map<string, unknown>(Object.entries(home)).get('presidentDefault') : undefined;
+    expect(toPresidentMessage(presidentDefault)).not.toBeNull();
   });
 });

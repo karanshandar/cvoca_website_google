@@ -7,6 +7,7 @@ import useSEO from '../hooks/useSEO';
 import { routeSEO } from '../seo/pages';
 import { fetchPresidentMessage, fetchManagingCommittee, fetchEvents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
+import { toCommitteeMember, toEvent } from '../utils/normalize';
 import { parseLocalDate } from '../utils/dates';
 import { getUpcomingEvents } from '../utils/events';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
@@ -126,17 +127,13 @@ const Home: React.FC = () => {
     // Google Sheets data (with local JSON fallback) — hydrates after first paint;
     // failures fall back without blocking the page.
     const { data: eventsData } = useFetch<CvoEvent[]>(
-        () => fetchWithFallback(fetchEvents, '/data/events.json') as unknown as Promise<CvoEvent[]>,
+        () => fetchWithFallback(fetchEvents, '/data/events.json', toEvent),
     );
     const { data: presidentMessageData } = useFetch<PresidentMessage | null>(
-        () => fetchPresidentMessage().catch(() => null) as unknown as Promise<PresidentMessage | null>,
+        () => fetchPresidentMessage().catch(() => null),
     );
     const { data: committee } = useFetch<CommitteeMember[]>(
-        () =>
-            fetchWithFallback(
-                fetchManagingCommittee,
-                '/data/managingCommittee.json',
-            ) as unknown as Promise<CommitteeMember[]>,
+        () => fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json', toCommitteeMember),
     );
 
     const events = eventsData ?? [];

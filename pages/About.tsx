@@ -5,6 +5,7 @@ import useSEO from '../hooks/useSEO';
 import { routeSEO } from '../seo/pages';
 import { fetchManagingCommittee, fetchCommittees, fetchAnnualReports, fetchPastPresidents } from '../utils/googleSheets';
 import { fetchWithFallback } from '../utils/fetchWithFallback';
+import { toAnnualReport, toCommittee, toCommitteeMember, toPastPresident } from '../utils/normalize';
 import { getOptimizedImageUrl, ImageSizePresets } from '../utils/imageUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoadError from '../components/LoadError';
@@ -257,11 +258,11 @@ const About: React.FC = () => {
     const { data, loading, error } = useFetch<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>(
         () =>
             Promise.all([
-                fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json'),
-                fetchWithFallback(fetchCommittees, '/data/committees.json'),
-                fetchWithFallback(fetchAnnualReports, '/data/annualReports.json'),
-                fetchWithFallback(fetchPastPresidents, '/data/pastPresidents.json'),
-            ]) as unknown as Promise<[CommitteeMember[], Committee[], AnnualReport[], PastPresident[]]>,
+                fetchWithFallback(fetchManagingCommittee, '/data/managingCommittee.json', toCommitteeMember),
+                fetchWithFallback(fetchCommittees, '/data/committees.json', toCommittee),
+                fetchWithFallback(fetchAnnualReports, '/data/annualReports.json', toAnnualReport),
+                fetchWithFallback(fetchPastPresidents, '/data/pastPresidents.json', toPastPresident),
+            ]),
     );
     const [managingCommittee, committees, annualReports, presidentRows] = data ?? [[], [], [], []];
     // Number past presidents in source order (Sheets or the JSON fallback, which has no srNo)
