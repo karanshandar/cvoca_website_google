@@ -278,16 +278,16 @@ const About: React.FC = () => {
         switch (activeTab) {
             case 'managing':
                 return (
-                    // Using 3 columns max to prevent name wrapping on desktop
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    // Using 3 columns max to prevent name wrapping on desktop; a compact 2-column grid on phones
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                         {managingCommittee.map(member => (
-                            <Card key={member.name} className="group text-center">
-                                <div className="relative w-28 h-28 mx-auto mb-5">
+                            <Card key={member.name} padding="md" className="group text-center sm:p-6">
+                                <div className="relative w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-3 sm:mb-5">
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-full opacity-20 group-hover:opacity-40 transition-opacity blur-md"></div>
                                     <img src={getOptimizedImageUrl(member.photoUrl, ImageSizePresets.TEAM_PHOTO)} alt={member.name} loading="lazy" decoding="async" className="relative w-full h-full rounded-full object-cover shadow-md border-2 border-white dark:border-slate-700" />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight">{member.name}</h3>
-                                <p className="text-sm font-medium text-primary dark:text-primary-light">{member.role}</p>
+                                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1 leading-tight break-words">{member.name}</h3>
+                                <p className="text-xs sm:text-sm font-medium text-primary dark:text-primary-light">{member.role}</p>
                             </Card>
                         ))}
                     </div>
@@ -469,7 +469,7 @@ const About: React.FC = () => {
 
 
     return (
-        <div className="bg-gray-50 dark:bg-background-dark min-h-screen">
+        <div className="bg-background-light dark:bg-background-dark min-h-screen">
             {/* Hero Section */}
             <PageHero
                 eyebrow="Legacy of Excellence"
