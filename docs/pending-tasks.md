@@ -25,8 +25,8 @@ Tick each box as you go. When you finish, send the completed checklist at the en
 |---|---|---|
 | 1 | Account owner | **Google** G1–G8 |
 | 2 | Account owner | **Testing** T1 |
-| 3 | Developer | **Developer** X1–X2, then deploy |
-| 4 | Developer | **Testing** T3 |
+| 3 | Developer | **Developer** X1–X2, then deploy (done, deployed 2026-10-29) |
+| 4 | Account owner, with developer | **Render** R2b, then **Testing** T3 |
 | 5 | Account owner | **Render** R1–R2 |
 | 6 | Both | **Testing** T2 |
 | 7 | Account owner, with developer | **Render** R3 |
@@ -178,10 +178,34 @@ default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-sr
 
 - [ ] Build command is `npm ci && npm run build`
 
+### R2b. Add one rewrite per page (with the developer, ~5 min)
+Each page now has its own file with its own title and link preview, for example `about/index.html`. But the live catch-all rule (`/*` → `/index.html`) catches `/about` first and serves the home page file, so links shared without a trailing slash still preview as the home page. Checked on 2026-10-29: `https://cvoca.org/about/` shows "About Us | CVOCA", while `https://cvoca.org/about` shows the home page title.
+
+1. In Render, open the **cvoca-website** service → **Redirects/Rewrites**.
+2. Add these 7 rules, all with **Action** `Rewrite`, and drag them **above** the existing `/*` rule (Render uses the first rule that matches):
+
+| Source | Destination |
+|---|---|
+| `/about` | `/about/index.html` |
+| `/membership` | `/membership/index.html` |
+| `/events` | `/events/index.html` |
+| `/blog` | `/blog/index.html` |
+| `/digital-outreach` | `/digital-outreach/index.html` |
+| `/contact` | `/contact/index.html` |
+| `/privacy-policy` | `/privacy-policy/index.html` |
+
+3. Save, then run Testing T3.
+
+These rules stay in place after R3. They make each page's file explicit, so R3 only changes what happens to unknown addresses.
+
+**Undo:** delete the 7 rules. The site goes back to how it was.
+
+- [ ] 7 page rewrites added above `/*`
+
 ### R3. Remove the catch-all rewrite (with the developer)
 Each page of the site now has its own file, so a shared link (WhatsApp, LinkedIn, etc.) shows that page's own title and description. Because of that, the old catch-all rule that sends every address to the home page is no longer needed. Removing it lets mistyped addresses return a proper "page not found", which search engines need.
 
-**Only do this after** the code with X1–X2 is deployed and Testing T3 has passed.
+**Only do this after** R2b is done and Testing T3 has passed.
 
 1. In Render, open the **cvoca-website** service → **Redirects/Rewrites**.
 2. Find the rule with **Source** `/*`, **Destination** `/index.html` and **Action** `Rewrite`.
@@ -199,10 +223,10 @@ Each page of the site now has its own file, so a shared link (WhatsApp, LinkedIn
 ### X1. Add a "page not found" file to the build
 The build must ship a `dist/404.html` page before R3. Render staff on the community forum say a static site serves `/404.html` for paths that match no file and no rule. Without it, unknown addresses would show Render's plain "Not Found" page.
 
-Done in code (2026-10-28): the build writes `dist/404.html`, a noindex copy of the site that shows the "Page not found" page. Still needs a deploy.
+Done in code (2026-10-28): the build writes `dist/404.html`, a noindex copy of the site that shows the "Page not found" page. Deployed 2026-10-29: `https://cvoca.org/404.html` serves "Page Not Found | CVOCA".
 
 - [x] `dist/404.html` built
-- [ ] Deployed
+- [x] Deployed
 
 ### X2. Remove the catch-all rewrite from `render.yaml`
 Delete the `routes:` `/* → /index.html` rewrite in `render.yaml`, so linking the Blueprint later doesn't bring it back.
@@ -265,8 +289,8 @@ The developer plans to move the Google Sheet reading **out of the browser** and 
 - [ ] securityheaders.com shows the headers
 - [ ] Site browsed and looks normal
 
-### T3. After the next deploy (developer)
-Run these with the latest code deployed:
+### T3. After R2b (developer)
+First run on 2026-10-29 (code deployed, before R2b): **failed**. `/about`, `/events` and `/membership` returned the home page title. `/events/` (with the slash) returned "Events | CVOCA". Cause: the catch-all rewrite matches first. Run again after R2b:
 ```
 curl -sI https://cvoca.org/about
 curl -s https://cvoca.org/about | grep canonical
@@ -324,10 +348,11 @@ Google
 Render
 [ ] R1 Seven headers added
 [ ] R2 Build command = npm ci && npm run build
+[ ] R2b Seven page rewrites added above /* (with developer)
 [ ] R3 Catch-all rewrite removed (with developer)
 
 Developer
-[ ] X1 dist/404.html deployed (built in code: done)
+[x] X1 dist/404.html deployed (2026-10-29)
 [x] X2 render.yaml catch-all removed
 [ ] X3 CSP enforced (one week after R1)
 [x] X4 Interaction tests for show/hide controls
