@@ -295,9 +295,10 @@ new keyframes.
   text links (`focus-visible:rounded`) and for resets.
 
 `tailwind.config.js` replaces Tailwind's radius scale with exactly these
-steps, so an off-scale class such as `rounded-md` or `rounded-3xl` does not
-compile (Tailwind drops unknown classes silently, so check the built CSS
-after adding a radius).
+steps, so a named off-scale class such as `rounded-md` or `rounded-3xl` does
+not compile (Tailwind drops unknown classes silently, so check the built CSS
+after adding a radius). Arbitrary values like `rounded-[2rem]` still compile;
+don't use them.
 
 ## Components
 

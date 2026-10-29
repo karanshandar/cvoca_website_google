@@ -31,6 +31,11 @@ describe('Events: "Filters" disclosure', () => {
     expect(button.getAttribute('aria-expanded')).toBe('false');
     const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
     expect(panel).not.toBeNull();
+    // `hidden` keeps the collapsed panel out of the tab order and the accessibility tree
+    expect(panel!.classList.contains('hidden')).toBe(true);
+    await userEvent.setup().click(button);
+    expect(panel!.classList.contains('hidden')).toBe(false);
+    expect(panel!.classList.contains('grid')).toBe(true);
     expect(within(panel!).getByLabelText('Filter events by organizer')).toBeTruthy();
     expect(within(panel!).getByLabelText('Filter events by time')).toBeTruthy();
     expect(within(panel!).getByLabelText('Filter events by tag')).toBeTruthy();
